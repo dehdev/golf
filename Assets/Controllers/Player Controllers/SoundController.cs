@@ -19,7 +19,6 @@ public class SoundController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("COLLISION");
         sound.Play();
     }
 }

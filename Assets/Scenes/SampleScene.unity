@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7af8c040fc0394985f4110460282be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VortexForce: 10
+  VortexForce: 20
 --- !u!136 &134064136
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -999,7 +999,7 @@ TrailRenderer:
       m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 0
+    numCornerVertices: 5
     numCapVertices: 0
     alignment: 0
     textureMode: 0
@@ -6094,7 +6094,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 581870626}
-  smoothTime: 1
+  smoothTime: 0.5
 --- !u!4 &8663110875167942578
 Transform:
   m_ObjectHideFlags: 0
@@ -6104,7 +6104,7 @@ Transform:
   m_GameObject: {fileID: 6953261788148685414}
   serializedVersion: 2
   m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
-  m_LocalPosition: {x: -25, y: 36.98, z: -25}
+  m_LocalPosition: {x: -30, y: 40, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6124,7 +6124,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxZoom: 15
   minZoom: 10
-  zoomSpeed: 0.7
+  zoomSpeed: 1
+  zoomSmoothTime: 0.3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

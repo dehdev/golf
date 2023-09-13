@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class ShootController : MonoBehaviour
 {
     [SerializeField] private float shotPower;
+    [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private AudioSource hitSound;
     [SerializeField] private float MaxDragDistance = 30f;
@@ -20,14 +21,14 @@ public class ShootController : MonoBehaviour
     private Vector3 lastPos;
     private bool isIdle;
     private bool isAiming;
-
+    private bool readyToShoot;
     private Rigidbody rb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         hitSound = GetComponent<AudioSource>();
-
+        readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
     }
@@ -36,6 +37,7 @@ public class ShootController : MonoBehaviour
     {
         if (rb.velocity.magnitude < stopVelocity)
         {
+            isIdle = true;
             StartCoroutine(Stop());
         }
         UpdateTimer();
@@ -52,12 +54,20 @@ public class ShootController : MonoBehaviour
         ProcessAim();
     }
 
+    private void OnMouseUp()
+    {
+        if (isIdle)
+        {
+            readyToShoot = true;
+        }
+    }
+
     private void OnMouseDown()
     {
         if (isIdle)
         {
-            isAiming = true;
             Cursor.visible = false;
+            isAiming = true;
         }
     }
 
@@ -82,6 +92,7 @@ public class ShootController : MonoBehaviour
 
     private void ProcessAim()
     {
+
         if (!isAiming || !isIdle)
         {
             return;
@@ -96,10 +107,11 @@ public class ShootController : MonoBehaviour
 
         DrawLine(worldPoint.Value);
 
-        if (Input.GetMouseButtonUp(0))
+        if (readyToShoot)
         {
-            Shoot(worldPoint.Value);
+            readyToShoot = false;
             Cursor.visible = true;
+            Shoot(worldPoint.Value);
         }
     }
 
@@ -118,10 +130,10 @@ public class ShootController : MonoBehaviour
 
         float strength = Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
 
-        rb.AddForce(direction * strength * shotPower);
+        rb.AddForce(-direction * strength * shotPower);
         isIdle = false;
 
-        Debug.Log("Force: " + (direction * strength * shotPower).magnitude);
+        Debug.Log("Force: " + (-direction * strength * shotPower).magnitude);
     }
 
     private void DrawLine(Vector3 worldPoint)
@@ -151,14 +163,12 @@ public class ShootController : MonoBehaviour
     {
         while (rb.angularVelocity.magnitude > 0.01f) // Adjust the threshold as needed
         {
-            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / 5);
-            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / 5);
-            isIdle = true;
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
+            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
             yield return null;
         }
         rb.velocity = Vector3.zero;  // Ensure the velocity is exactly zero when done
         rb.angularVelocity = Vector3.zero; // Ensure the angular velocity is exactly zero when done
-        isIdle = true;
     }
 
 

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
@@ -8,24 +6,29 @@ public class CameraZoom : MonoBehaviour
     [SerializeField] private float maxZoom = 15f;
     [SerializeField] private float minZoom = 10f;
     [SerializeField] private float zoomSpeed = 0.7f; // Adjust this to control zoom speed.
+    [SerializeField] private float zoomSmoothTime = 0.2f; // Adjust this for smoothing.
+
+    private float targetZoom;
+    private float currentZoomVelocity;
 
     // Start is called before the first frame update
     void Start()
     {
         cam = GetComponent<Camera>();
         cam.orthographicSize = maxZoom;
+        targetZoom = maxZoom;
     }
 
     // Update is called once per frame
     void Update()
     {
         float zoomInput = Input.mouseScrollDelta.y; // Use y-axis for zoom input
-        float newSize = cam.orthographicSize - zoomInput * zoomSpeed;
+        targetZoom -= zoomInput * zoomSpeed;
 
-        // Clamp the new size to the minZoom and maxZoom values
-        newSize = Mathf.Clamp(newSize, minZoom, maxZoom);
+        // Clamp the target zoom to the minZoom and maxZoom values 
+        targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
 
-        // Set the camera's orthographic size to the new size
-        cam.orthographicSize = newSize;
+        // Smoothly adjust the camera's orthographic size
+        cam.orthographicSize = Mathf.SmoothDamp(cam.orthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
     }
 }

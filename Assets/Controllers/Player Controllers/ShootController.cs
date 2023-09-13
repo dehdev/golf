@@ -14,6 +14,10 @@ public class ShootController : MonoBehaviour
     [SerializeField] private UnityEvent<string> shotEvent;
     [SerializeField] private UnityEvent<string> timerEvent;
     [SerializeField] private LineRenderer lineRenderer;
+    [SerializeField] private GameObject idleParticles;
+    [SerializeField] private GameObject arrow;
+
+    [SerializeField] private float iddleEffectDistance;
 
     private int shots;
     private float time;
@@ -31,12 +35,19 @@ public class ShootController : MonoBehaviour
         readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
+        idleParticles.SetActive(false);
     }
 
     private void Update()
     {
+        arrow.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 2);
         if (rb.velocity.magnitude < stopVelocity)
         {
+            if (!isAiming)
+            {
+                idleParticles.transform.position = new Vector3(transform.position.x, transform.position.y - iddleEffectDistance, transform.position.z);
+                idleParticles.SetActive(true);
+            }
             isIdle = true;
             StartCoroutine(Stop());
         }
@@ -66,6 +77,7 @@ public class ShootController : MonoBehaviour
     {
         if (isIdle)
         {
+            idleParticles.SetActive(false);
             Cursor.visible = false;
             isAiming = true;
         }
@@ -106,7 +118,6 @@ public class ShootController : MonoBehaviour
         }
 
         DrawLine(worldPoint.Value);
-
         if (readyToShoot)
         {
             readyToShoot = false;
@@ -138,6 +149,7 @@ public class ShootController : MonoBehaviour
 
     private void DrawLine(Vector3 worldPoint)
     {
+
         // Calculate the direction from the current position to the worldPoint
         Vector3 direction = worldPoint - transform.position;
 
@@ -156,6 +168,9 @@ public class ShootController : MonoBehaviour
 
         lineRenderer.SetPositions(positions);
         lineRenderer.enabled = true;
+
+        arrow.transform.RotateAround(rb.transform.position, transform.parent.up, 100 * Time.deltaTime);
+
     }
 
 

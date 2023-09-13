@@ -151,8 +151,8 @@ public class ShootController : MonoBehaviour
     {
         while (rb.angularVelocity.magnitude > 0.01f) // Adjust the threshold as needed
         {
-            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / 10);
-            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / 5);
+            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / 5);
             isIdle = true;
             yield return null;
         }

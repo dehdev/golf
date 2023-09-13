@@ -1690,7 +1690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotPower: 150
-  stopVelocity: 0.05
+  stopVelocity: 0.1
   hitSound: {fileID: 581870618}
   MaxDragDistance: 15
   shotEvent:
@@ -1997,7 +1997,7 @@ GameObject:
   - component: {fileID: 844097671}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

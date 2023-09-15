@@ -1,38 +1,40 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
 
 public class ShootController : MonoBehaviour
 {
-    [SerializeField] private float shotPower;
+    private Rigidbody rb;
+
+    [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
+    [SerializeField] private float iddleEffectDistance;
+    private float time;
+
+    private int shots;
+
+    private string timeText;
     [SerializeField] private UnityEvent<string> shotEvent;
     [SerializeField] private UnityEvent<string> timerEvent;
+
     [SerializeField] private LineRenderer lineRenderer;
+
     [SerializeField] private GameObject idleParticles;
     [SerializeField] private GameObject arrow;
 
-    [SerializeField] private float iddleEffectDistance;
+    private Vector3 lastPos;
 
     private SoundController soundController;
 
-    private int shots;
-    private float time;
-    private string timeText;
-    private Vector3 lastPos;
     private bool isIdle;
     private bool isAiming;
     private bool readyToShoot;
     private bool hasChangedToIdle;
-    private Rigidbody rb;
 
     private void Awake()
     {
@@ -75,7 +77,6 @@ public class ShootController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
     }
-
     private void FixedUpdate()
     {
         ProcessAim();
@@ -104,7 +105,7 @@ public class ShootController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         soundController.PlayCollisionSound(rb.velocity.magnitude / 10);
-        if (collision.gameObject.tag == "Terrain")
+        if (collision.gameObject.CompareTag("Terrain"))
         {
             transform.position = lastPos;
             rb.velocity = Vector3.zero;
@@ -156,16 +157,16 @@ public class ShootController : MonoBehaviour
         isAiming = false;
         lineRenderer.enabled = false;
 
-        Vector3 horizontalWorldPoint = new Vector3(worldPoint.x, transform.position.y, worldPoint.z);
+        Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
 
         Vector3 direction = (horizontalWorldPoint - transform.position).normalized;
 
         float strength = Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
 
-        rb.AddForce(-direction * strength * shotPower);
+        rb.AddForce(shotMultiplier * strength * -direction);
         isIdle = false;
 
-        Debug.Log("Force: " + (-direction * strength * shotPower).magnitude);
+        Debug.Log("Force: " + (shotMultiplier * strength * -direction).magnitude);
     }
 
     private void DrawLine(Vector3 worldPoint)
@@ -196,7 +197,6 @@ public class ShootController : MonoBehaviour
 
     }
 
-
     IEnumerator Stop()
     {
         while (rb.angularVelocity.magnitude > 0.01f) // Adjust the threshold as needed
@@ -209,22 +209,19 @@ public class ShootController : MonoBehaviour
         rb.angularVelocity = Vector3.zero; // Ensure the angular velocity is exactly zero when done
     }
 
-
-
     private Vector3? CastMouseClickRay()
     {
-        Vector3 screenMousePosFar = new Vector3(
+        Vector3 screenMousePosFar = new(
             Input.mousePosition.x,
             Input.mousePosition.y,
             Camera.main.farClipPlane);
-        Vector3 screenMousePosNear = new Vector3(
+        Vector3 screenMousePosNear = new(
             Input.mousePosition.x,
             Input.mousePosition.y,
             Camera.main.nearClipPlane);
         Vector3 worldMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosFar);
         Vector3 worldMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
-        RaycastHit hit;
-        if (Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out hit, float.PositiveInfinity))
+        if (Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit, float.PositiveInfinity))
         {
             return hit.point;
         }

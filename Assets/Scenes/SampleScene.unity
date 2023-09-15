@@ -785,8 +785,8 @@ Rigidbody:
   m_GameObject: {fileID: 581870616}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 0.5
+  m_Drag: 2
+  m_AngularDrag: 2
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -942,7 +942,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 909c8f03744ecf04aaf8b017fab00392, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1015,10 +1015,10 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 5
+    numCapVertices: 1
     alignment: 0
-    textureMode: 0
-    textureScale: {x: 1, y: 1}
+    textureMode: 1
+    textureScale: {x: 0.3, y: 0.3}
     shadowBias: 0.5
     generateLightingData: 0
   m_MaskInteraction: 0
@@ -1037,10 +1037,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9b14751ec18af04ea78d655d56cf691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotPower: 250
+  shotMultiplier: 400
   stopDuration: 5
-  stopVelocity: 0.08
+  stopVelocity: 0.05
   MaxDragDistance: 15
+  iddleEffectDistance: 0
   shotEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1074,7 +1075,6 @@ MonoBehaviour:
   lineRenderer: {fileID: 581870633}
   idleParticles: {fileID: 816005211}
   arrow: {fileID: 2082107022}
-  iddleEffectDistance: 0
 --- !u!114 &581870637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6115,7 +6115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &2082107023
 MeshCollider:
   m_ObjectHideFlags: 0

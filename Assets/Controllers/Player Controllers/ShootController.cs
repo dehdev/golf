@@ -3,13 +3,16 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AudioSource))]
 
 public class ShootController : MonoBehaviour
 {
     [SerializeField] private float shotPower;
     [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
-    [SerializeField] private AudioSource hitSound;
     [SerializeField] private float MaxDragDistance = 30f;
     [SerializeField] private UnityEvent<string> shotEvent;
     [SerializeField] private UnityEvent<string> timerEvent;
@@ -19,6 +22,8 @@ public class ShootController : MonoBehaviour
 
     [SerializeField] private float iddleEffectDistance;
 
+    private SoundController soundController;
+
     private int shots;
     private float time;
     private string timeText;
@@ -26,27 +31,38 @@ public class ShootController : MonoBehaviour
     private bool isIdle;
     private bool isAiming;
     private bool readyToShoot;
+    private bool hasChangedToIdle;
     private Rigidbody rb;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        hitSound = GetComponent<AudioSource>();
         readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
+        hasChangedToIdle = false;
         idleParticles.SetActive(false);
+        arrow.SetActive(false);
+    }
+
+    private void Start()
+    {
+        soundController = GetComponent<SoundController>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        arrow.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 2);
+        idleParticles.transform.position = new Vector3(transform.position.x, transform.position.y - iddleEffectDistance, transform.position.z);
         if (rb.velocity.magnitude < stopVelocity)
         {
             if (!isAiming)
             {
-                idleParticles.transform.position = new Vector3(transform.position.x, transform.position.y - iddleEffectDistance, transform.position.z);
-                idleParticles.SetActive(true);
+                if (!hasChangedToIdle)
+                {
+                    hasChangedToIdle = true;
+                    soundController.PlayIdle();
+                    idleParticles.SetActive(true);
+                }
             }
             isIdle = true;
             StartCoroutine(Stop());
@@ -77,14 +93,17 @@ public class ShootController : MonoBehaviour
     {
         if (isIdle)
         {
+            arrow.transform.position = transform.position;
+            arrow.SetActive(true);
             idleParticles.SetActive(false);
-            Cursor.visible = false;
+            UnityEngine.Cursor.visible = false;
             isAiming = true;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        soundController.PlayCollisionSound(rb.velocity.magnitude / 10);
         if (collision.gameObject.tag == "Terrain")
         {
             transform.position = lastPos;
@@ -120,16 +139,18 @@ public class ShootController : MonoBehaviour
         DrawLine(worldPoint.Value);
         if (readyToShoot)
         {
+            arrow.SetActive(false);
             readyToShoot = false;
-            Cursor.visible = true;
+            hasChangedToIdle = false;
+            UnityEngine.Cursor.visible = true;
             Shoot(worldPoint.Value);
         }
     }
 
     private void Shoot(Vector3 worldPoint)
     {
+        soundController.PlayBallHit();
         lastPos = transform.position;
-        hitSound.Play();
         shots++;
         shotEvent.Invoke("Shots: " + shots.ToString());
         isAiming = false;
@@ -169,7 +190,9 @@ public class ShootController : MonoBehaviour
         lineRenderer.SetPositions(positions);
         lineRenderer.enabled = true;
 
-        arrow.transform.RotateAround(rb.transform.position, transform.parent.up, 100 * Time.deltaTime);
+        float arrowAngle = Mathf.Atan2(clampedDirection.x, clampedDirection.z) * Mathf.Rad2Deg;
+        Quaternion arrowRotation = Quaternion.Euler(0f, arrowAngle, 0f);
+        arrow.transform.rotation = arrowRotation;
 
     }
 

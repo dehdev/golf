@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class OptionsButton : MonoBehaviour
+public class BackScript : MonoBehaviour
 {
 
     TextMeshPro textMesh;
@@ -24,8 +24,8 @@ public class OptionsButton : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        mainMenuButtons.SetActive(false);
-        optionsMenuButtons.SetActive(true);
+        mainMenuButtons.SetActive(true);
+        optionsMenuButtons.SetActive(false);
         textMesh.color = Color.white;
         Debug.Log("Options");
     }

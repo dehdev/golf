@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
@@ -75,10 +76,6 @@ public class ShootController : MonoBehaviour
             transform.position = new Vector3(6, 7, 5);
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-        }
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Application.Quit();
         }
     }
     private void FixedUpdate()

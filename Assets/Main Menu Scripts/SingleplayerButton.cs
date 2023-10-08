@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SingleplayerButton : MonoBehaviour
 {
@@ -23,5 +24,6 @@ public class SingleplayerButton : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("Singleplayer");
+        SceneManager.LoadScene("Tutorial", LoadSceneMode.Single);
     }
 }

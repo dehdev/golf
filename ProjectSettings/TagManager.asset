@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - OptionsRoot
   - Terrain
   layers:
   - Default
@@ -13,7 +12,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - PostProcessing
   - 
   - 
   - 

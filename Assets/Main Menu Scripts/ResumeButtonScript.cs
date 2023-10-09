@@ -1,15 +1,16 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class OptionsButton : MonoBehaviour
+public class ResumeButtonScript : MonoBehaviour
 {
 
     TextMeshPro textMesh;
-    [SerializeField] GameObject mainMenuButtons;
-    [SerializeField] GameObject optionsMenuButtons;
+    PauseMenuZoom pauseMenuZoom;
     // Start is called before the first frame update
     void Start()
     {
+        pauseMenuZoom = GameObject.Find("Main Camera").GetComponent<PauseMenuZoom>();
         textMesh = GetComponent<TextMeshPro>();
     }
 
@@ -24,8 +25,7 @@ public class OptionsButton : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        mainMenuButtons.SetActive(false);
-        optionsMenuButtons.SetActive(true);
         textMesh.color = Color.white;
+        pauseMenuZoom.HandleMenu();
     }
 }

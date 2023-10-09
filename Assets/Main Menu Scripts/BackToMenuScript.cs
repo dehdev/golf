@@ -1,12 +1,11 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class OptionsButton : MonoBehaviour
+public class BackToMenuScript : MonoBehaviour
 {
 
     TextMeshPro textMesh;
-    [SerializeField] GameObject mainMenuButtons;
-    [SerializeField] GameObject optionsMenuButtons;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,8 +23,6 @@ public class OptionsButton : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        mainMenuButtons.SetActive(false);
-        optionsMenuButtons.SetActive(true);
-        textMesh.color = Color.white;
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 }

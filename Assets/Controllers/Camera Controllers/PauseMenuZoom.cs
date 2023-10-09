@@ -28,18 +28,21 @@ public class PauseMenuZoom : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            isPaused = !isPaused;
-            PauseMenu.SetActive(isPaused);
-            PlayerRenderer.enabled = !isPaused;
-            Player.GetComponent<Outline>().enabled = !isPaused;
-            IdleEffects.SetActive(!isPaused);
-            cam.GetComponent<CameraZoom>().enabled = !isPaused;
-
-
-            // Start a coroutine to smoothly adjust the orthographic size
-            StartCoroutine(SmoothZoom(optionsMenuZoom));
+            HandleMenu();
         }
     }
+
+    public void HandleMenu()
+    {
+        isPaused = !isPaused;
+        PauseMenu.SetActive(isPaused);
+        Player.GetComponent<Outline>().enabled = !isPaused;
+        cam.GetComponent<CameraZoom>().enabled = !isPaused;
+
+        // Start a coroutine to smoothly adjust the orthographic size
+        StartCoroutine(SmoothZoom(optionsMenuZoom));
+    }
+
     private IEnumerator SmoothZoom(float targetSize)
     {
         float elapsedTime = 0f;

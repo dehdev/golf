@@ -32,9 +32,6 @@ public class OptionsScript : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("GeneralVolume: " + PlayerPrefs.GetInt("GeneralVolume", 2));
-        Debug.Log("MusicVolume: " + PlayerPrefs.GetInt("MusicVolume", 2));
-
         currentGeneralVolumeIndex = PlayerPrefs.GetInt("GeneralVolume", 2);
         currentMusicVolumeIndex = PlayerPrefs.GetInt("MusicVolume", 2);
         SetVolume();

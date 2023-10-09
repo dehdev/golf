@@ -22,7 +22,7 @@ public class OptionsButton : MonoBehaviour
     {
         textMesh.color = Color.white;
     }
-    private void OnMouseDown()
+    private void OnMouseUp()
     {
         mainMenuButtons.SetActive(false);
         optionsMenuButtons.SetActive(true);

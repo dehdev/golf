@@ -5,6 +5,9 @@ public class MultiplayerButton : MonoBehaviour
 {
 
     TextMeshPro textMesh;
+    [SerializeField] GameObject mainMenuButtons;
+    [SerializeField] GameObject multiplayerMenuButtons;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,8 +23,11 @@ public class MultiplayerButton : MonoBehaviour
     {
         textMesh.color = Color.white;
     }
+
     private void OnMouseDown()
     {
-        Debug.Log("Multiplayer");
+        mainMenuButtons.SetActive(false);
+        multiplayerMenuButtons.SetActive(true);
+        textMesh.color = Color.white;
     }
 }

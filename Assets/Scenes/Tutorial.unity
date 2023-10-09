@@ -7665,7 +7665,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 57445575107296528, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.56
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 57445575107296528, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7771,6 +7771,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PauseMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 5460715732056101546, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5735585884339510912, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -7806,19 +7810,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7453581646535678398, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6124828191367520702, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 3903659738869713135, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 4142674668764290992, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a862e536ccfb914086fa3f26b5d5ad8, type: 3}
 --- !u!20 &1332586430816878050
 Camera:

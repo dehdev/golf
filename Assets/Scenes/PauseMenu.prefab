@@ -548,6 +548,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e3132f4d00cf4408571cc1df640325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuButtons: {fileID: 0}
+  multiplayerMenuButtons: {fileID: 0}
 --- !u!1 &778227685242194004
 GameObject:
   m_ObjectHideFlags: 0
@@ -3723,8 +3725,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.2707043, y: 1.303936, z: 0}
-  m_Center: {x: -8.403697, y: 1.0864677, z: 0.000000017014628}
+  m_Size: {x: 2.5257928, y: 1.3039361, z: 0}
+  m_Center: {x: -9.276154, y: 1.0864745, z: 0.000000069016444}
 --- !u!114 &151766262550567385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3901,7 +3903,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.22994328, y: 0.7336874, z: 17.655287, w: 3.078538}
+  m_margin: {x: -0.22994328, y: 0.7336874, z: 18.937378, w: 3.078538}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -3941,8 +3943,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.5909705, y: 1.1763258, z: 0}
-  m_Center: {x: -8.930456, y: 1.167995, z: -0.0000002979589}
+  m_Size: {x: 1.2672843, y: 1.1763259, z: 0}
+  m_Center: {x: -9.592299, y: 1.168004, z: -0.00000025851085}
 --- !u!1 &4240263902418871282
 GameObject:
   m_ObjectHideFlags: 0
@@ -7139,8 +7141,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.2707043, y: 1.303936, z: 0}
-  m_Center: {x: -8.403697, y: 1.0864677, z: 0.000000017014628}
+  m_Size: {x: 2.3865259, y: 1.3039361, z: 0}
+  m_Center: {x: -9.345785, y: 1.0864718, z: 0.00000007316675}
 --- !u!114 &1944403069083025770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8152,7 +8154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6696499751304940983
 RectTransform:
   m_ObjectHideFlags: 0

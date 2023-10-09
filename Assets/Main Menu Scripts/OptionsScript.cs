@@ -106,8 +106,9 @@ public class OptionsScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonUp(0))
         {
+
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -117,127 +118,130 @@ public class OptionsScript : MonoBehaviour
 
                 if (clickedObject != null)
                 {
-                    if (clickedObject.name == "Cycle res -")
                     {
-                        applyButton.SetActive(true);
-                        if (currentResolutionIndex > 0)
-                        {
-                            currentResolutionIndex--;
-                            resolutionText.text = filteredResolutions[currentResolutionIndex].width + "x" + filteredResolutions[currentResolutionIndex].height;
-                        }
-                    }
-                    else if (clickedObject.name == "Cycle res +")
-                    {
-                        applyButton.SetActive(true);
-                        if (currentResolutionIndex < filteredResolutions.Count - 1)
-                        {
-                            currentResolutionIndex++;
-                            resolutionText.text = filteredResolutions[currentResolutionIndex].width + "x" + filteredResolutions[currentResolutionIndex].height;
-                        }
-                    }
-                    else if (clickedObject.name == "Fullscreen checkbox")
-                    {
-                        if (isFullscreen)
-                        {
-                            Screen.fullScreen = false;
-                            isFullscreen = false;
-                            checkBoxRenderer.material = notSelected;
-                        }
-                        else
-                        {
-                            Screen.fullScreen = true;
-                            isFullscreen = true;
-                            checkBoxRenderer.material = selected;
-                        }
-                    }
-                    else if (clickedObject.name == "Cycle quality -")
-                    {
-                        if (currentQualityIndex > 0)
+                        if (clickedObject.name == "Cycle res -")
                         {
                             applyButton.SetActive(true);
-                            currentQualityIndex--;
-                            qualityText.text = QualitySettings.names[currentQualityIndex];
-                        }
-                    }
-                    else if (clickedObject.name == "Cycle quality +")
-                    {
-                        if (currentQualityIndex < 5)
-                        {
-                            applyButton.SetActive(true);
-                            currentQualityIndex++;
-                            qualityText.text = QualitySettings.names[currentQualityIndex];
-                        }
-                    }
-                    else if (clickedObject.name == "GVolume +")
-                    {
-                        if (currentGeneralVolumeIndex < 2)
-                        {
-                            applyButton.SetActive(true);
-                            currentGeneralVolumeIndex++;
-                            GeneralVolumeTileRenderers[currentGeneralVolumeIndex].material = selected;
-                            SetVolume();
-                        }
-                    }
-                    else if (clickedObject.name == "GVolume -")
-                    {
-                        if (currentGeneralVolumeIndex >= 0)
-                        {
-                            if (currentGeneralVolumeIndex == 0)
+                            if (currentResolutionIndex > 0)
                             {
-                                applyButton.SetActive(true);
-                                GeneralVolumeTileRenderers[0].material = notSelected;
+                                currentResolutionIndex--;
+                                resolutionText.text = filteredResolutions[currentResolutionIndex].width + "x" + filteredResolutions[currentResolutionIndex].height;
+                            }
+                        }
+                        else if (clickedObject.name == "Cycle res +")
+                        {
+                            applyButton.SetActive(true);
+                            if (currentResolutionIndex < filteredResolutions.Count - 1)
+                            {
+                                currentResolutionIndex++;
+                                resolutionText.text = filteredResolutions[currentResolutionIndex].width + "x" + filteredResolutions[currentResolutionIndex].height;
+                            }
+                        }
+                        else if (clickedObject.name == "Fullscreen checkbox")
+                        {
+                            if (isFullscreen)
+                            {
+                                Screen.fullScreen = false;
+                                isFullscreen = false;
+                                checkBoxRenderer.material = notSelected;
                             }
                             else
                             {
-                                applyButton.SetActive(true);
-                                GeneralVolumeTileRenderers[currentGeneralVolumeIndex].material = notSelected;
+                                Screen.fullScreen = true;
+                                isFullscreen = true;
+                                checkBoxRenderer.material = selected;
                             }
-                            currentGeneralVolumeIndex--;
-                            SetVolume();
                         }
-                    }
-                    else if (clickedObject.name == "MVolume +")
-                    {
-                        if (currentMusicVolumeIndex < 2)
+                        else if (clickedObject.name == "Cycle quality -")
                         {
-                            applyButton.SetActive(true);
-                            currentMusicVolumeIndex++;
-                            MusicVolumeTileRenderers[currentMusicVolumeIndex].material = selected;
-                            SetVolume();
-                        }
-                    }
-                    else if (clickedObject.name == "MVolume -")
-                    {
-                        if (currentMusicVolumeIndex >= 0)
-                        {
-                            if (currentMusicVolumeIndex == 0)
+                            if (currentQualityIndex > 0)
                             {
                                 applyButton.SetActive(true);
-                                MusicVolumeTileRenderers[0].material = notSelected;
+                                currentQualityIndex--;
+                                qualityText.text = QualitySettings.names[currentQualityIndex];
                             }
-                            else
+                        }
+                        else if (clickedObject.name == "Cycle quality +")
+                        {
+                            if (currentQualityIndex < 5)
                             {
                                 applyButton.SetActive(true);
-                                MusicVolumeTileRenderers[currentMusicVolumeIndex].material = notSelected;
+                                currentQualityIndex++;
+                                qualityText.text = QualitySettings.names[currentQualityIndex];
                             }
-                            currentMusicVolumeIndex--;
-                            SetVolume();
                         }
-                    }
-                    else if (clickedObject.name == "Apply text")
-                    {
-                        Screen.SetResolution(filteredResolutions[currentResolutionIndex].width, filteredResolutions[currentResolutionIndex].height, isFullscreen);
-                        QualitySettings.SetQualityLevel(currentQualityIndex);
-                        SetVolume();
-                        PlayerPrefs.SetInt("GeneralVolume", currentGeneralVolumeIndex);
-                        PlayerPrefs.SetInt("MusicVolume", currentMusicVolumeIndex);
-                        PlayerPrefs.Save();
-                        applyButton.SetActive(false);
+                        else if (clickedObject.name == "GVolume +")
+                        {
+                            if (currentGeneralVolumeIndex < 2)
+                            {
+                                applyButton.SetActive(true);
+                                currentGeneralVolumeIndex++;
+                                GeneralVolumeTileRenderers[currentGeneralVolumeIndex].material = selected;
+                                SetVolume();
+                            }
+                        }
+                        else if (clickedObject.name == "GVolume -")
+                        {
+                            if (currentGeneralVolumeIndex >= 0)
+                            {
+                                if (currentGeneralVolumeIndex == 0)
+                                {
+                                    applyButton.SetActive(true);
+                                    GeneralVolumeTileRenderers[0].material = notSelected;
+                                }
+                                else
+                                {
+                                    applyButton.SetActive(true);
+                                    GeneralVolumeTileRenderers[currentGeneralVolumeIndex].material = notSelected;
+                                }
+                                currentGeneralVolumeIndex--;
+                                SetVolume();
+                            }
+                        }
+                        else if (clickedObject.name == "MVolume +")
+                        {
+                            if (currentMusicVolumeIndex < 2)
+                            {
+                                applyButton.SetActive(true);
+                                currentMusicVolumeIndex++;
+                                MusicVolumeTileRenderers[currentMusicVolumeIndex].material = selected;
+                                SetVolume();
+                            }
+                        }
+                        else if (clickedObject.name == "MVolume -")
+                        {
+                            if (currentMusicVolumeIndex >= 0)
+                            {
+                                if (currentMusicVolumeIndex == 0)
+                                {
+                                    applyButton.SetActive(true);
+                                    MusicVolumeTileRenderers[0].material = notSelected;
+                                }
+                                else
+                                {
+                                    applyButton.SetActive(true);
+                                    MusicVolumeTileRenderers[currentMusicVolumeIndex].material = notSelected;
+                                }
+                                currentMusicVolumeIndex--;
+                                SetVolume();
+                            }
+                        }
+                        else if (clickedObject.name == "Apply text")
+                        {
+                            Screen.SetResolution(filteredResolutions[currentResolutionIndex].width, filteredResolutions[currentResolutionIndex].height, isFullscreen);
+                            QualitySettings.SetQualityLevel(currentQualityIndex);
+                            SetVolume();
+                            PlayerPrefs.SetInt("GeneralVolume", currentGeneralVolumeIndex);
+                            PlayerPrefs.SetInt("MusicVolume", currentMusicVolumeIndex);
+                            PlayerPrefs.Save();
+                            applyButton.SetActive(false);
+                        }
                     }
                 }
             }
         }
     }
+
     public void SetVolume()
     {
         float minVolume = -80f; // Lowest volume (mute)
@@ -260,5 +264,7 @@ public class OptionsScript : MonoBehaviour
         };
         GeneralAudioMixer.SetFloat("GeneralVolume", generalVolume);
         MusicAudioMixer.SetFloat("MusicVolume", musicVolume);
+        Debug.Log("GeneralVolume: " + generalVolume);
+        Debug.Log("MusicVolume: " + musicVolume);
     }
 }

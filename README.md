@@ -2,7 +2,7 @@
 
 imbunatatit camera<br>
 buton pentru anulat aim<br>
-marit gravitatia<br>
+marit gravitatia?<br>
 
 # BUGS
 rezolvata situatia in care dai restart in timp ce tragi<br>

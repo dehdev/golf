@@ -6478,6 +6478,10 @@ PrefabInstance:
       value: Idle Particles
       objectReference: {fileID: 0}
     - target: {fileID: 4540662591443197119, guid: dcd6e0cb8f8b08c4c95670b7345c10f2, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540662591443197119, guid: dcd6e0cb8f8b08c4c95670b7345c10f2, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}

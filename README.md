@@ -3,6 +3,8 @@
 imbunatatit camera<br>
 buton pentru anulat aim<br>
 marit gravitatia?<br>
+golfmanager<br>
+de refacut UI<br>
 
 # BUGS
 

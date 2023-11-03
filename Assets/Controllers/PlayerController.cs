@@ -1,27 +1,30 @@
+using System;
 using System.Collections;
+using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(AudioSource))]
 
-public class ShootController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
+    public static PlayerController Instance { get; private set; }
+
     private Rigidbody rb;
+
+    public static event EventHandler OnBallHit;
+    public static event EventHandler<float> OnCollisionHit;
+    public static event EventHandler OnIdleEvent;
+
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
     [SerializeField] private float iddleEffectDistance;
-    private float time;
-
-    private int shots;
-
-    private string timeText;
-    [SerializeField] private UnityEvent<string> shotEvent;
-    [SerializeField] private UnityEvent<string> timerEvent;
 
     [SerializeField] private LineRenderer lineRenderer;
 
@@ -30,12 +33,12 @@ public class ShootController : MonoBehaviour
 
     private Vector3 lastPos;
 
-    private SoundController soundController;
-
     private bool isIdle;
     private bool isAiming;
     private bool readyToShoot;
     private bool hasChangedToIdle;
+
+    [SerializeField] private Cinemachine.CinemachineVirtualCamera virtualCamera;
 
     private void Awake()
     {
@@ -49,12 +52,20 @@ public class ShootController : MonoBehaviour
 
     private void Start()
     {
-        soundController = GetComponent<SoundController>();
+        if (IsLocalPlayer)
+        {
+            virtualCamera = Cinemachine.CinemachineVirtualCamera.FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
+            virtualCamera.Follow = transform;
+        }
         rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         idleParticles.transform.position = new Vector3(transform.position.x, transform.position.y - iddleEffectDistance, transform.position.z);
         if (rb.velocity.magnitude < stopVelocity)
         {
@@ -63,14 +74,13 @@ public class ShootController : MonoBehaviour
                 if (!hasChangedToIdle)
                 {
                     hasChangedToIdle = true;
-                    soundController.PlayIdle();
+                    OnIdleEvent?.Invoke(this, EventArgs.Empty);
                     idleParticles.SetActive(true);
                 }
             }
             isIdle = true;
             StartCoroutine(Stop());
         }
-        UpdateTimer();
         if (Input.GetKey(KeyCode.R))
         {
             transform.position = new Vector3(6, 7, 5);
@@ -80,6 +90,10 @@ public class ShootController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         ProcessAim();
     }
 
@@ -97,30 +111,23 @@ public class ShootController : MonoBehaviour
         {
             arrow.transform.position = transform.position;
             arrow.SetActive(true);
+            arrow.transform.LookAt(transform.position + Vector3.up);
             idleParticles.SetActive(false);
-            UnityEngine.Cursor.visible = false;
+            //UnityEngine.Cursor.visible = false;
             isAiming = true;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        soundController.PlayCollisionSound(rb.velocity.magnitude / 10);
+        float clampedVolume = Mathf.Clamp(rb.velocity.magnitude / 10 * 0.2f, 0.1f, 1);
+        OnCollisionHit?.Invoke(this, clampedVolume);
         if (collision.gameObject.CompareTag("Terrain"))
         {
             transform.position = lastPos;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
-    }
-
-    private void UpdateTimer()
-    {
-        time += Time.deltaTime;
-        float seconds = Mathf.FloorToInt(time % 60);
-        float minutes = Mathf.FloorToInt(time / 60);
-        timeText = string.Format("{0:00}:{1:00}", minutes, seconds);
-        timerEvent.Invoke(timeText.ToString());
     }
 
     private void ProcessAim()
@@ -151,10 +158,8 @@ public class ShootController : MonoBehaviour
 
     private void Shoot(Vector3 worldPoint)
     {
-        soundController.PlayBallHit();
+        OnBallHit?.Invoke(this, EventArgs.Empty);
         lastPos = transform.position;
-        shots++;
-        shotEvent.Invoke("Shots: " + shots.ToString());
         isAiming = false;
         lineRenderer.enabled = false;
 

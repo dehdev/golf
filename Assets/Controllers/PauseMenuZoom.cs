@@ -5,20 +5,16 @@ using UnityEngine;
 public class PauseMenuZoom : MonoBehaviour
 {
     [SerializeField] private GameObject PauseMenu;
-    [SerializeField] private GameObject Player;
-    [SerializeField] private GameObject IdleEffects;
 
     [SerializeField] private float optionsMenuZoom = 7f;
     [SerializeField] private float zoomSmoothTime = 0.2f;
     private bool isPaused = false;
 
     Camera cam;
-    private Renderer PlayerRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
-        PlayerRenderer = Player.GetComponent<Renderer>();
         PauseMenu.SetActive(isPaused);
         cam = Camera.main;
     }
@@ -36,7 +32,6 @@ public class PauseMenuZoom : MonoBehaviour
     {
         isPaused = !isPaused;
         PauseMenu.SetActive(isPaused);
-        Player.GetComponent<Outline>().enabled = !isPaused;
         cam.GetComponent<CameraZoom>().enabled = !isPaused;
 
         // Start a coroutine to smoothly adjust the orthographic size

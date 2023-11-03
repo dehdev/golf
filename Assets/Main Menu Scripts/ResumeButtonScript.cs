@@ -10,7 +10,7 @@ public class ResumeButtonScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pauseMenuZoom = GameObject.Find("Main Camera").GetComponent<PauseMenuZoom>();
+        pauseMenuZoom = gameObject.GetComponentInParent<PauseMenuZoom>();
         textMesh = GetComponent<TextMeshPro>();
     }
 

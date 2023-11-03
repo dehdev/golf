@@ -1,8 +1,9 @@
+using Cinemachine;
 using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
 {
-    private Camera cam;
+    private Cinemachine.CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float maxZoom = 15f;
     [SerializeField] private float minZoom = 10f;
     [SerializeField] private float zoomSpeed = 0.7f; // Adjust this to control zoom speed.
@@ -14,8 +15,8 @@ public class CameraZoom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cam = GetComponent<Camera>();
-        cam.orthographicSize = maxZoom;
+        virtualCamera = Cinemachine.CinemachineVirtualCamera.FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
+        virtualCamera.m_Lens.OrthographicSize = maxZoom;
         targetZoom = maxZoom;
     }
 
@@ -29,6 +30,6 @@ public class CameraZoom : MonoBehaviour
         targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
 
         // Smoothly adjust the camera's orthographic size
-        cam.orthographicSize = Mathf.SmoothDamp(cam.orthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
+        virtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(virtualCamera.m_Lens.OrthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
     }
 }

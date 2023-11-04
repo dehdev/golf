@@ -10,8 +10,6 @@ game state: playing, paused, etc... din tutorialul codemonkey<br>
 
 # BUGS
 
- astea 2 sunt legate <br>
-| -- rezolvata situatia in care dai restart in timp ce tragi<br>
 | -- uneori cand dai restart nu duce bila la inceput (sau posibil sa fie legata de functia de oprire a mingii)<br>
 cand dai drag and release repede mingea se opreste mult mai rapid <br>
 sunetele se aud ciudat uneori

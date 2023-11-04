@@ -15,6 +15,8 @@ public class PlayerController : NetworkBehaviour
 
     private Rigidbody rb;
 
+    private int shots = 0;
+
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
@@ -42,6 +44,11 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Debug.LogError("More than one instance of PlayerController found!");
+        }
+        Instance = this;
         readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
@@ -107,15 +114,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnMouseDown()
     {
-        if (isIdle)
-        {
-            arrow.transform.position = transform.position;
-            arrow.SetActive(true);
-            arrow.transform.LookAt(transform.position + Vector3.up);
-            idleParticles.SetActive(false);
-            //UnityEngine.Cursor.visible = false;
-            isAiming = true;
-        }
+        PreProcessAim();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -130,9 +129,20 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    private void PreProcessAim()
+    {
+        if (GolfGameManager.Instance.isGamePlaying())
+        {
+            arrow.transform.position = transform.position;
+            arrow.SetActive(true);
+            arrow.transform.LookAt(transform.position + Vector3.up);
+            idleParticles.SetActive(false);
+            isAiming = true; ;
+        }
+    }
+
     private void ProcessAim()
     {
-
         if (!isAiming || !isIdle)
         {
             return;
@@ -153,14 +163,15 @@ public class PlayerController : NetworkBehaviour
             hasChangedToIdle = false;
             UnityEngine.Cursor.visible = true;
             Shoot(worldPoint.Value);
+            isAiming = false;
         }
     }
 
     private void Shoot(Vector3 worldPoint)
     {
+        shots++;
         OnBallHit?.Invoke(this, EventArgs.Empty);
         lastPos = transform.position;
-        isAiming = false;
         lineRenderer.enabled = false;
 
         Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
@@ -235,5 +246,10 @@ public class PlayerController : NetworkBehaviour
         {
             return null;
         }
+    }
+
+    public int getShots()
+    {
+        return shots;
     }
 }

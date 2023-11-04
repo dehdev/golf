@@ -11,6 +11,8 @@ public class GolfGameManager : MonoBehaviour
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameResumed;
 
+    private Vector3 spawnPoint;
+
     private enum State
     {
         WaitingToStart,
@@ -24,7 +26,7 @@ public class GolfGameManager : MonoBehaviour
     private float countdownToStartTimer = 3f;
     private float waitingToStartTimer = 1f;
     private float gamePlayingTimer;
-    private float gameplayingTimerMax = 15f;
+    private float gameplayingTimerMax = 300f;
     private bool isGamePaused = false;
 
     // Start is called before the first frame update
@@ -32,6 +34,35 @@ public class GolfGameManager : MonoBehaviour
     {
         Instance = this;
         state = State.WaitingToStart;
+        spawnPoint = GameObject.FindWithTag("SpawnPoint").transform.position;
+    }
+
+    private void Start()
+    {
+        GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+        GameInput.Instance.OnResetAction += GameInput_OnResetAction;
+        PlayerController.spawnPlayer += PlayerController_spawnPlayer;
+    }
+
+    private void PlayerController_spawnPlayer(object sender, EventArgs e)
+    {
+        PlayerController.Instance.MoveToPos(spawnPoint);
+        PlayerController.Instance.StopRbRotation();
+    }
+
+    private void GameInput_OnResetAction(object sender, EventArgs e)
+    {
+        if (!isGamePlaying())
+        {
+            return;
+        }
+        PlayerController.Instance.MoveToPos(spawnPoint);
+        PlayerController.Instance.StopRbRotation();
+    }
+
+    private void GameInput_OnPauseAction(object sender, EventArgs e)
+    {
+        TogglePauseGame();
     }
 
     // Update is called once per frame
@@ -92,7 +123,7 @@ public class GolfGameManager : MonoBehaviour
 
     public float GetGamePlayingTimerInSeconds()
     {
-          return gamePlayingTimer;
+        return gamePlayingTimer;
     }
 
     public string GetGamePlayingTimer()
@@ -102,7 +133,7 @@ public class GolfGameManager : MonoBehaviour
 
     public string GetGamePlayingTimerMax()
     {
-       return GetGameTimer(gameplayingTimerMax);
+        return GetGameTimer(gameplayingTimerMax);
     }
 
     public string GetGameTimer(float timeInSeconds)
@@ -111,5 +142,20 @@ public class GolfGameManager : MonoBehaviour
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
         return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public void TogglePauseGame()
+    {
+        isGamePaused = !isGamePaused;
+        if (isGamePaused)
+        {
+            Time.timeScale = 0f;
+            OnGamePaused?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            OnGameResumed?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

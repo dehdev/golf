@@ -20,13 +20,13 @@ public class PlayerController : NetworkBehaviour
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
+    public static event EventHandler spawnPlayer;
 
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
-    [SerializeField] private float iddleEffectDistance;
 
     [SerializeField] private LineRenderer lineRenderer;
 
@@ -63,8 +63,9 @@ public class PlayerController : NetworkBehaviour
         {
             virtualCamera = Cinemachine.CinemachineVirtualCamera.FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
             virtualCamera.Follow = transform;
+            rb = GetComponent<Rigidbody>();
+            spawnPlayer?.Invoke(this, EventArgs.Empty);
         }
-        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -73,7 +74,6 @@ public class PlayerController : NetworkBehaviour
         {
             return;
         }
-        idleParticles.transform.position = new Vector3(transform.position.x, transform.position.y - iddleEffectDistance, transform.position.z);
         if (rb.velocity.magnitude < stopVelocity)
         {
             if (!isAiming)
@@ -86,13 +86,10 @@ public class PlayerController : NetworkBehaviour
                 }
             }
             isIdle = true;
-            StartCoroutine(Stop());
+            Stop();
         }
-        if (Input.GetKey(KeyCode.R))
-        {
-            transform.position = new Vector3(6, 7, 5);
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+        else {
+            isIdle = false;
         }
     }
     private void FixedUpdate()
@@ -102,6 +99,16 @@ public class PlayerController : NetworkBehaviour
             return;
         }
         ProcessAim();
+    }
+
+    public void StopRbRotation()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        rb.angularVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
     }
 
     private void OnMouseUp()
@@ -121,17 +128,11 @@ public class PlayerController : NetworkBehaviour
     {
         float clampedVolume = Mathf.Clamp(rb.velocity.magnitude / 10 * 0.2f, 0.1f, 1);
         OnCollisionHit?.Invoke(this, clampedVolume);
-        if (collision.gameObject.CompareTag("Terrain"))
-        {
-            transform.position = lastPos;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
     }
 
     private void PreProcessAim()
     {
-        if (GolfGameManager.Instance.isGamePlaying())
+        if (GolfGameManager.Instance.isGamePlaying() && isIdle)
         {
             arrow.transform.position = transform.position;
             arrow.SetActive(true);
@@ -214,16 +215,16 @@ public class PlayerController : NetworkBehaviour
 
     }
 
-    IEnumerator Stop()
+    public void Stop()
     {
-        while (rb.angularVelocity.magnitude > 0.01f) // Adjust the threshold as needed
-        {
+        //Debug.Log("STOP STARTED");
+        //while (rb.angularVelocity.magnitude > 0.01f && rb.velocity.magnitude > 0.01f) // Adjust the threshold as needed
+        //{
             rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
             rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
-            yield return null;
-        }
-        rb.velocity = Vector3.zero;  // Ensure the velocity is exactly zero when done
-        rb.angularVelocity = Vector3.zero; // Ensure the angular velocity is exactly zero when done
+        //    Debug.Log("STOPPING");
+        //}
+        //Debug.Log("STOP ENDED");
     }
 
     private Vector3? CastMouseClickRay()
@@ -246,6 +247,11 @@ public class PlayerController : NetworkBehaviour
         {
             return null;
         }
+    }
+
+    public void MoveToPos(Vector3 pos)
+    {
+        rb.MovePosition(pos);
     }
 
     public int getShots()

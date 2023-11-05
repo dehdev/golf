@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,6 +27,7 @@ public class GamePauseUI : MonoBehaviour
         });
         mainMenuButton.onClick.AddListener(() =>
         {
+            NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
         optionsButon.onClick.AddListener(() =>
@@ -37,17 +39,17 @@ public class GamePauseUI : MonoBehaviour
 
     private void Start()
     {
-        GolfGameManager.Instance.OnGamePaused += GolfGameManager_OnGamePaused;
-        GolfGameManager.Instance.OnGameResumed += GolfGameManager_OnGameResumed;
+        GolfGameManager.Instance.OnLocalGamePaused += GolfGameManager_OnLocalGamePaused;
+        GolfGameManager.Instance.OnLocalGameUnpaused += GolfGameManager_OnLocalGameUnpaused;
         Hide();
     }
 
-    private void GolfGameManager_OnGameResumed(object sender, EventArgs e)
+    private void GolfGameManager_OnLocalGameUnpaused(object sender, EventArgs e)
     {
         Hide();
     }
 
-    private void GolfGameManager_OnGamePaused(object sender, EventArgs e)
+    private void GolfGameManager_OnLocalGamePaused(object sender, EventArgs e)
     {
         Show();
     }

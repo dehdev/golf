@@ -14,13 +14,11 @@ public class MultiplayerDebugUI : MonoBehaviour
         startHostButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-            Debug.Log("HOST");
             Hide();
         });
         startClientButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartClient();
-            Debug.Log("CLIENT");
             Hide();
         });
     }

@@ -8,12 +8,15 @@ public class GolfGameManager : NetworkBehaviour
 {
     public static GolfGameManager Instance { get; private set; }
 
-    private Dictionary<ulong, Boolean> playerReadyDictionary;
+    private Dictionary<ulong, bool> playerReadyDictionary;
+    private Dictionary<ulong, bool> playerPausedDictionary;
 
     public event EventHandler OnStateChanged;
-    public event EventHandler OnGamePaused;
-    public event EventHandler OnGameResumed;
+    public event EventHandler OnLocalGamePaused;
+    public event EventHandler OnLocalGameUnpaused;
     public event EventHandler OnLocalPlayerReadyChanged;
+    public event EventHandler OnMultiplayerGamePaused;
+    public event EventHandler OnMultiplayerGameUnPaused;
 
     private int shots = 0;
 
@@ -29,14 +32,16 @@ public class GolfGameManager : NetworkBehaviour
     private bool isLocalPlayerReady;
     private NetworkVariable<float> countdownToStartTimer = new(3f);
     private NetworkVariable<float> gamePlayingTimer = new(0f);
-    private float gameplayingTimerMax = 10f;
-    private bool isGamePaused = false;
+    private float gameplayingTimerMax = 90f;
+    private bool isLocalGamePaused = false;
+    private bool autoTestGamePausedState = false;
+    private NetworkVariable<bool> isGamePaused = new(false);
 
-    // Start is called before the first frame update
     private void Awake()
     {
         Instance = this;
         playerReadyDictionary = new Dictionary<ulong, bool>();
+        playerPausedDictionary = new Dictionary<ulong, bool>();
     }
 
     private void Start()
@@ -50,6 +55,31 @@ public class GolfGameManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         state.OnValueChanged += State_OnValueChanged;
+        isGamePaused.OnValueChanged += IsGamePaused_OnValueChanged;
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+        }
+    }
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong obj)
+    {
+        autoTestGamePausedState = true;
+    }
+
+    private void IsGamePaused_OnValueChanged(bool previousValue, bool newValue)
+    {
+        if (isGamePaused.Value)
+        {
+            Time.timeScale = 0f;
+            OnMultiplayerGamePaused?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            OnMultiplayerGameUnPaused?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void State_OnValueChanged(State previousValue, State newValue)
@@ -62,8 +92,8 @@ public class GolfGameManager : NetworkBehaviour
         if (state.Value == State.WaitingToStart)
         {
             isLocalPlayerReady = true;
-            SetPlayerReadyServerRpc();
             OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
+            SetPlayerReadyServerRpc();
         }
     }
 
@@ -71,7 +101,6 @@ public class GolfGameManager : NetworkBehaviour
     private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
     {
         playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
-
         bool allClientsReady = true;
         foreach (ulong clientdId in NetworkManager.Singleton.ConnectedClientsIds)
         {
@@ -143,6 +172,15 @@ public class GolfGameManager : NetworkBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (autoTestGamePausedState)
+        {
+            autoTestGamePausedState = false;
+            TestGamePausedState();
+        }
+    }
+
     public bool IsGamePlaying()
     {
         return state.Value == State.GamePlaying;
@@ -193,16 +231,44 @@ public class GolfGameManager : NetworkBehaviour
 
     public void TogglePauseGame()
     {
-        isGamePaused = !isGamePaused;
-        if (isGamePaused)
+        isLocalGamePaused = !isLocalGamePaused;
+        if (isLocalGamePaused)
         {
-            Time.timeScale = 0f;
-            OnGamePaused?.Invoke(this, EventArgs.Empty);
+            PauseGameServerRpc();
+            OnLocalGamePaused?.Invoke(this, EventArgs.Empty);
         }
         else
         {
-            Time.timeScale = 1f;
-            OnGameResumed?.Invoke(this, EventArgs.Empty);
+            UnPauseGameServerRpc();
+            OnLocalGameUnpaused?.Invoke(this, EventArgs.Empty);
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void PauseGameServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        playerPausedDictionary[serverRpcParams.Receive.SenderClientId] = true;
+        TestGamePausedState();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UnPauseGameServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        playerPausedDictionary[serverRpcParams.Receive.SenderClientId] = false;
+        TestGamePausedState();
+    }
+
+    private void TestGamePausedState()
+    {
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (playerPausedDictionary.ContainsKey(clientId) && playerPausedDictionary[clientId])
+            {
+                isGamePaused.Value = true;
+                return;
+            }
+        }
+        isGamePaused.Value = false;
+    }
+
 }

@@ -50,7 +50,7 @@ public class OptionsUI : MonoBehaviour
 
     private void Start()
     {
-        GolfGameManager.Instance.OnGameResumed += GolfGameManager_OnGameResumed;
+        GolfGameManager.Instance.OnLocalGameUnpaused += GolfGameManager_OnGameResumed;
         UpdateVisual();
         Hide();
     }

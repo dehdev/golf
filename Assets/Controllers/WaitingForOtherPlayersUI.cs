@@ -3,21 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaitingForInputUI : MonoBehaviour
+public class WaitingForOtherPlayersUI : MonoBehaviour
 {
     private void Start()
     {
-        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         GolfGameManager.Instance.OnLocalPlayerReadyChanged += GolfGameManager_OnLocalPlayerReadyChanged;
-        Show();
-    }
-
-    private void GolfGameManager_OnLocalPlayerReadyChanged(object sender, EventArgs e)
-    {
-        if (GolfGameManager.Instance.IsLocalPlayerReady())
-        {
-            Hide();
-        }
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+        Hide();
     }
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
@@ -25,6 +17,14 @@ public class WaitingForInputUI : MonoBehaviour
         if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             Hide();
+        }
+    }
+
+    private void GolfGameManager_OnLocalPlayerReadyChanged(object sender, EventArgs e)
+    {
+        if (GolfGameManager.Instance.IsLocalPlayerReady())
+        {
+            Show();
         }
     }
 

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class GamePauseUI : MonoBehaviour
 {
+    public static GamePauseUI Instance { get; private set; }
+
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button optionsButon;
@@ -13,6 +15,7 @@ public class GamePauseUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         resumeButton.onClick.AddListener(() =>
         {
             GolfGameManager.Instance.TogglePauseGame();
@@ -24,6 +27,11 @@ public class GamePauseUI : MonoBehaviour
         mainMenuButton.onClick.AddListener(() =>
         {
             Loader.Load(Loader.Scene.MainMenuScene);
+        });
+        optionsButon.onClick.AddListener(() =>
+        {
+            Hide();
+            OptionsUI.Instance.Show();
         });
     }
 
@@ -44,12 +52,12 @@ public class GamePauseUI : MonoBehaviour
         Show();
     }
 
-    private void Hide()
+    public void Hide()
     {
         gameObject.SetActive(false);
     }
 
-    private void Show()
+    public void Show()
     {
         gameObject.SetActive(true);
     }

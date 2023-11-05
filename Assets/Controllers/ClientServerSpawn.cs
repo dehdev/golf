@@ -26,7 +26,6 @@ public class ClientServerSpawn : NetworkBehaviour
         if (NetworkManager.gameObject.TryGetComponent<SpawnPointManager>(out var spawnPointManager))
         {
             rb.position = spawnPointManager.GetSpawnPoint();
-            Debug.Log("CLIENT SPAWNED" + rb.position);
         }
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.Follow = transform;

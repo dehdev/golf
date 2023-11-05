@@ -9,6 +9,7 @@ public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] private Button playButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Button optionsButton;
 
     private void Awake()
     {

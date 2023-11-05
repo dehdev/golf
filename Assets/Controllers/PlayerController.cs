@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using TMPro;
@@ -5,23 +6,20 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 
 public class PlayerController : NetworkBehaviour
 {
-    public static PlayerController Instance { get; private set; }
+    //public static PlayerController Instance { get; private set; }
 
     private Rigidbody rb;
-
-    private int shots = 0;
 
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
-    public static event EventHandler spawnPlayer;
-
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
@@ -33,39 +31,26 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private GameObject idleParticles;
     [SerializeField] private GameObject arrow;
 
-    private Vector3 lastPos;
-
     private bool isIdle;
     private bool isAiming;
     private bool readyToShoot;
     private bool hasChangedToIdle;
 
-    [SerializeField] private Cinemachine.CinemachineVirtualCamera virtualCamera;
-
     private void Awake()
     {
-        if (Instance != null)
+        rb = GetComponent<Rigidbody>();
+
+        /*if (Instance != null)
         {
             Debug.LogError("More than one instance of PlayerController found!");
         }
-        Instance = this;
+        Instance = this;*/
         readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
         hasChangedToIdle = false;
         idleParticles.SetActive(false);
         arrow.SetActive(false);
-    }
-
-    private void Start()
-    {
-        if (IsLocalPlayer)
-        {
-            virtualCamera = Cinemachine.CinemachineVirtualCamera.FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
-            virtualCamera.Follow = transform;
-            rb = GetComponent<Rigidbody>();
-            spawnPlayer?.Invoke(this, EventArgs.Empty);
-        }
     }
 
     private void Update()
@@ -88,7 +73,8 @@ public class PlayerController : NetworkBehaviour
             isIdle = true;
             Stop();
         }
-        else {
+        else
+        {
             isIdle = false;
         }
     }
@@ -103,10 +89,6 @@ public class PlayerController : NetworkBehaviour
 
     public void StopRbRotation()
     {
-        if (!IsOwner)
-        {
-            return;
-        }
         rb.angularVelocity = Vector3.zero;
         rb.velocity = Vector3.zero;
     }
@@ -132,7 +114,7 @@ public class PlayerController : NetworkBehaviour
 
     private void PreProcessAim()
     {
-        if (GolfGameManager.Instance.isGamePlaying() && isIdle)
+        if (GolfGameManager.Instance.IsGamePlaying() && isIdle)
         {
             arrow.transform.position = transform.position;
             arrow.SetActive(true);
@@ -170,9 +152,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Shoot(Vector3 worldPoint)
     {
-        shots++;
         OnBallHit?.Invoke(this, EventArgs.Empty);
-        lastPos = transform.position;
         lineRenderer.enabled = false;
 
         Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
@@ -217,14 +197,8 @@ public class PlayerController : NetworkBehaviour
 
     public void Stop()
     {
-        //Debug.Log("STOP STARTED");
-        //while (rb.angularVelocity.magnitude > 0.01f && rb.velocity.magnitude > 0.01f) // Adjust the threshold as needed
-        //{
-            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
-            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
-        //    Debug.Log("STOPPING");
-        //}
-        //Debug.Log("STOP ENDED");
+        rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
+        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
     }
 
     private Vector3? CastMouseClickRay()
@@ -247,15 +221,5 @@ public class PlayerController : NetworkBehaviour
         {
             return null;
         }
-    }
-
-    public void MoveToPos(Vector3 pos)
-    {
-        rb.MovePosition(pos);
-    }
-
-    public int getShots()
-    {
-        return shots;
     }
 }

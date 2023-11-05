@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class GolfGameManager : MonoBehaviour
@@ -11,7 +12,7 @@ public class GolfGameManager : MonoBehaviour
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameResumed;
 
-    private Vector3 spawnPoint;
+    private int shots = 0;
 
     private enum State
     {
@@ -24,7 +25,6 @@ public class GolfGameManager : MonoBehaviour
     private State state;
     private bool isLocalPlayerReady;
     private float countdownToStartTimer = 3f;
-    private float waitingToStartTimer = 1f;
     private float gamePlayingTimer;
     private float gameplayingTimerMax = 300f;
     private bool isGamePaused = false;
@@ -34,30 +34,43 @@ public class GolfGameManager : MonoBehaviour
     {
         Instance = this;
         state = State.WaitingToStart;
-        spawnPoint = GameObject.FindWithTag("SpawnPoint").transform.position;
     }
 
     private void Start()
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
-        PlayerController.spawnPlayer += PlayerController_spawnPlayer;
+        GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
+        PlayerController.OnBallHit += PlayerController_OnBallHit;
     }
 
-    private void PlayerController_spawnPlayer(object sender, EventArgs e)
+    private void GameInput_OnAnyKeyPressed(object sender, EventArgs e)
     {
-        PlayerController.Instance.MoveToPos(spawnPoint);
-        PlayerController.Instance.StopRbRotation();
+        if (state == State.WaitingToStart)
+        {
+            state = state = State.CountdownToStart;
+            OnStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void PlayerController_OnBallHit(object sender, EventArgs e)
+    {
+        shots++;
+    }
+
+    public int GetShots()
+    {
+        return shots;
     }
 
     private void GameInput_OnResetAction(object sender, EventArgs e)
     {
-        if (!isGamePlaying())
+        if (!IsGamePlaying())
         {
             return;
         }
-        PlayerController.Instance.MoveToPos(spawnPoint);
-        PlayerController.Instance.StopRbRotation();
+        //PlayerController.Instance.MoveToPos(spawnPoint);
+        //PlayerController.Instance.StopRbRotation();
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
@@ -71,12 +84,6 @@ public class GolfGameManager : MonoBehaviour
         switch (state)
         {
             case State.WaitingToStart:
-                waitingToStartTimer -= Time.deltaTime;
-                if (waitingToStartTimer <= 0f)
-                {
-                    state = State.CountdownToStart;
-                    OnStateChanged?.Invoke(this, EventArgs.Empty);
-                }
                 break;
             case State.CountdownToStart:
                 countdownToStartTimer -= Time.deltaTime;
@@ -101,17 +108,17 @@ public class GolfGameManager : MonoBehaviour
         }
     }
 
-    public bool isGamePlaying()
+    public bool IsGamePlaying()
     {
         return state == State.GamePlaying;
     }
 
-    public bool isGameOver()
+    public bool IsGameOver()
     {
         return state == State.GameOver;
     }
 
-    public bool isCountdownToStartActive()
+    public bool IsCountdownToStartActive()
     {
         return state == State.CountdownToStart;
     }

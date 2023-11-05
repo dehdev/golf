@@ -4969,6 +4969,8 @@ GameObject:
   - component: {fileID: 4619970837693820336}
   - component: {fileID: 8578481637157660445}
   - component: {fileID: 353335351230481258}
+  - component: {fileID: 2763493167552753821}
+  - component: {fileID: 4380565146904205249}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5324,7 +5326,6 @@ MonoBehaviour:
   stopDuration: 5
   stopVelocity: 0.05
   MaxDragDistance: 15
-  iddleEffectDistance: 0
   lineRenderer: {fileID: 2376572942043338893}
   idleParticles: {fileID: 3035676753139126120}
   arrow: {fileID: 3111674827145115671}
@@ -5437,3 +5438,27 @@ MonoBehaviour:
   minZoom: 10
   zoomSpeed: 0.7
   zoomSmoothTime: 0.2
+--- !u!114 &2763493167552753821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8189122645325627270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be105689beb832345a6bf4ed3377360b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4380565146904205249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8189122645325627270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 267e8234304c52040934693b747a9d0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

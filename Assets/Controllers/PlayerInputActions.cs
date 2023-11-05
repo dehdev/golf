@@ -44,6 +44,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Any key pressed"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2f93093-ab26-423a-ae7a-7c7d7f6a96ec"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -68,6 +77,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d87807af-e24d-481f-a510-d0076289fb4e"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Any key pressed"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -78,6 +98,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Resetplayerposition = m_Player.FindAction("Reset player position", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_Anykeypressed = m_Player.FindAction("Any key pressed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -141,12 +162,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Resetplayerposition;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_Anykeypressed;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Resetplayerposition => m_Wrapper.m_Player_Resetplayerposition;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @Anykeypressed => m_Wrapper.m_Player_Anykeypressed;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -162,6 +185,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @Anykeypressed.started += instance.OnAnykeypressed;
+            @Anykeypressed.performed += instance.OnAnykeypressed;
+            @Anykeypressed.canceled += instance.OnAnykeypressed;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -172,6 +198,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @Anykeypressed.started -= instance.OnAnykeypressed;
+            @Anykeypressed.performed -= instance.OnAnykeypressed;
+            @Anykeypressed.canceled -= instance.OnAnykeypressed;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -193,5 +222,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         void OnResetplayerposition(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnAnykeypressed(InputAction.CallbackContext context);
     }
 }

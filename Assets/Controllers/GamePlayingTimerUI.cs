@@ -20,7 +20,7 @@ public class GamePlayingTimerUI : MonoBehaviour
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if (GolfGameManager.Instance.isGamePlaying())
+        if (GolfGameManager.Instance.IsGamePlaying())
         {
             Show();
         }

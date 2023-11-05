@@ -16,14 +16,10 @@ public class GameOverUI : MonoBehaviour
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if (GolfGameManager.Instance.isGameOver())
+        if (GolfGameManager.Instance.IsGameOver())
         {
             Show();
-            if (!PlayerController.Instance)
-            {
-                return;
-            }
-            shotsText.text = PlayerController.Instance.getShots().ToString();
+            shotsText.text = GolfGameManager.Instance.GetShots().ToString();
         }
         else
         {

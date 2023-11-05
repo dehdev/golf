@@ -12,6 +12,7 @@ public class GameInput : MonoBehaviour
 
     public event EventHandler OnPauseAction;
     public event EventHandler OnResetAction;
+    public event EventHandler OnAnyKeyPressed;
 
     private void Awake()
     {
@@ -22,6 +23,12 @@ public class GameInput : MonoBehaviour
 
         playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Resetplayerposition.performed += Resetplayerposition_performed;
+        playerInputActions.Player.Anykeypressed.performed += Anykeypressed_performed;
+    }
+
+    private void Anykeypressed_performed(InputAction.CallbackContext context)
+    {
+        OnAnyKeyPressed?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDestroy()

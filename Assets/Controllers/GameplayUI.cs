@@ -17,7 +17,7 @@ public class GameplayUI : MonoBehaviour
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if (GolfGameManager.Instance.isGamePlaying())
+        if (GolfGameManager.Instance.IsGamePlaying())
         {
             Show();
         }
@@ -29,7 +29,7 @@ public class GameplayUI : MonoBehaviour
 
     private void PlayerController_OnBallHit(object sender, EventArgs e)
     {
-        shotsText.text = PlayerController.Instance.getShots().ToString();
+        shotsText.text = GolfGameManager.Instance.GetShots().ToString();
     }
 
     private void Hide()

@@ -21,6 +21,10 @@ public class GamePauseUI : MonoBehaviour
         {
             Application.Quit();
         });
+        mainMenuButton.onClick.AddListener(() =>
+        {
+            Loader.Load(Loader.Scene.MainMenuScene);
+        });
     }
 
     private void Start()

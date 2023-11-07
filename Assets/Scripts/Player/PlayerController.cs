@@ -10,13 +10,14 @@ using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
-    //public static PlayerController Instance { get; private set; }
+    public static PlayerController LocalInstace { get; private set; }
 
     private Rigidbody rb;
 
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
+
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
@@ -43,6 +44,27 @@ public class PlayerController : NetworkBehaviour
         idleParticles.SetActive(false);
         arrow.SetActive(false);
     }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            LocalInstace = this;
+        }
+        base.OnNetworkSpawn();
+    }
+
+    private void Start()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = transform;
+    }
+
+
     private void Update()
     {
         if (!IsOwner)
@@ -67,21 +89,6 @@ public class PlayerController : NetworkBehaviour
         {
             isIdle = false;
         }
-    }
-
-    public override void OnNetworkSpawn()
-    {
-       // if (IsServer)
-       // {
-      //      Vector3 spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").GetComponent<SpawnPointManager>().GetSpawnPoint();
-     //       transform.position = spawnPoint;
-     //   }
-        if (IsOwner)
-        {
-            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-            virtualCamera.Follow = transform;
-        }
-        base.OnNetworkSpawn();
     }
 
     private void FixedUpdate()

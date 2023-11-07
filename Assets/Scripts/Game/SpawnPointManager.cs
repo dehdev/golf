@@ -6,21 +6,37 @@ using UnityEngine;
 
 public class SpawnPointManager : MonoBehaviour
 {
-    public static SpawnPointManager Instance { get; private set; }
+    [SerializeField] List<GameObject> m_SpawnPoints;
 
-    private GameObject spawnPoint;
+    static SpawnPointManager s_Instance;
 
-    private void Awake()
+    public static SpawnPointManager Instance
     {
-        Instance = this;
-        spawnPoint = GameObject.FindWithTag("SpawnPoint");
-    }
-    public Vector3 GetSpawnPoint()
-    {
-        if (spawnPoint != null)
+        get
         {
-            return spawnPoint.transform.position;
+            if (s_Instance == null)
+            {
+                s_Instance = FindObjectOfType<SpawnPointManager>();
+            }
+
+            return s_Instance;
         }
-        return Vector3.zero;
+    }
+
+    void OnDestroy()
+    {
+        s_Instance = null;
+    }
+
+    public GameObject ConsumeNextSpawnPoint()
+    {
+        if (m_SpawnPoints.Count == 0)
+        {
+            return null;
+        }
+
+        var toReturn = m_SpawnPoints[m_SpawnPoints.Count - 1];
+        m_SpawnPoints.RemoveAt(m_SpawnPoints.Count - 1);
+        return toReturn;
     }
 }

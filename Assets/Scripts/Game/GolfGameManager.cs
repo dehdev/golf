@@ -1,8 +1,7 @@
-using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,7 +10,7 @@ public class GolfGameManager : NetworkBehaviour
 {
     public static GolfGameManager Instance { get; private set; }
 
-    [SerializeField] private Transform playerPrefab;
+    [SerializeField] private GameObject playerPrefab;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, bool> playerPausedDictionary;
@@ -59,6 +58,8 @@ public class GolfGameManager : NetworkBehaviour
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
+
+
     }
 
     public override void OnNetworkSpawn()
@@ -74,17 +75,23 @@ public class GolfGameManager : NetworkBehaviour
         base.OnNetworkSpawn();
     }
 
-
     private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
+        if (!IsServer)
+        {
+            return;
+        }
         foreach (ulong clientId in clientsCompleted)
         {
-            Vector3 spawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").GetComponent<SpawnPointManager>().GetSpawnPoint();
-            Transform playerTransform = Instantiate(playerPrefab, spawnPoint, Quaternion.identity);
-            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-        }
-    }
+            var spawnPoint = SpawnPointManager.Instance.ConsumeNextSpawnPoint();
+            var spawnPosition = spawnPoint ? spawnPoint.transform.position : Vector3.zero;
 
+            GameObject newPlayer = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+            newPlayer.GetComponent<Rigidbody>().isKinematic = false;
+            newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+        }
+
+    }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)
     {
@@ -156,8 +163,6 @@ public class GolfGameManager : NetworkBehaviour
         {
             return;
         }
-        //PlayerController.Instance.MoveToPos(spawnPoint);
-        //PlayerController.Instance.StopRbRotation();
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)

@@ -4,39 +4,51 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class SpawnPointManager : MonoBehaviour
+public class SpawnPointManager : NetworkBehaviour
 {
-    [SerializeField] List<GameObject> m_SpawnPoints;
+    [SerializeField] private List<GameObject> m_SpawnPoints;
+    private Dictionary<ulong, Vector3> playerSpawnPointDictionary;
 
-    static SpawnPointManager s_Instance;
+    public static SpawnPointManager Instance { get; private set; }
 
-    public static SpawnPointManager Instance
+    private void Awake()
     {
-        get
-        {
-            if (s_Instance == null)
-            {
-                s_Instance = FindObjectOfType<SpawnPointManager>();
-            }
+        Instance = this;
+        playerSpawnPointDictionary = new Dictionary<ulong, Vector3>();
+    }
 
-            return s_Instance;
+    private void Start()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+        int clientsToAssign = 0;
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            playerSpawnPointDictionary.Add(clientId, m_SpawnPoints[clientsToAssign].transform.position);
+            Debug.Log("Spawn point assigned to client: " + clientId + " at " + m_SpawnPoints[clientsToAssign].name);
+            GetSpawnPointForClientId(clientId);
+            clientsToAssign++;
         }
     }
 
-    void OnDestroy()
+    private void GetSpawnPointForClientId(ulong clientId)
     {
-        s_Instance = null;
+        if (playerSpawnPointDictionary.ContainsKey(clientId))
+        {
+            StartCoroutine(SpawnPlayer(clientId));
+        }
+        else
+        {
+            Debug.LogError("No spawn point found for client: " + clientId);
+        }
     }
 
-    public GameObject ConsumeNextSpawnPoint()
+    IEnumerator SpawnPlayer(ulong clientId)
     {
-        if (m_SpawnPoints.Count == 0)
-        {
-            return null;
-        }
-
-        var toReturn = m_SpawnPoints[m_SpawnPoints.Count - 1];
-        m_SpawnPoints.RemoveAt(m_SpawnPoints.Count - 1);
-        return toReturn;
+        Debug.Log("coroutine started");
+        yield return new WaitForSeconds(.5f);
+        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetSpawnPositionClientRpc(playerSpawnPointDictionary[clientId], clientId);
     }
 }

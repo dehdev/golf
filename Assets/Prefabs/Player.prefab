@@ -4967,8 +4967,8 @@ GameObject:
   - component: {fileID: 3720556429358799956}
   - component: {fileID: 353335351230481258}
   - component: {fileID: 5186505787050962488}
-  - component: {fileID: 4981206507936785229}
-  - component: {fileID: -8032182161970813109}
+  - component: {fileID: -5016561408152938527}
+  - component: {fileID: -7398942753125674270}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5393,7 +5393,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &4981206507936785229
+--- !u!114 &-5016561408152938527
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5423,7 +5423,7 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &-8032182161970813109
+--- !u!114 &-7398942753125674270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

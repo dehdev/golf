@@ -4,20 +4,20 @@ using System.Collections;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 
 public class PlayerController : NetworkBehaviour
 {
-    public static PlayerController LocalInstace { get; private set; }
+    public static PlayerController LocalInstance { get; private set; }
 
     private Rigidbody rb;
 
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
-
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
@@ -49,13 +49,14 @@ public class PlayerController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            LocalInstace = this;
+            LocalInstance = this;
         }
         base.OnNetworkSpawn();
     }
 
     private void Start()
     {
+        GetComponent<DebugScript>().enabled = IsOwner;
         if (!IsOwner)
         {
             return;
@@ -65,12 +66,22 @@ public class PlayerController : NetworkBehaviour
     }
 
 
+    [ClientRpc]
+    public void SetSpawnPositionClientRpc(Vector3 spawnPoint, ulong playerId)
+    {
+        if (playerId != NetworkManager.Singleton.LocalClientId) { return; }
+        transform.position = spawnPoint;
+        Debug.Log("transform position: " + transform.position);
+        Debug.Log("Spawn position: " + spawnPoint);
+    }
+
     private void Update()
     {
         if (!IsOwner)
         {
             return;
         }
+
         if (rb.velocity.magnitude < stopVelocity)
         {
             if (!isAiming)
@@ -123,6 +134,13 @@ public class PlayerController : NetworkBehaviour
     {
         float clampedVolume = Mathf.Clamp(rb.velocity.magnitude / 10 * 0.2f, 0.1f, 1);
         OnCollisionHit?.Invoke(this, clampedVolume);
+        if (collision.gameObject.CompareTag("Terrain"))
+        {
+            if (!IsOwner)
+            {
+                return;
+            }
+        }
     }
 
     private void PreProcessAim()

@@ -58,8 +58,6 @@ public class GolfGameManager : NetworkBehaviour
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
-
-
     }
 
     public override void OnNetworkSpawn()
@@ -83,14 +81,9 @@ public class GolfGameManager : NetworkBehaviour
         }
         foreach (ulong clientId in clientsCompleted)
         {
-            var spawnPoint = SpawnPointManager.Instance.ConsumeNextSpawnPoint();
-            var spawnPosition = spawnPoint ? spawnPoint.transform.position : Vector3.zero;
-
-            GameObject newPlayer = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-            newPlayer.GetComponent<Rigidbody>().isKinematic = false;
+            GameObject newPlayer = Instantiate(playerPrefab);
             newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
-
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)

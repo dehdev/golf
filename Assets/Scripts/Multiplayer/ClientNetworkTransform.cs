@@ -1,7 +1,5 @@
-using Cinemachine;
 using Unity.Netcode.Components;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
 {

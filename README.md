@@ -1,13 +1,15 @@
 # TO DO
 
-imbunatatit camera<br>
 buton pentru anulat aim<br>
 marit gravitatia?<br>
-golfmanager (managerul care tine cont de cine a castigat de ex)<br>
-de refacut UI<br>
+playeri in hole<br>
+golf manager sa tina cont de shots, nu playerul<br>
+poate reusesc line rendererul sa fie doar pe 2 axe, nu si pe inaltime <br>
 de terminat multiplayerul<br>
+ui pentru putere lovire <br>
+<br>
+coliziuni intre mingi cu???<br>
 
 # BUGS
 
-cand dai drag and release repede mingea se opreste mult mai rapid ?? posibil fixed<br>
-sunetele se aud ciudat uneori
+sunetele se aud ciudat uneori din cauza vitezei<br>

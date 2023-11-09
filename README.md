@@ -8,7 +8,7 @@ poate reusesc line rendererul sa fie doar pe 2 axe, nu si pe inaltime <br>
 de terminat multiplayerul<br>
 ui pentru putere lovire <br>
 <br>
-coliziuni intre mingi cu???<br>
+coliziuni intre mingi cu movement???<br>
 
 # BUGS
 

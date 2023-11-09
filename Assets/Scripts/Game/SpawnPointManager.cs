@@ -47,8 +47,7 @@ public class SpawnPointManager : NetworkBehaviour
 
     IEnumerator SpawnPlayer(ulong clientId)
     {
-        Debug.Log("coroutine started");
         yield return new WaitForSeconds(.5f);
-        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetSpawnPositionClientRpc(playerSpawnPointDictionary[clientId], clientId);
+        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetSpawnPositionClientRpc(playerSpawnPointDictionary[clientId]);
     }
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,6 +15,9 @@ public class PlayerController : NetworkBehaviour
     public static PlayerController LocalInstance { get; private set; }
 
     private Rigidbody rb;
+    private TrailRenderer trailRenderer;
+    private SphereCollider sphereCollider;
+    private MeshRenderer meshRenderer;
 
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
@@ -37,12 +41,20 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        trailRenderer = GetComponent<TrailRenderer>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        sphereCollider = GetComponent<SphereCollider>();
+
         readyToShoot = false;
         isAiming = false;
         lineRenderer.enabled = false;
         hasChangedToIdle = false;
         idleParticles.SetActive(false);
         arrow.SetActive(false);
+
+        trailRenderer.enabled = false;
+        meshRenderer.enabled = false;
+        sphereCollider.enabled = false;
     }
 
     public override void OnNetworkSpawn()
@@ -59,6 +71,7 @@ public class PlayerController : NetworkBehaviour
         GetComponent<DebugScript>().enabled = IsOwner;
         if (!IsOwner)
         {
+            sphereCollider.enabled = false;
             return;
         }
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
@@ -67,12 +80,23 @@ public class PlayerController : NetworkBehaviour
 
 
     [ClientRpc]
-    public void SetSpawnPositionClientRpc(Vector3 spawnPoint, ulong playerId)
+    public void SetSpawnPositionClientRpc(Vector3 spawnPoint)
     {
-        if (playerId != NetworkManager.Singleton.LocalClientId) { return; }
-        transform.position = spawnPoint;
-        Debug.Log("transform position: " + transform.position);
-        Debug.Log("Spawn position: " + spawnPoint);
+        StartCoroutine(SpawnPlayerCoroutine(spawnPoint));
+    }
+
+    IEnumerator SpawnPlayerCoroutine(Vector3 spawnPoint)
+    {
+        if (IsOwner)
+        {
+            yield return new WaitForFixedUpdate();
+            transform.position = spawnPoint;
+            Debug.Log("Spawn position: " + spawnPoint);
+            sphereCollider.enabled = true;
+        }
+        GetComponent<MeshRenderer>().enabled = true;
+        trailRenderer.enabled = true;
+        meshRenderer.enabled = true;
     }
 
     private void Update()
@@ -89,8 +113,8 @@ public class PlayerController : NetworkBehaviour
                 if (!hasChangedToIdle)
                 {
                     hasChangedToIdle = true;
-                    OnIdleEvent?.Invoke(this, EventArgs.Empty);
                     idleParticles.SetActive(true);
+                    OnIdleEvent?.Invoke(this, EventArgs.Empty);
                 }
             }
             isIdle = true;

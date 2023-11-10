@@ -288,4 +288,8 @@ public class GolfGameManager : NetworkBehaviour
         return state.Value == State.WaitingToStart;
     }
 
+    public bool IsLocalPlayerPaused()
+    {
+        return isLocalGamePaused;
+    }
 }

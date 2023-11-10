@@ -25,12 +25,14 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Resetplayerposition.performed += Resetplayerposition_performed;
         playerInputActions.WaitingForInput.Anykeypressed.performed += Anykeypressed_performed;
-
-        
     }
 
     private void Anykeypressed_performed(InputAction.CallbackContext context)
     {
+        if (!GolfGameManager.Instance.IsWaitingToStart())
+        {
+            return;
+        }
         OnAnyKeyPressed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -45,15 +47,15 @@ public class GameInput : MonoBehaviour
 
     private void Resetplayerposition_performed(InputAction.CallbackContext context)
     {
+        if(GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying())
+        {
+            return;
+        }
         OnResetAction?.Invoke(this, EventArgs.Empty);
     }
 
     private void Pause_performed(InputAction.CallbackContext context)
     {
         OnPauseAction?.Invoke(this, EventArgs.Empty);
-    }
-
-    public PlayerInputActions GetPlayerInputActions() {
-        return playerInputActions;
     }
 }

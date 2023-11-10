@@ -38,6 +38,9 @@ public class PlayerController : NetworkBehaviour
     private bool readyToShoot;
     private bool hasChangedToIdle;
 
+    private Vector3 lastPos;
+    private Vector3 spawnPos;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -69,6 +72,7 @@ public class PlayerController : NetworkBehaviour
     private void Start()
     {
         GetComponent<DebugScript>().enabled = IsOwner;
+        GameInput.Instance.OnResetAction += GameInput_OnResetAction;
         if (!IsOwner)
         {
             sphereCollider.enabled = false;
@@ -78,20 +82,34 @@ public class PlayerController : NetworkBehaviour
         virtualCamera.Follow = transform;
     }
 
-
-    [ClientRpc]
-    public void SetSpawnPositionClientRpc(Vector3 spawnPoint)
+    private void GameInput_OnResetAction(object sender, EventArgs e)
     {
-        StartCoroutine(SpawnPlayerCoroutine(spawnPoint));
+        if (!IsOwner)
+        {
+            return;
+        }
+        StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPos));
+        InstantStop();
     }
 
-    IEnumerator SpawnPlayerCoroutine(Vector3 spawnPoint)
+    [ClientRpc]
+    public void SetPlayerPositionClientRpc(Vector3 spawnPoint)
+    {
+        StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPoint));
+        if (IsOwner)
+        {
+            spawnPos = spawnPoint;
+        }
+    }
+
+    IEnumerator SetPlayerSpawnPositionCoroutine(Vector3 spawnPoint)
     {
         if (IsOwner)
         {
+            lastPos = spawnPoint;
             yield return new WaitForFixedUpdate();
             transform.position = spawnPoint;
-            Debug.Log("Spawn position: " + spawnPoint);
+            Debug.Log("Player pos set to: " + spawnPoint);
             sphereCollider.enabled = true;
         }
         GetComponent<MeshRenderer>().enabled = true;
@@ -118,7 +136,7 @@ public class PlayerController : NetworkBehaviour
                 }
             }
             isIdle = true;
-            Stop();
+            LerpStop();
         }
         else
         {
@@ -156,14 +174,16 @@ public class PlayerController : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         float clampedVolume = Mathf.Clamp(rb.velocity.magnitude / 10 * 0.2f, 0.1f, 1);
         OnCollisionHit?.Invoke(this, clampedVolume);
         if (collision.gameObject.CompareTag("Terrain"))
         {
-            if (!IsOwner)
-            {
-                return;
-            }
+            transform.position = lastPos;
+            InstantStop();
         }
     }
 
@@ -208,6 +228,8 @@ public class PlayerController : NetworkBehaviour
     private void Shoot(Vector3 worldPoint)
     {
         OnBallHit?.Invoke(this, EventArgs.Empty);
+        lastPos = transform.position;
+
         lineRenderer.enabled = false;
 
         Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
@@ -220,6 +242,7 @@ public class PlayerController : NetworkBehaviour
         isIdle = false;
 
         Debug.Log("Force: " + (shotMultiplier * strength * -direction).magnitude);
+
     }
 
     private void DrawLine(Vector3 worldPoint)
@@ -250,10 +273,16 @@ public class PlayerController : NetworkBehaviour
 
     }
 
-    public void Stop()
+    private void LerpStop()
     {
         rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
         rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
+    }
+
+    private void InstantStop()
+    {
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     private Vector3? CastMouseClickRay()

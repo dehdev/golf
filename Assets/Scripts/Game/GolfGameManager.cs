@@ -55,7 +55,6 @@ public class GolfGameManager : NetworkBehaviour
     private void Start()
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
-        GameInput.Instance.OnResetAction += GameInput_OnResetAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
     }
@@ -148,14 +147,6 @@ public class GolfGameManager : NetworkBehaviour
     public int GetShots()
     {
         return shots;
-    }
-
-    private void GameInput_OnResetAction(object sender, EventArgs e)
-    {
-        if (!IsGamePlaying())
-        {
-            return;
-        }
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)

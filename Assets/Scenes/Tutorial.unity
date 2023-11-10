@@ -8442,7 +8442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a17eb0c5bdeb04b8d5d4671d1bab3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SpawnPoints:
+  SpawnPoints:
   - {fileID: 929672202}
   - {fileID: 626933505}
   - {fileID: 741976940}

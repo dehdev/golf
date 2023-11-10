@@ -20,10 +20,13 @@ public class GameInput : MonoBehaviour
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+        playerInputActions.WaitingForInput.Enable();
 
         playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Resetplayerposition.performed += Resetplayerposition_performed;
-        playerInputActions.Player.Anykeypressed.performed += Anykeypressed_performed;
+        playerInputActions.WaitingForInput.Anykeypressed.performed += Anykeypressed_performed;
+
+        
     }
 
     private void Anykeypressed_performed(InputAction.CallbackContext context)
@@ -35,7 +38,7 @@ public class GameInput : MonoBehaviour
     {
         playerInputActions.Player.Pause.performed -= Pause_performed;
         playerInputActions.Player.Resetplayerposition.performed -= Resetplayerposition_performed;
-        playerInputActions.Player.Anykeypressed.performed -= Anykeypressed_performed;
+        playerInputActions.WaitingForInput.Anykeypressed.performed -= Anykeypressed_performed;
 
         playerInputActions.Dispose();
     }
@@ -48,5 +51,9 @@ public class GameInput : MonoBehaviour
     private void Pause_performed(InputAction.CallbackContext context)
     {
         OnPauseAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    public PlayerInputActions GetPlayerInputActions() {
+        return playerInputActions;
     }
 }

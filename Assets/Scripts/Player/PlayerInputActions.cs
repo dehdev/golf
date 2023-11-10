@@ -44,15 +44,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Any key pressed"",
-                    ""type"": ""Button"",
-                    ""id"": ""b2f93093-ab26-423a-ae7a-7c7d7f6a96ec"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -77,10 +68,27 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
+                }
+            ]
+        },
+        {
+            ""name"": ""WaitingForInput"",
+            ""id"": ""e61c0449-a426-4e90-a188-90580ddbef95"",
+            ""actions"": [
+                {
+                    ""name"": ""Any key pressed"",
+                    ""type"": ""Button"",
+                    ""id"": ""00a48d80-39bd-485c-bcee-e539e59d794f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""d87807af-e24d-481f-a510-d0076289fb4e"",
+                    ""id"": ""1f0157b1-e299-4566-a55c-5020cc388fc2"",
                     ""path"": ""<Keyboard>/anyKey"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -98,7 +106,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Resetplayerposition = m_Player.FindAction("Reset player position", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
-        m_Player_Anykeypressed = m_Player.FindAction("Any key pressed", throwIfNotFound: true);
+        // WaitingForInput
+        m_WaitingForInput = asset.FindActionMap("WaitingForInput", throwIfNotFound: true);
+        m_WaitingForInput_Anykeypressed = m_WaitingForInput.FindAction("Any key pressed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -162,14 +172,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Resetplayerposition;
     private readonly InputAction m_Player_Pause;
-    private readonly InputAction m_Player_Anykeypressed;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Resetplayerposition => m_Wrapper.m_Player_Resetplayerposition;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
-        public InputAction @Anykeypressed => m_Wrapper.m_Player_Anykeypressed;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -185,9 +193,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
-            @Anykeypressed.started += instance.OnAnykeypressed;
-            @Anykeypressed.performed += instance.OnAnykeypressed;
-            @Anykeypressed.canceled += instance.OnAnykeypressed;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -198,9 +203,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
-            @Anykeypressed.started -= instance.OnAnykeypressed;
-            @Anykeypressed.performed -= instance.OnAnykeypressed;
-            @Anykeypressed.canceled -= instance.OnAnykeypressed;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -218,10 +220,59 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // WaitingForInput
+    private readonly InputActionMap m_WaitingForInput;
+    private List<IWaitingForInputActions> m_WaitingForInputActionsCallbackInterfaces = new List<IWaitingForInputActions>();
+    private readonly InputAction m_WaitingForInput_Anykeypressed;
+    public struct WaitingForInputActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public WaitingForInputActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Anykeypressed => m_Wrapper.m_WaitingForInput_Anykeypressed;
+        public InputActionMap Get() { return m_Wrapper.m_WaitingForInput; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(WaitingForInputActions set) { return set.Get(); }
+        public void AddCallbacks(IWaitingForInputActions instance)
+        {
+            if (instance == null || m_Wrapper.m_WaitingForInputActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_WaitingForInputActionsCallbackInterfaces.Add(instance);
+            @Anykeypressed.started += instance.OnAnykeypressed;
+            @Anykeypressed.performed += instance.OnAnykeypressed;
+            @Anykeypressed.canceled += instance.OnAnykeypressed;
+        }
+
+        private void UnregisterCallbacks(IWaitingForInputActions instance)
+        {
+            @Anykeypressed.started -= instance.OnAnykeypressed;
+            @Anykeypressed.performed -= instance.OnAnykeypressed;
+            @Anykeypressed.canceled -= instance.OnAnykeypressed;
+        }
+
+        public void RemoveCallbacks(IWaitingForInputActions instance)
+        {
+            if (m_Wrapper.m_WaitingForInputActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IWaitingForInputActions instance)
+        {
+            foreach (var item in m_Wrapper.m_WaitingForInputActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_WaitingForInputActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public WaitingForInputActions @WaitingForInput => new WaitingForInputActions(this);
     public interface IPlayerActions
     {
         void OnResetplayerposition(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+    }
+    public interface IWaitingForInputActions
+    {
         void OnAnykeypressed(InputAction.CallbackContext context);
     }
 }

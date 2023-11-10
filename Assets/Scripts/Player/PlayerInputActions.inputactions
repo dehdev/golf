@@ -22,15 +22,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Any key pressed",
-                    "type": "Button",
-                    "id": "b2f93093-ab26-423a-ae7a-7c7d7f6a96ec",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -55,10 +46,27 @@
                     "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "WaitingForInput",
+            "id": "e61c0449-a426-4e90-a188-90580ddbef95",
+            "actions": [
+                {
+                    "name": "Any key pressed",
+                    "type": "Button",
+                    "id": "00a48d80-39bd-485c-bcee-e539e59d794f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "d87807af-e24d-481f-a510-d0076289fb4e",
+                    "id": "1f0157b1-e299-4566-a55c-5020cc388fc2",
                     "path": "<Keyboard>/anyKey",
                     "interactions": "",
                     "processors": "",

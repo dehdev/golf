@@ -15,7 +15,6 @@ public class PlayerController : NetworkBehaviour
     public static PlayerController LocalInstance { get; private set; }
 
     private Rigidbody rb;
-    private TrailRenderer trailRenderer;
     private SphereCollider sphereCollider;
     private MeshRenderer meshRenderer;
 
@@ -29,7 +28,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float MaxDragDistance = 30f;
 
     [SerializeField] private LineRenderer lineRenderer;
-
+    [SerializeField] private TrailRenderer trailRenderer;
+    [SerializeField] private GameObject shootingPlane;
     [SerializeField] private GameObject idleParticles;
     [SerializeField] private GameObject arrow;
 
@@ -44,7 +44,6 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        trailRenderer = GetComponent<TrailRenderer>();
         meshRenderer = GetComponent<MeshRenderer>();
         sphereCollider = GetComponent<SphereCollider>();
 
@@ -58,6 +57,7 @@ public class PlayerController : NetworkBehaviour
         trailRenderer.enabled = false;
         meshRenderer.enabled = false;
         sphereCollider.enabled = false;
+        shootingPlane.SetActive(false);
     }
 
     public override void OnNetworkSpawn()
@@ -76,6 +76,7 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner)
         {
             sphereCollider.enabled = false;
+            shootingPlane.SetActive(false);
             return;
         }
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
@@ -111,6 +112,7 @@ public class PlayerController : NetworkBehaviour
             transform.position = spawnPoint;
             Debug.Log("Player pos set to: " + spawnPoint);
             sphereCollider.enabled = true;
+            shootingPlane.SetActive(true);
         }
         GetComponent<MeshRenderer>().enabled = true;
         trailRenderer.enabled = true;
@@ -142,7 +144,8 @@ public class PlayerController : NetworkBehaviour
             isIdle = false;
         }
 
-       // trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0); --------------------------------- FIX THIS
+        trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
+        shootingPlane.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     private void FixedUpdate()

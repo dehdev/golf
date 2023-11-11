@@ -123,7 +123,6 @@ public class PlayerController : NetworkBehaviour
         {
             return;
         }
-
         if (rb.velocity.magnitude < stopVelocity)
         {
             if (!isAiming)
@@ -142,6 +141,8 @@ public class PlayerController : NetworkBehaviour
         {
             isIdle = false;
         }
+
+       // trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0); --------------------------------- FIX THIS
     }
 
     private void FixedUpdate()
@@ -265,6 +266,9 @@ public class PlayerController : NetworkBehaviour
     };
 
         lineRenderer.SetPositions(positions);
+
+        lineRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
+
         lineRenderer.enabled = true;
 
         float arrowAngle = Mathf.Atan2(clampedDirection.x, clampedDirection.z) * Mathf.Rad2Deg;

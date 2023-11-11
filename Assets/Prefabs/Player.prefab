@@ -5137,7 +5137,7 @@ TrailRenderer:
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.3
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -5251,7 +5251,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.5
+    widthMultiplier: 0.02
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -5299,9 +5299,9 @@ LineRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 1
-    alignment: 0
-    textureMode: 1
-    textureScale: {x: 0.3, y: 0.3}
+    alignment: 1
+    textureMode: 4
+    textureScale: {x: 0.4, y: 0.4}
     shadowBias: 0.5
     generateLightingData: 0
   m_MaskInteraction: 0

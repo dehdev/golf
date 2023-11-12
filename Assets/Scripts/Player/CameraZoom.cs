@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using UnityEngine;
 
 public class CameraZoom : MonoBehaviour
@@ -15,7 +16,7 @@ public class CameraZoom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        virtualCamera = Cinemachine.CinemachineVirtualCamera.FindObjectOfType<Cinemachine.CinemachineVirtualCamera>();
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.m_Lens.OrthographicSize = maxZoom;
         targetZoom = maxZoom;
     }
@@ -23,6 +24,10 @@ public class CameraZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying())
+        {
+            return;
+        }
         float zoomInput = Input.mouseScrollDelta.y; // Use y-axis for zoom input
         targetZoom -= zoomInput * zoomSpeed;
 

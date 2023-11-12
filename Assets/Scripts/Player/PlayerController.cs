@@ -109,18 +109,26 @@ public class PlayerController : NetworkBehaviour
             yield return new WaitForFixedUpdate();
             transform.position = spawnPoint;
             Debug.Log("Player pos set to: " + spawnPoint);
-            sphereCollider.enabled = true;
-            shootingPlane.SetActive(true);
+            if (isFirstSpawn)
+            {
+                sphereCollider.enabled = true;
+                shootingPlane.SetActive(true);
+            }
         }
         if (isFirstSpawn)
         {
-            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-            virtualCamera.Follow = transform;
-            GetComponent<MeshRenderer>().enabled = true;
-            trailRenderer.enabled = true;
-            meshRenderer.enabled = true;
-            isFirstSpawn = false;
+            InitializePlayerObjects();
         }
+    }
+
+    private void InitializePlayerObjects()
+    {
+        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = transform;
+        GetComponent<MeshRenderer>().enabled = true;
+        trailRenderer.enabled = true;
+        meshRenderer.enabled = true;
+        isFirstSpawn = false;
     }
 
     private void Update()
@@ -203,7 +211,8 @@ public class PlayerController : NetworkBehaviour
             arrow.SetActive(true);
             arrow.transform.LookAt(transform.position + Vector3.up);
             idleParticles.SetActive(false);
-            isAiming = true; ;
+            isAiming = true;
+            UnityEngine.Cursor.visible = false;
         }
     }
 
@@ -281,7 +290,6 @@ public class PlayerController : NetworkBehaviour
         float arrowAngle = Mathf.Atan2(clampedDirection.x, clampedDirection.z) * Mathf.Rad2Deg;
         Quaternion arrowRotation = Quaternion.Euler(0f, arrowAngle, 0f);
         arrow.transform.rotation = arrowRotation;
-
     }
 
     private void LerpStop()
@@ -298,6 +306,7 @@ public class PlayerController : NetworkBehaviour
 
     private Vector3? CastMouseClickRay()
     {
+        int mask = LayerMask.GetMask("Shooting Plane");
         Vector3 screenMousePosFar = new(
             Input.mousePosition.x,
             Input.mousePosition.y,
@@ -308,7 +317,7 @@ public class PlayerController : NetworkBehaviour
             Camera.main.nearClipPlane);
         Vector3 worldMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosFar);
         Vector3 worldMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
-        if (Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit, float.PositiveInfinity))
+        if (Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit, 1000, mask))
         {
             return hit.point;
         }

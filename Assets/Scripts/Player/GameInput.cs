@@ -24,6 +24,7 @@ public class GameInput : MonoBehaviour
 
         playerInputActions.Player.Pause.performed += Pause_performed;
         playerInputActions.Player.Resetplayerposition.performed += Resetplayerposition_performed;
+
         playerInputActions.WaitingForInput.Anykeypressed.performed += Anykeypressed_performed;
     }
 

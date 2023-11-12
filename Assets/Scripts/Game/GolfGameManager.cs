@@ -83,8 +83,17 @@ public class GolfGameManager : NetworkBehaviour
         {
             GameObject newPlayer = Instantiate(playerPrefab);
             newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            OnLocalPlayerSpawned?.Invoke(this, EventArgs.Empty);
+            StartCoroutine(WaitForSpawnPointManager(clientId));
         }
+    }
+
+    IEnumerator WaitForSpawnPointManager(ulong clientId)
+    {
+        while (!SpawnPointManager.Instance.IsInitialized)
+        {
+            yield return null;
+        }
+        OnLocalPlayerSpawned?.Invoke(clientId, EventArgs.Empty);
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)

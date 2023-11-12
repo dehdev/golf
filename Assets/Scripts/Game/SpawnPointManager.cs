@@ -11,6 +11,7 @@ public class SpawnPointManager : NetworkBehaviour
     private int spawnPointIndex;
 
     public static SpawnPointManager Instance { get; private set; }
+    public bool IsInitialized { get; private set; }
 
     private void Awake()
     {
@@ -27,13 +28,12 @@ public class SpawnPointManager : NetworkBehaviour
             return;
         }
         GolfGameManager.Instance.OnLocalPlayerSpawned += GolfGameManager_OnLocalPlayerSpawned;
+        IsInitialized = true;
     }
 
     private void GolfGameManager_OnLocalPlayerSpawned(object sender, EventArgs e)
     {
-        PlayerController playerController = sender as PlayerController;
-        ulong clientId = playerController.OwnerClientId;
-        Debug.Log("Player spawned: " + clientId);
+        ulong clientId = (ulong)sender;
         playerSpawnPointDictionary.Add(clientId, SpawnPoints[spawnPointIndex].transform.position);
         Debug.Log("Spawn point assigned to client: " + clientId + " at " + SpawnPoints[spawnPointIndex].name);
         SetSpawnPointForClientId(clientId);
@@ -44,7 +44,9 @@ public class SpawnPointManager : NetworkBehaviour
     {
         if (playerSpawnPointDictionary.ContainsKey(clientId))
         {
-            StartCoroutine(SpawnPlayer(clientId));
+            //StartCoroutine(SpawnPlayer(clientId));
+            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId]);
+
         }
         else
         {

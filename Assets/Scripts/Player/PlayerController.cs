@@ -112,14 +112,13 @@ public class PlayerController : NetworkBehaviour
             sphereCollider.enabled = true;
             shootingPlane.SetActive(true);
         }
-        GetComponent<MeshRenderer>().enabled = true;
-        trailRenderer.enabled = true;
-        meshRenderer.enabled = true;
-
         if (isFirstSpawn)
         {
             var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
             virtualCamera.Follow = transform;
+            GetComponent<MeshRenderer>().enabled = true;
+            trailRenderer.enabled = true;
+            meshRenderer.enabled = true;
             isFirstSpawn = false;
         }
     }

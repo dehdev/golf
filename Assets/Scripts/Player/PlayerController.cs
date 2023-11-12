@@ -37,6 +37,7 @@ public class PlayerController : NetworkBehaviour
     private bool isAiming;
     private bool readyToShoot;
     private bool hasChangedToIdle;
+    private bool isFirstSpawn = true;
 
     private Vector3 lastPos;
     private Vector3 spawnPos;
@@ -71,7 +72,6 @@ public class PlayerController : NetworkBehaviour
 
     private void Start()
     {
-        GetComponent<DebugScript>().enabled = IsOwner;
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
         if (!IsOwner)
         {
@@ -79,8 +79,6 @@ public class PlayerController : NetworkBehaviour
             shootingPlane.SetActive(false);
             return;
         }
-        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-        virtualCamera.Follow = transform;
     }
 
     private void GameInput_OnResetAction(object sender, EventArgs e)
@@ -117,6 +115,13 @@ public class PlayerController : NetworkBehaviour
         GetComponent<MeshRenderer>().enabled = true;
         trailRenderer.enabled = true;
         meshRenderer.enabled = true;
+
+        if (isFirstSpawn)
+        {
+            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            virtualCamera.Follow = transform;
+            isFirstSpawn = false;
+        }
     }
 
     private void Update()

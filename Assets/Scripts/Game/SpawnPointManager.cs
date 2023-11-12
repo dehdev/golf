@@ -8,6 +8,7 @@ public class SpawnPointManager : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> SpawnPoints;
     private Dictionary<ulong, Vector3> playerSpawnPointDictionary;
+    private int spawnPointIndex;
 
     public static SpawnPointManager Instance { get; private set; }
 
@@ -15,6 +16,8 @@ public class SpawnPointManager : NetworkBehaviour
     {
         Instance = this;
         playerSpawnPointDictionary = new Dictionary<ulong, Vector3>();
+        spawnPointIndex = SpawnPoints.Count;
+        spawnPointIndex--;
     }
 
     private void Start()
@@ -23,15 +26,18 @@ public class SpawnPointManager : NetworkBehaviour
         {
             return;
         }
+        GolfGameManager.Instance.OnLocalPlayerSpawned += GolfGameManager_OnLocalPlayerSpawned;
+    }
 
-        int clientsToAssign = 0;
-        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-        {
-            playerSpawnPointDictionary.Add(clientId, SpawnPoints[clientsToAssign].transform.position);
-            Debug.Log("Spawn point assigned to client: " + clientId + " at " + SpawnPoints[clientsToAssign].name);
-            SetSpawnPointForClientId(clientId);
-            clientsToAssign++;
-        }
+    private void GolfGameManager_OnLocalPlayerSpawned(object sender, EventArgs e)
+    {
+        PlayerController playerController = sender as PlayerController;
+        ulong clientId = playerController.OwnerClientId;
+        Debug.Log("Player spawned: " + clientId);
+        playerSpawnPointDictionary.Add(clientId, SpawnPoints[spawnPointIndex].transform.position);
+        Debug.Log("Spawn point assigned to client: " + clientId + " at " + SpawnPoints[spawnPointIndex].name);
+        SetSpawnPointForClientId(clientId);
+        spawnPointIndex--;
     }
 
     private void SetSpawnPointForClientId(ulong clientId)
@@ -61,7 +67,7 @@ public class SpawnPointManager : NetworkBehaviour
 
     IEnumerator SpawnPlayer(ulong clientId)
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(0.1f);
         NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId]);
     }
 }

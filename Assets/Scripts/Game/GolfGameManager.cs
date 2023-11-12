@@ -23,6 +23,7 @@ public class GolfGameManager : NetworkBehaviour
     public event EventHandler OnLocalPlayerReadyChanged;
     public event EventHandler OnMultiplayerGamePaused;
     public event EventHandler OnMultiplayerGameUnPaused;
+    public event EventHandler OnLocalPlayerSpawned;
 
     private int shots = 0;
 
@@ -82,6 +83,7 @@ public class GolfGameManager : NetworkBehaviour
         {
             GameObject newPlayer = Instantiate(playerPrefab);
             newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+            OnLocalPlayerSpawned?.Invoke(this, EventArgs.Empty);
         }
     }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
+using System.ComponentModel;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,7 +14,6 @@ public class GolfGameManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, bool> playerPausedDictionary;
-    private Dictionary<ulong, bool> playerFinishedDictionary;
     private Dictionary<ulong, int> playerShotsDictionary;
 
     public event EventHandler OnStateChanged;
@@ -24,8 +23,6 @@ public class GolfGameManager : NetworkBehaviour
     public event EventHandler OnMultiplayerGamePaused;
     public event EventHandler OnMultiplayerGameUnPaused;
     public event EventHandler OnLocalPlayerSpawned;
-
-    private int shots = 0;
 
     private enum State
     {
@@ -39,17 +36,18 @@ public class GolfGameManager : NetworkBehaviour
     private bool isLocalPlayerReady;
     private NetworkVariable<float> countdownToStartTimer = new(3f);
     private NetworkVariable<float> gamePlayingTimer = new(0f);
-    private float gameplayingTimerMax = 180f;
+    private float gameplayingTimerMax = 30f;
     private bool isLocalGamePaused = false;
     private bool autoTestGamePausedState = false;
     private NetworkVariable<bool> isGamePaused = new(false);
+
+    private bool didLocalPlayerFinish = false;
 
     private void Awake()
     {
         Instance = this;
         playerReadyDictionary = new Dictionary<ulong, bool>();
         playerPausedDictionary = new Dictionary<ulong, bool>();
-        playerFinishedDictionary = new Dictionary<ulong, bool>();
         playerShotsDictionary = new Dictionary<ulong, int>();
     }
 
@@ -57,7 +55,13 @@ public class GolfGameManager : NetworkBehaviour
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
-        PlayerController.OnBallHit += PlayerController_OnBallHit;
+        FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
+        FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
+    }
+
+    private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
+    {
+        didLocalPlayerFinish = true;
     }
 
     public override void OnNetworkSpawn()
@@ -71,6 +75,11 @@ public class GolfGameManager : NetworkBehaviour
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
         }
         base.OnNetworkSpawn();
+    }
+
+    private void FinishManager_OnMultiplayerGameFinished(object sender, EventArgs e)
+    {
+        state.Value = State.GameOver;
     }
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
@@ -94,6 +103,7 @@ public class GolfGameManager : NetworkBehaviour
             yield return null;
         }
         OnLocalPlayerSpawned?.Invoke(clientId, EventArgs.Empty);
+        playerShotsDictionary.Add(clientId, 0);
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)
@@ -150,14 +160,18 @@ public class GolfGameManager : NetworkBehaviour
         }
     }
 
-    private void PlayerController_OnBallHit(object sender, EventArgs e)
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerBallHitServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        shots++;
-    }
-
-    public int GetShots()
-    {
-        return shots;
+        if (!IsClient)
+        {
+            return;
+        }
+        ulong clientId = serverRpcParams.Receive.SenderClientId;
+        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
+        {
+            playerShotsDictionary[serverRpcParams.Receive.SenderClientId]++;
+        }
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
@@ -302,5 +316,10 @@ public class GolfGameManager : NetworkBehaviour
     public bool IsLocalPlayerPaused()
     {
         return isLocalGamePaused;
+    }
+
+    public bool DidLocalPlayerFinish()
+    {
+        return didLocalPlayerFinish;
     }
 }

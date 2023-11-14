@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class GameplayUI : MonoBehaviour
@@ -10,9 +12,14 @@ public class GameplayUI : MonoBehaviour
 
     private void Start()
     {
-        PlayerController.OnBallHit += PlayerController_OnBallHit;
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+        PlayerController.OnBallHit += PlayerController_OnBallHit;
         Hide();
+    }
+
+    private void PlayerController_OnBallHit(object sender, EventArgs e)
+    {
+        shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
     }
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
@@ -25,11 +32,6 @@ public class GameplayUI : MonoBehaviour
         {
             Hide();
         }
-    }
-
-    private void PlayerController_OnBallHit(object sender, EventArgs e)
-    {
-        shotsText.text = GolfGameManager.Instance.GetShots().ToString();
     }
 
     private void Hide()

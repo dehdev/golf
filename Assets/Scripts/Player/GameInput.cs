@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class GameInput : MonoBehaviour
 {
     private PlayerInputActions playerInputActions;
-        
+
     public static GameInput Instance { get; private set; }
 
     public event EventHandler OnPauseAction;
@@ -48,7 +48,7 @@ public class GameInput : MonoBehaviour
 
     private void Resetplayerposition_performed(InputAction.CallbackContext context)
     {
-        if(GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying())
+        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.DidLocalPlayerFinish())
         {
             return;
         }

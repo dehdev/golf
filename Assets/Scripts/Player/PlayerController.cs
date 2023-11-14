@@ -17,6 +17,7 @@ public class PlayerController : NetworkBehaviour
     private Rigidbody rb;
     private SphereCollider sphereCollider;
     private MeshRenderer meshRenderer;
+    [SerializeField] private GameObject areaOfEffect;
 
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
@@ -38,6 +39,8 @@ public class PlayerController : NetworkBehaviour
     private bool hasChangedToIdle;
     private bool isFirstSpawn = true;
 
+    private int localPlayerShots = 0;
+
     private Vector3 lastPos;
     private Vector3 spawnPos;
 
@@ -57,6 +60,7 @@ public class PlayerController : NetworkBehaviour
         trailRenderer.enabled = false;
         meshRenderer.enabled = false;
         sphereCollider.enabled = false;
+        areaOfEffect.SetActive(false);
     }
 
     public override void OnNetworkSpawn()
@@ -74,6 +78,7 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner)
         {
             sphereCollider.enabled = false;
+            areaOfEffect.SetActive(false);
             return;
         }
     }
@@ -109,6 +114,7 @@ public class PlayerController : NetworkBehaviour
             if (isFirstSpawn)
             {
                 sphereCollider.enabled = true;
+                areaOfEffect.SetActive(true);
             }
         }
         if (isFirstSpawn)
@@ -180,6 +186,10 @@ public class PlayerController : NetworkBehaviour
 
     private void OnMouseDown()
     {
+        if (!IsOwner || GolfGameManager.Instance.DidLocalPlayerFinish())
+        {
+            return;
+        }
         PreProcessAim();
     }
 
@@ -207,7 +217,7 @@ public class PlayerController : NetworkBehaviour
             arrow.transform.LookAt(transform.position + Vector3.up);
             idleParticles.SetActive(false);
             isAiming = true;
-            UnityEngine.Cursor.visible = false;
+            Cursor.visible = false;
         }
     }
 
@@ -231,7 +241,7 @@ public class PlayerController : NetworkBehaviour
             arrow.SetActive(false);
             readyToShoot = false;
             hasChangedToIdle = false;
-            UnityEngine.Cursor.visible = true;
+            Cursor.visible = true;
             Shoot(worldPoint.Value);
             isAiming = false;
         }
@@ -239,7 +249,10 @@ public class PlayerController : NetworkBehaviour
 
     private void Shoot(Vector3 worldPoint)
     {
+        GolfGameManager.Instance.SetPlayerBallHitServerRpc();
+        localPlayerShots++;
         OnBallHit?.Invoke(this, EventArgs.Empty);
+
         lastPos = transform.position;
 
         lineRenderer.enabled = false;
@@ -303,13 +316,17 @@ public class PlayerController : NetworkBehaviour
     {
         Plane plane = new Plane(Vector3.up, transform.position);
 
-        float enter = 0.0f;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(plane.Raycast(ray, out enter))
+        if (plane.Raycast(ray, out float enter))
         {
             Vector3 hitPoint = ray.GetPoint(enter);
             return hitPoint;
         }
         return null;
+    }
+
+    public int GetLocalPlayerShots()
+    {
+        return localPlayerShots;
     }
 }

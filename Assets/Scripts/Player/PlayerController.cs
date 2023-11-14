@@ -29,7 +29,6 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private TrailRenderer trailRenderer;
-    [SerializeField] private GameObject shootingPlane;
     [SerializeField] private GameObject idleParticles;
     [SerializeField] private GameObject arrow;
 
@@ -58,7 +57,6 @@ public class PlayerController : NetworkBehaviour
         trailRenderer.enabled = false;
         meshRenderer.enabled = false;
         sphereCollider.enabled = false;
-        shootingPlane.SetActive(false);
     }
 
     public override void OnNetworkSpawn()
@@ -76,7 +74,6 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner)
         {
             sphereCollider.enabled = false;
-            shootingPlane.SetActive(false);
             return;
         }
     }
@@ -112,7 +109,6 @@ public class PlayerController : NetworkBehaviour
             if (isFirstSpawn)
             {
                 sphereCollider.enabled = true;
-                shootingPlane.SetActive(true);
             }
         }
         if (isFirstSpawn)
@@ -157,7 +153,6 @@ public class PlayerController : NetworkBehaviour
         }
 
         trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
-        shootingPlane.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     private void FixedUpdate()
@@ -306,24 +301,15 @@ public class PlayerController : NetworkBehaviour
 
     private Vector3? CastMouseClickRay()
     {
-        int mask = LayerMask.GetMask("Shooting Plane");
-        Vector3 screenMousePosFar = new(
-            Input.mousePosition.x,
-            Input.mousePosition.y,
-            Camera.main.farClipPlane);
-        Vector3 screenMousePosNear = new(
-            Input.mousePosition.x,
-            Input.mousePosition.y,
-            Camera.main.nearClipPlane);
-        Vector3 worldMousePosFar = Camera.main.ScreenToWorldPoint(screenMousePosFar);
-        Vector3 worldMousePosNear = Camera.main.ScreenToWorldPoint(screenMousePosNear);
-        if (Physics.Raycast(worldMousePosNear, worldMousePosFar - worldMousePosNear, out RaycastHit hit, 1000, mask))
+        Plane plane = new Plane(Vector3.up, transform.position);
+
+        float enter = 0.0f;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if(plane.Raycast(ray, out enter))
         {
-            return hit.point;
+            Vector3 hitPoint = ray.GetPoint(enter);
+            return hitPoint;
         }
-        else
-        {
-            return null;
-        }
+        return null;
     }
 }

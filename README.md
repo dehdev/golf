@@ -1,7 +1,6 @@
 # TO DO
 
 buton pentru anulat aim<br>
-marit gravitatia?<br>
 de terminat multiplayerul<br>
 ui pentru putere lovire <br>
 <br>

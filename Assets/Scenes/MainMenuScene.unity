@@ -251,6 +251,8 @@ MonoBehaviour:
   playButton: {fileID: 1030107242}
   quitButton: {fileID: 1476811986}
   optionsButton: {fileID: 0}
+  titleText: {fileID: 1401723545}
+  titleTextBackground: {fileID: 899668096}
 --- !u!1 &885496214
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,9 +758,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73ce51887cacc104d9dbccb8dcc94a8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  degreesPerSecond: 15
-  amplitude: 0.5
-  frequency: 1
+  degreesPerSecond: 1.5
+  amplitude: 0.02
+  frequency: 0.15
 --- !u!1 &1380239828
 GameObject:
   m_ObjectHideFlags: 0

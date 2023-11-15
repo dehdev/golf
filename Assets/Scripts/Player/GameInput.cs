@@ -48,7 +48,7 @@ public class GameInput : MonoBehaviour
 
     private void Resetplayerposition_performed(InputAction.CallbackContext context)
     {
-        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.DidLocalPlayerFinish())
+        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.IsLocalPlayerFinished())
         {
             return;
         }
@@ -57,6 +57,10 @@ public class GameInput : MonoBehaviour
 
     private void Pause_performed(InputAction.CallbackContext context)
     {
+        if (GolfGameManager.Instance.IsLocalPlayerFinished())
+        {
+            return;
+        }
         OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
 }

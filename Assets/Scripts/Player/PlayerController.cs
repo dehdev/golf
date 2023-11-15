@@ -16,7 +16,7 @@ public class PlayerController : NetworkBehaviour
 
     private Rigidbody rb;
     private SphereCollider sphereCollider;
-    private MeshRenderer meshRenderer;
+    [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject areaOfEffect;
 
     public static event EventHandler OnBallHit;
@@ -32,6 +32,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private GameObject idleParticles;
     [SerializeField] private GameObject arrow;
+    [SerializeField] private PlayerVisual playerVisual;
 
     private bool isIdle;
     private bool isAiming;
@@ -47,7 +48,6 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        meshRenderer = GetComponent<MeshRenderer>();
         sphereCollider = GetComponent<SphereCollider>();
 
         readyToShoot = false;
@@ -75,6 +75,8 @@ public class PlayerController : NetworkBehaviour
     private void Start()
     {
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
+        PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+        playerVisual.SetPlayerColor(GolfGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
         if (!IsOwner)
         {
             sphereCollider.enabled = false;
@@ -127,7 +129,6 @@ public class PlayerController : NetworkBehaviour
     {
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.Follow = transform;
-        GetComponent<MeshRenderer>().enabled = true;
         trailRenderer.enabled = true;
         meshRenderer.enabled = true;
         isFirstSpawn = false;
@@ -186,7 +187,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnMouseDown()
     {
-        if (!IsOwner || GolfGameManager.Instance.DidLocalPlayerFinish())
+        if (!IsOwner || GolfGameManager.Instance.IsLocalPlayerFinished())
         {
             return;
         }

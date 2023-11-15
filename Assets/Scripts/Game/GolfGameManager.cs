@@ -318,7 +318,7 @@ public class GolfGameManager : NetworkBehaviour
         return isLocalGamePaused;
     }
 
-    public bool DidLocalPlayerFinish()
+    public bool IsLocalPlayerFinished()
     {
         return didLocalPlayerFinish;
     }

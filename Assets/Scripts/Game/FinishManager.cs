@@ -28,7 +28,6 @@ public class FinishManager : NetworkBehaviour
         {
             playerFinishedDictionary.Add(clientId, false);
         }
-        Debug.Log(playerFinishedDictionary.Count);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -44,9 +44,7 @@ public class SpawnPointManager : NetworkBehaviour
     {
         if (playerSpawnPointDictionary.ContainsKey(clientId))
         {
-            //StartCoroutine(SpawnPlayer(clientId));
             NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId]);
-
         }
         else
         {
@@ -65,11 +63,5 @@ public class SpawnPointManager : NetworkBehaviour
             Debug.LogError("No spawn point found for client: " + clientId);
             return Vector3.zero;
         }
-    }
-
-    IEnumerator SpawnPlayer(ulong clientId)
-    {
-        yield return new WaitForSeconds(0.1f);
-        NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId]);
     }
 }

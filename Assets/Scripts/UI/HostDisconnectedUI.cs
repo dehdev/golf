@@ -9,14 +9,18 @@ public class HostDisconnectedUI : MonoBehaviour
 {
     [SerializeField] private Button mainMenuButton;
 
-    private void Start()
+    private void Awake()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         mainMenuButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
+    }
+
+    private void Start()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         Hide();
     }
 

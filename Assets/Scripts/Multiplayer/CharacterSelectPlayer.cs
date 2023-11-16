@@ -2,26 +2,40 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterSelectPlayer : MonoBehaviour
 {
     [SerializeField] private int playerIndex;
     [SerializeField] GameObject readyText;
     [SerializeField] PlayerVisual playerVisual;
+    [SerializeField] private Button kickButton;
+
+    private void Awake()
+    {
+        kickButton.onClick.AddListener(() =>
+        {
+            PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
+            GolfGameMultiplayer.Instance.KickPlayer(playerData.clientId);
+        });
+    }
+
     private void Start()
     {
-        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged += Instance_OnPlayerDataNetworkListChanged;
-        CharacterSelectReady.Instance.OnReadyStatusChanged += Instance_OnReadyStatusChanged;
+        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged += GolfGameMultiplayer_OnPlayerDataNetworkListChanged;
+        CharacterSelectReady.Instance.OnReadyStatusChanged += CharacterSelectReady_OnReadyStatusChanged;
+        kickButton.gameObject.SetActive(NetworkManager.Singleton.IsServer && playerIndex != 0);
         UpdatePlayer();
     }
 
-    private void Instance_OnReadyStatusChanged(object sender, EventArgs e)
+    private void CharacterSelectReady_OnReadyStatusChanged(object sender, EventArgs e)
     {
         UpdatePlayer();
     }
 
-    private void Instance_OnPlayerDataNetworkListChanged(object sender, EventArgs e)
+    private void GolfGameMultiplayer_OnPlayerDataNetworkListChanged(object sender, EventArgs e)
     {
         UpdatePlayer();
     }
@@ -48,5 +62,10 @@ public class CharacterSelectPlayer : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= GolfGameMultiplayer_OnPlayerDataNetworkListChanged;
     }
 }

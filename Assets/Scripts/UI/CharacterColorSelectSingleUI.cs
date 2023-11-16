@@ -40,4 +40,9 @@ public class CharacterColorSelectSingleUI : MonoBehaviour
             selectedImage.SetActive(false);
         }
     }
+
+    private void OnDestroy()
+    {
+        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= Instance_OnPlayerDataNetworkListChanged;
+    }
 }

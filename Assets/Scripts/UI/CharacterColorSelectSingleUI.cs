@@ -20,12 +20,12 @@ public class CharacterColorSelectSingleUI : MonoBehaviour
 
     private void Start()
     {
-        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged += Instance_OnPlayerDataNetworkListChanged;
+        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged += GolfGameMultiplayer_OnPlayerDataNetworkListChanged;
         image.color = GolfGameMultiplayer.Instance.GetPlayerColor(colorId);
         UpdateIsSelected();
     }
 
-    private void Instance_OnPlayerDataNetworkListChanged(object sender, EventArgs e)
+    private void GolfGameMultiplayer_OnPlayerDataNetworkListChanged(object sender, EventArgs e)
     {
         UpdateIsSelected();
     }
@@ -43,6 +43,6 @@ public class CharacterColorSelectSingleUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= Instance_OnPlayerDataNetworkListChanged;
+        GolfGameMultiplayer.Instance.OnPlayerDataNetworkListChanged -= GolfGameMultiplayer_OnPlayerDataNetworkListChanged;
     }
 }

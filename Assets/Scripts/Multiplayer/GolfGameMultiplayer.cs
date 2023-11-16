@@ -45,9 +45,14 @@ public class GolfGameMultiplayer : NetworkBehaviour
     {
         for (int i = 0; i < playerDataNetworkList.Count; i++)
         {
+            if (NetworkManager.Singleton.ShutdownInProgress)
+            {
+                return;
+            }
             PlayerData playerData = playerDataNetworkList[i];
             if (playerData.clientId == clientId)
             {
+                // Disconnected!
                 playerDataNetworkList.RemoveAt(i);
             }
         }
@@ -55,7 +60,7 @@ public class GolfGameMultiplayer : NetworkBehaviour
 
     private void NetworkManager_OnClientConnectedCallback(ulong clientId)
     {
-        playerDataNetworkList.Add(new PlayerData()
+        playerDataNetworkList.Add(new PlayerData
         {
             clientId = clientId,
             colorId = 0,
@@ -70,7 +75,7 @@ public class GolfGameMultiplayer : NetworkBehaviour
             response.Reason = "GAME HAS ALREADY STARTED";
             return;
         }
-        if (NetworkManager.Singleton.ConnectedClientsList.Count >= MAX_PLAYER_AMOUNT)
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT)
         {
             response.Approved = false;
             response.Reason = "GAME IS FULL";
@@ -88,11 +93,7 @@ public class GolfGameMultiplayer : NetworkBehaviour
 
     private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId)
     {
-        if (SceneManager.GetActiveScene().name != Loader.Scene.LobbyScene.ToString())
-        {
-            return;
-        }
-        OnFailedToJoinGame.Invoke(this, EventArgs.Empty);
+        OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
 
     public bool IsPlayerIndexConnected(int playerIndex)

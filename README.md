@@ -3,7 +3,6 @@
 buton pentru anulat aim<br>
 de terminat multiplayerul<br>
 ui pentru putere lovire <br>
-magnus effect<br>
 <br>
 coliziuni intre mingi cu movement???<br>
 obstacole<br>

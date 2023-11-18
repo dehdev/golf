@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class GolfGameMultiplayer : NetworkBehaviour
 {
-    private const int MAX_PLAYER_AMOUNT = 4;
+    public const int MAX_PLAYER_AMOUNT = 4;
 
     public static GolfGameMultiplayer Instance { get; private set; }
 

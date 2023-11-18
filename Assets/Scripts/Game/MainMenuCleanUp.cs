@@ -15,5 +15,9 @@ public class MainMenuCleanUp : MonoBehaviour
         {
             Destroy(GolfGameMultiplayer.Instance.gameObject);
         }
+        if (GolfGameLobby.Instance != null)
+        {
+            Destroy(GolfGameLobby.Instance.gameObject);
+        }
     }
 }

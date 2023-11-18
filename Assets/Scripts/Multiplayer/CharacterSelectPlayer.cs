@@ -12,12 +12,14 @@ public class CharacterSelectPlayer : MonoBehaviour
     [SerializeField] GameObject readyText;
     [SerializeField] PlayerVisual playerVisual;
     [SerializeField] private Button kickButton;
+    [SerializeField] private TextMeshProUGUI playerNameText;
 
     private void Awake()
     {
         kickButton.onClick.AddListener(() =>
         {
             PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
+            GolfGameLobby.Instance.KickPlayer(playerData.playerId.ToString());
             GolfGameMultiplayer.Instance.KickPlayer(playerData.clientId);
         });
     }
@@ -48,6 +50,7 @@ public class CharacterSelectPlayer : MonoBehaviour
             PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
             readyText.SetActive(CharacterSelectReady.Instance.isPlayerReady(playerData.clientId));
             playerVisual.SetPlayerColor(GolfGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+            playerNameText.text = playerData.playerName.ToString();
         }
         else
         {

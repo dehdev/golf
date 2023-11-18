@@ -43,6 +43,7 @@ public class CharacterSelectReady : NetworkBehaviour
 
         if (allClientsReady)
         {
+            GolfGameLobby.Instance.DeleteLobby();
             Loader.LoadNetwork(Loader.Scene.Tutorial);
         }
     }

@@ -82,8 +82,15 @@ public class PlayerController : NetworkBehaviour
         {
             sphereCollider.enabled = false;
             areaOfEffect.SetActive(false);
-            return;
         }
+        if (IsOwner)
+        {
+            sphereCollider.enabled = true;
+            areaOfEffect.SetActive(true);
+            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            virtualCamera.Follow = transform;
+        }
+        InitializePlayerObjects();
     }
 
     private void GameInput_OnCancelShoot(object sender, EventArgs e)
@@ -115,10 +122,13 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SetPlayerPositionClientRpc(Vector3 spawnPoint)
+    public void SetPlayerPositionClientRpc(Vector3 spawnPoint, ulong clientId)
     {
-        StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPoint));
-        spawnPos = spawnPoint;
+        if (clientId == OwnerClientId)
+        {
+            StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPoint));
+            spawnPos = spawnPoint;
+        }
     }
 
     IEnumerator SetPlayerSpawnPositionCoroutine(Vector3 spawnPoint)
@@ -337,7 +347,7 @@ public class PlayerController : NetworkBehaviour
 
     private Vector3? CastMouseClickRay()
     {
-        Plane plane = new Plane(Vector3.up, transform.position);
+        Plane plane = new(Vector3.up, transform.position);
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (plane.Raycast(ray, out float enter))

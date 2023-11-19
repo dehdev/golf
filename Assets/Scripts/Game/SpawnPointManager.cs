@@ -44,7 +44,7 @@ public class SpawnPointManager : NetworkBehaviour
     {
         if (playerSpawnPointDictionary.ContainsKey(clientId))
         {
-            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId]);
+            NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>().SetPlayerPositionClientRpc(playerSpawnPointDictionary[clientId], clientId);
         }
         else
         {

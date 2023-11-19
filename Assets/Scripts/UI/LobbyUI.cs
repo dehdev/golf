@@ -57,6 +57,11 @@ public class LobbyUI : MonoBehaviour
         UpdateLobbyList(e.lobbyList);
     }
 
+    private void OnDestroy()
+    {
+        GolfGameLobby.Instance.OnLobbyListChanged -= GolfGameLobby_OnLobbyListChanged;
+    }
+
     private void UpdateLobbyList(List<Lobby> lobbyList)
     {
         foreach (Transform child in lobbyContainer)

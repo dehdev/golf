@@ -133,6 +133,11 @@ public class GolfGameLobby : MonoBehaviour
         }
     }
 
+    private void AllocateRelay()
+    {
+        
+    }
+
     public async void CreateLobby(string lobbyName, bool isPrivate)
     {
         OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);

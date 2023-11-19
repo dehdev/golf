@@ -75,6 +75,7 @@ public class PlayerController : NetworkBehaviour
     private void Start()
     {
         GameInput.Instance.OnResetAction += GameInput_OnResetAction;
+        GameInput.Instance.OnCancelShoot += GameInput_OnCancelShoot;
         PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
         playerVisual.SetPlayerColor(GolfGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
         if (!IsOwner)
@@ -83,6 +84,11 @@ public class PlayerController : NetworkBehaviour
             areaOfEffect.SetActive(false);
             return;
         }
+    }
+
+    private void GameInput_OnCancelShoot(object sender, EventArgs e)
+    {
+        CancelShoot();
     }
 
     private void GameInput_OnResetAction(object sender, EventArgs e)
@@ -96,9 +102,16 @@ public class PlayerController : NetworkBehaviour
         CancelShoot();
     }
 
-    private void CancelShoot()
+    public void CancelShoot()
     {
         Cursor.visible = true;
+        arrow.SetActive(false);
+        isAiming = false;
+        lineRenderer.enabled = false;
+        if (isIdle)
+        {
+            idleParticles.SetActive(true);
+        }
     }
 
     [ClientRpc]
@@ -184,18 +197,22 @@ public class PlayerController : NetworkBehaviour
 
     private void OnMouseUp()
     {
-        if (isIdle)
+        Debug.Log("OnMouseUp");
+        if (isIdle && Time.timeScale == 1)
         {
             readyToShoot = true;
+            Debug.Log("Ready to shoot");
         }
     }
 
     private void OnMouseDown()
     {
+        Debug.Log("OnMouseDown");
         if (!IsOwner || GolfGameManager.Instance.IsLocalPlayerFinished())
         {
             return;
         }
+        readyToShoot = false;
         PreProcessAim();
     }
 

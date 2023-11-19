@@ -44,6 +44,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CancelShoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""7025d8d3-4390-4d3f-a0e5-5b5119dbba5a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -66,6 +75,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""774604dc-75c1-4a7b-8b10-833cb445e3c3"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CancelShoot"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -106,6 +126,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Resetplayerposition = m_Player.FindAction("Reset player position", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_CancelShoot = m_Player.FindAction("CancelShoot", throwIfNotFound: true);
         // WaitingForInput
         m_WaitingForInput = asset.FindActionMap("WaitingForInput", throwIfNotFound: true);
         m_WaitingForInput_Anykeypressed = m_WaitingForInput.FindAction("Any key pressed", throwIfNotFound: true);
@@ -172,12 +193,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Resetplayerposition;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_CancelShoot;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Resetplayerposition => m_Wrapper.m_Player_Resetplayerposition;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @CancelShoot => m_Wrapper.m_Player_CancelShoot;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -193,6 +216,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started += instance.OnPause;
             @Pause.performed += instance.OnPause;
             @Pause.canceled += instance.OnPause;
+            @CancelShoot.started += instance.OnCancelShoot;
+            @CancelShoot.performed += instance.OnCancelShoot;
+            @CancelShoot.canceled += instance.OnCancelShoot;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -203,6 +229,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Pause.started -= instance.OnPause;
             @Pause.performed -= instance.OnPause;
             @Pause.canceled -= instance.OnPause;
+            @CancelShoot.started -= instance.OnCancelShoot;
+            @CancelShoot.performed -= instance.OnCancelShoot;
+            @CancelShoot.canceled -= instance.OnCancelShoot;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -270,6 +299,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         void OnResetplayerposition(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnCancelShoot(InputAction.CallbackContext context);
     }
     public interface IWaitingForInputActions
     {

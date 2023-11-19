@@ -271,6 +271,7 @@ public class GolfGameManager : NetworkBehaviour
         isLocalGamePaused = !isLocalGamePaused;
         if (isLocalGamePaused)
         {
+            PlayerController.LocalInstance.CancelShoot();
             PauseGameServerRpc();
             OnLocalGamePaused?.Invoke(this, EventArgs.Empty);
         }

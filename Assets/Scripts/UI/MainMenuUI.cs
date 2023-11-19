@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
+    public static MainMenuUI Instance { get; private set; }
+
     [SerializeField] private Button singlePlayerButton;
     [SerializeField] private Button multiPlayerButton;
     [SerializeField] private Button quitButton;
@@ -18,6 +20,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         singlePlayerButton.onClick.AddListener(() =>
         {
             GolfGameMultiplayer.playMultiplayer = false;
@@ -32,7 +35,22 @@ public class MainMenuUI : MonoBehaviour
         {
             Application.Quit();
         });
+        optionsButton.onClick.AddListener(() =>
+        {
+            MaineMenuOptionsUI.Instance.Show();
+            Hide();
+        });
         Time.timeScale = 1;
         Cursor.visible = true;
+    }
+
+    private void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        gameObject.SetActive(true);
     }
 }

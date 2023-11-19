@@ -1,6 +1,8 @@
 # TO DO
 
 ui pentru putere lovire <br>
+modificat cum abordez spawnpointurile<br>
+adaugat selectie nivel<br>
 <br>
 coliziuni intre mingi cu movement???<br>
 obstacole<br>

@@ -1,6 +1,5 @@
 # TO DO
 
-functia pentru anulat aim<br>
 ui pentru putere lovire <br>
 <br>
 coliziuni intre mingi cu movement???<br>

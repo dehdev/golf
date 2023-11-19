@@ -1,7 +1,6 @@
 # TO DO
 
-buton pentru anulat aim<br>
-de terminat multiplayerul<br>
+functia pentru anulat aim<br>
 ui pentru putere lovire <br>
 <br>
 coliziuni intre mingi cu movement???<br>
@@ -17,3 +16,4 @@ copaci, iarba, constructii pe langa, etc<br>
 # BUGS
 
 sunetele se aud ciudat uneori din cauza vitezei (schimba doppler effect pe audio listener)<br>
+bug cand dai moseup pe jucator<br>

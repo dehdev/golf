@@ -9,7 +9,8 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] private Button playButton;
+    [SerializeField] private Button singlePlayerButton;
+    [SerializeField] private Button multiPlayerButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button optionsButton;
     [SerializeField] private TextMeshProUGUI titleText;
@@ -17,8 +18,14 @@ public class MainMenuUI : MonoBehaviour
 
     private void Awake()
     {
-        playButton.onClick.AddListener(() =>
+        singlePlayerButton.onClick.AddListener(() =>
         {
+            GolfGameMultiplayer.playMultiplayer = false;
+            Loader.Load(Loader.Scene.LobbyScene);
+        });
+        multiPlayerButton.onClick.AddListener(() =>
+        {
+            GolfGameMultiplayer.playMultiplayer = true;
             Loader.Load(Loader.Scene.LobbyScene);
         });
         quitButton.onClick.AddListener(() =>
@@ -26,5 +33,6 @@ public class MainMenuUI : MonoBehaviour
             Application.Quit();
         });
         Time.timeScale = 1;
+        Cursor.visible = true;
     }
 }

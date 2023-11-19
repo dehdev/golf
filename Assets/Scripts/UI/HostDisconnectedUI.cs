@@ -13,7 +13,6 @@ public class HostDisconnectedUI : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
     }
@@ -40,10 +39,5 @@ public class HostDisconnectedUI : MonoBehaviour
     private void Show()
     {
         gameObject.SetActive(true);
-    }
-
-    private void OnDestroy()
-    {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnectCallback;
     }
 }

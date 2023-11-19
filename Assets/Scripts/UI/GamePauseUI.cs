@@ -53,6 +53,7 @@ public class GamePauseUI : MonoBehaviour
     private void GolfGameManager_OnLocalGamePaused(object sender, EventArgs e)
     {
         Show();
+        Cursor.visible = true;
     }
 
     public void Hide()

@@ -93,16 +93,19 @@ public class PlayerController : NetworkBehaviour
         }
         StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPos));
         InstantStop();
+        CancelShoot();
+    }
+
+    private void CancelShoot()
+    {
+        Cursor.visible = true;
     }
 
     [ClientRpc]
     public void SetPlayerPositionClientRpc(Vector3 spawnPoint)
     {
         StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPoint));
-        if (IsOwner)
-        {
-            spawnPos = spawnPoint;
-        }
+        spawnPos = spawnPoint;
     }
 
     IEnumerator SetPlayerSpawnPositionCoroutine(Vector3 spawnPoint)
@@ -117,18 +120,20 @@ public class PlayerController : NetworkBehaviour
             {
                 sphereCollider.enabled = true;
                 areaOfEffect.SetActive(true);
+                var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+                virtualCamera.Follow = transform;
             }
         }
+
         if (isFirstSpawn)
         {
             InitializePlayerObjects();
         }
+
     }
 
     private void InitializePlayerObjects()
     {
-        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-        virtualCamera.Follow = transform;
         trailRenderer.enabled = true;
         meshRenderer.enabled = true;
         isFirstSpawn = false;

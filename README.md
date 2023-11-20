@@ -17,4 +17,3 @@ copaci, iarba, constructii pe langa, etc<br>
 # BUGS
 
 sunetele se aud ciudat uneori din cauza vitezei (schimba doppler effect pe audio listener)<br>
-bug cand dai moseup pe jucator<br>

@@ -36,7 +36,7 @@ public class GolfGameManager : NetworkBehaviour
     private bool isLocalPlayerReady;
     private NetworkVariable<float> countdownToStartTimer = new(3f);
     private NetworkVariable<float> gamePlayingTimer = new(0f);
-    private float gameplayingTimerMax = 30f;
+    private float gameplayingTimerMax = 120f;
     private bool isLocalGamePaused = false;
     private bool autoTestGamePausedState = false;
     private NetworkVariable<bool> isGamePaused = new(false);

@@ -205,6 +205,7 @@ public class GolfGameManager : NetworkBehaviour
                 }
                 break;
             case State.GameOver:
+                PlayerController.LocalInstance.CancelShoot();
                 break;
         }
     }

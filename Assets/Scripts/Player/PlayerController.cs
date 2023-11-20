@@ -207,17 +207,14 @@ public class PlayerController : NetworkBehaviour
 
     private void OnMouseUp()
     {
-        Debug.Log("OnMouseUp");
         if (isIdle && Time.timeScale == 1)
         {
             readyToShoot = true;
-            Debug.Log("Ready to shoot");
         }
     }
 
     private void OnMouseDown()
     {
-        Debug.Log("OnMouseDown");
         if (!IsOwner || GolfGameManager.Instance.IsLocalPlayerFinished())
         {
             return;

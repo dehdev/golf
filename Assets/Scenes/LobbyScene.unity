@@ -5423,7 +5423,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4795706b1f99e5c42b4fb17421907d59, type: 2}
+  - {fileID: 2100000, guid: ffa9f731b331c2e40a2d09ecab6118c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5883,7 +5883,7 @@ PrefabInstance:
     - target: {fileID: -5288732233295040138, guid: a06bdeac471a33f49bf6d50837d20bdf, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: b0a1026565393f44e9795cc1d82d5232, type: 2}
+      objectReference: {fileID: 2100000, guid: e36588a55a89bc640b105558d998199b, type: 2}
     - target: {fileID: 919132149155446097, guid: a06bdeac471a33f49bf6d50837d20bdf, type: 3}
       propertyPath: m_Name
       value: pedestal

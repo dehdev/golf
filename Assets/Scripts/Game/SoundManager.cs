@@ -8,7 +8,7 @@ public class SoundManager : MonoBehaviour
     private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
     public static SoundManager Instance { get; private set; }
 
-    [SerializeField] private AudioClip idleSound, ballHit, collisionSound, countdownSound;
+    [SerializeField] private AudioClip idleSound, ballHit, collisionSound, countdownSound, finishSound;
     private float volume = 1f;
 
     private void Awake()
@@ -23,6 +23,14 @@ public class SoundManager : MonoBehaviour
         PlayerController.OnIdleEvent += PlayerController_OnIdleEvent;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
         PlayerController.OnCollisionHit += PlayerController_OnCollisionHit;
+
+        //FinishManager.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
+    }
+
+    private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
+    {
+        FinishManager finishManager = sender as FinishManager;
+        PlaySound(finishSound, finishManager.transform.position);
     }
 
     private void PlayerController_OnBallHit(object sender, EventArgs e)

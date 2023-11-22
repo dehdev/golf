@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ActivateCameraRotate",
+                    "type": "Button",
+                    "id": "bfc3dc63-d0bd-4ac9-b9b0-beadb07c7c66",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold(duration=0.2)",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -64,6 +73,56 @@
                     "processors": "",
                     "groups": "",
                     "action": "CancelShoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0a830149-afb9-4c28-92dd-d74e3169ec8f",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CancelShoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ef177d5-e9ea-40bf-b80d-b2aa64df0ba6",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActivateCameraRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "RotateCamera",
+            "id": "d1fd7397-f79a-47fc-97e4-f499727b3eeb",
+            "actions": [
+                {
+                    "name": "RotatingCamera",
+                    "type": "Value",
+                    "id": "5ccdab85-c42c-413e-87e1-2bd07078c8b2",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0206800f-06d8-48c6-9d3b-56f2f32c57a7",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotatingCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

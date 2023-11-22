@@ -53,6 +53,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ActivateCameraRotate"",
+                    ""type"": ""Button"",
+                    ""id"": ""bfc3dc63-d0bd-4ac9-b9b0-beadb07c7c66"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold(duration=0.2)"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -86,6 +95,56 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""CancelShoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0a830149-afb9-4c28-92dd-d74e3169ec8f"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CancelShoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ef177d5-e9ea-40bf-b80d-b2aa64df0ba6"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActivateCameraRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""RotateCamera"",
+            ""id"": ""d1fd7397-f79a-47fc-97e4-f499727b3eeb"",
+            ""actions"": [
+                {
+                    ""name"": ""RotatingCamera"",
+                    ""type"": ""Value"",
+                    ""id"": ""5ccdab85-c42c-413e-87e1-2bd07078c8b2"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""0206800f-06d8-48c6-9d3b-56f2f32c57a7"",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotatingCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -127,6 +186,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Resetplayerposition = m_Player.FindAction("Reset player position", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_CancelShoot = m_Player.FindAction("CancelShoot", throwIfNotFound: true);
+        m_Player_ActivateCameraRotate = m_Player.FindAction("ActivateCameraRotate", throwIfNotFound: true);
+        // RotateCamera
+        m_RotateCamera = asset.FindActionMap("RotateCamera", throwIfNotFound: true);
+        m_RotateCamera_RotatingCamera = m_RotateCamera.FindAction("RotatingCamera", throwIfNotFound: true);
         // WaitingForInput
         m_WaitingForInput = asset.FindActionMap("WaitingForInput", throwIfNotFound: true);
         m_WaitingForInput_Anykeypressed = m_WaitingForInput.FindAction("Any key pressed", throwIfNotFound: true);
@@ -194,6 +257,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Resetplayerposition;
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_CancelShoot;
+    private readonly InputAction m_Player_ActivateCameraRotate;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -201,6 +265,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Resetplayerposition => m_Wrapper.m_Player_Resetplayerposition;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @CancelShoot => m_Wrapper.m_Player_CancelShoot;
+        public InputAction @ActivateCameraRotate => m_Wrapper.m_Player_ActivateCameraRotate;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -219,6 +284,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CancelShoot.started += instance.OnCancelShoot;
             @CancelShoot.performed += instance.OnCancelShoot;
             @CancelShoot.canceled += instance.OnCancelShoot;
+            @ActivateCameraRotate.started += instance.OnActivateCameraRotate;
+            @ActivateCameraRotate.performed += instance.OnActivateCameraRotate;
+            @ActivateCameraRotate.canceled += instance.OnActivateCameraRotate;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -232,6 +300,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CancelShoot.started -= instance.OnCancelShoot;
             @CancelShoot.performed -= instance.OnCancelShoot;
             @CancelShoot.canceled -= instance.OnCancelShoot;
+            @ActivateCameraRotate.started -= instance.OnActivateCameraRotate;
+            @ActivateCameraRotate.performed -= instance.OnActivateCameraRotate;
+            @ActivateCameraRotate.canceled -= instance.OnActivateCameraRotate;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -249,6 +320,52 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // RotateCamera
+    private readonly InputActionMap m_RotateCamera;
+    private List<IRotateCameraActions> m_RotateCameraActionsCallbackInterfaces = new List<IRotateCameraActions>();
+    private readonly InputAction m_RotateCamera_RotatingCamera;
+    public struct RotateCameraActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public RotateCameraActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @RotatingCamera => m_Wrapper.m_RotateCamera_RotatingCamera;
+        public InputActionMap Get() { return m_Wrapper.m_RotateCamera; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(RotateCameraActions set) { return set.Get(); }
+        public void AddCallbacks(IRotateCameraActions instance)
+        {
+            if (instance == null || m_Wrapper.m_RotateCameraActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_RotateCameraActionsCallbackInterfaces.Add(instance);
+            @RotatingCamera.started += instance.OnRotatingCamera;
+            @RotatingCamera.performed += instance.OnRotatingCamera;
+            @RotatingCamera.canceled += instance.OnRotatingCamera;
+        }
+
+        private void UnregisterCallbacks(IRotateCameraActions instance)
+        {
+            @RotatingCamera.started -= instance.OnRotatingCamera;
+            @RotatingCamera.performed -= instance.OnRotatingCamera;
+            @RotatingCamera.canceled -= instance.OnRotatingCamera;
+        }
+
+        public void RemoveCallbacks(IRotateCameraActions instance)
+        {
+            if (m_Wrapper.m_RotateCameraActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IRotateCameraActions instance)
+        {
+            foreach (var item in m_Wrapper.m_RotateCameraActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_RotateCameraActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public RotateCameraActions @RotateCamera => new RotateCameraActions(this);
 
     // WaitingForInput
     private readonly InputActionMap m_WaitingForInput;
@@ -300,6 +417,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnResetplayerposition(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnCancelShoot(InputAction.CallbackContext context);
+        void OnActivateCameraRotate(InputAction.CallbackContext context);
+    }
+    public interface IRotateCameraActions
+    {
+        void OnRotatingCamera(InputAction.CallbackContext context);
     }
     public interface IWaitingForInputActions
     {

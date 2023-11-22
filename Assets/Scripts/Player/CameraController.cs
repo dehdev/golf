@@ -1,10 +1,11 @@
 using Cinemachine;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class CameraZoom : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
-    private Cinemachine.CinemachineVirtualCamera virtualCamera;
+    private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float maxZoom = 15f;
     [SerializeField] private float minZoom = 10f;
     [SerializeField] private float zoomSpeed = 0.7f; // Adjust this to control zoom speed.
@@ -19,6 +20,20 @@ public class CameraZoom : MonoBehaviour
         virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.m_Lens.OrthographicSize = maxZoom;
         targetZoom = maxZoom;
+        GameInput.Instance.OnStartedRotatingCamera += Instance_OnRotatingCamera;
+    }
+
+    private void Instance_OnRotatingCamera(object sender, EventArgs e)
+    {
+        Vector2 inputVector = (Vector2)sender;
+
+        // Modify the localEulerAngles based on the inputVector
+        Vector3 currentEulerAngles = virtualCamera.transform.localEulerAngles;
+
+        currentEulerAngles.y += inputVector.x; // Conver mouse x axis to camera y axis
+
+        // Assign the modified angles back to the transform
+        virtualCamera.transform.localEulerAngles = currentEulerAngles;
     }
 
     // Update is called once per frame

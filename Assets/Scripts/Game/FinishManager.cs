@@ -9,7 +9,7 @@ public class FinishManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> playerFinishedDictionary;
 
-    public event EventHandler OnLocalPlayerFinished;
+    public static event EventHandler OnLocalPlayerFinished;
     public event EventHandler OnMultiplayerGameFinished;
 
     private void Awake()

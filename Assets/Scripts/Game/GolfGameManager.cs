@@ -55,7 +55,7 @@ public class GolfGameManager : NetworkBehaviour
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
-        FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
+        FinishManager.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
     }
 
@@ -137,6 +137,8 @@ public class GolfGameManager : NetworkBehaviour
             isLocalPlayerReady = true;
             OnLocalPlayerReadyChanged?.Invoke(this, EventArgs.Empty);
             SetPlayerReadyServerRpc();
+            GameInput.Instance.DisableWaitingForInputMap();
+            GameInput.Instance.OnAnyKeyPressed -= GameInput_OnAnyKeyPressed;
         }
     }
 

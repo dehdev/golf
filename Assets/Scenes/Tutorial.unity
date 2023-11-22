@@ -2373,7 +2373,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 45.39, z: 0}
 --- !u!114 &603557573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3591,12 +3591,12 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Hold and drag to shoot
 
-    Right-click to cancel
+    Right-click to cancel/rotate
 
-    Press R to respawn
+    Press R
+    to respawn
 
-    Press
-    ESC to pause'
+    Press ESC to pause'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: edeee9548779fe5468ef4dff5466e46a, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: edeee9548779fe5468ef4dff5466e46a, type: 2}

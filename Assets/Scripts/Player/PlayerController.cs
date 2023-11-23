@@ -176,7 +176,7 @@ public class PlayerController : NetworkBehaviour
                 {
                     hasChangedToIdle = true;
                     idleParticles.SetActive(true);
-                    if (GolfGameManager.Instance.IsGamePlaying())
+                    if (!GolfGameManager.Instance.IsLocalPlayerFinished())
                     {
                         OnIdleEvent?.Invoke(this, EventArgs.Empty);
                     }

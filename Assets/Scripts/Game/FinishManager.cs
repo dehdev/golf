@@ -9,7 +9,7 @@ public class FinishManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> playerFinishedDictionary;
 
-    public static event EventHandler OnLocalPlayerFinished;
+    public event EventHandler OnLocalPlayerFinished;
     public event EventHandler OnMultiplayerGameFinished;
 
     private void Awake()
@@ -36,6 +36,7 @@ public class FinishManager : NetworkBehaviour
         {
             OnLocalPlayerFinished?.Invoke(this, EventArgs.Empty);
             SetPlayerFinishServerRpc();
+            SoundManager.Instance.PlayFinishedSound(this, EventArgs.Empty);
         }
     }
 

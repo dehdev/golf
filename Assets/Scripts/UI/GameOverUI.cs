@@ -16,7 +16,7 @@ public class GameOverUI : MonoBehaviour
     private void Start()
     {
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
-        FinishManager.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
+        FinishManager.Instance.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
         mainMenuButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.Shutdown();
@@ -38,9 +38,9 @@ public class GameOverUI : MonoBehaviour
     {
         if (GolfGameManager.Instance.IsGameOver())
         {
-            FinishManager.OnLocalPlayerFinished -= Instance_OnLocalPlayerFinished;
             shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
             finishLabel.text = "DIDN'T FINISH IN";
+            FinishManager.Instance.OnLocalPlayerFinished -= Instance_OnLocalPlayerFinished;
             Show();
         }
         else

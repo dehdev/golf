@@ -55,7 +55,7 @@ public class GolfGameManager : NetworkBehaviour
     {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
-        FinishManager.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
+        FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
     }
 

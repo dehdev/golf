@@ -23,11 +23,9 @@ public class SoundManager : MonoBehaviour
         PlayerController.OnIdleEvent += PlayerController_OnIdleEvent;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
         PlayerController.OnCollisionHit += PlayerController_OnCollisionHit;
-
-        //FinishManager.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
     }
 
-    private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
+    public void PlayFinishedSound(object sender, EventArgs e)
     {
         FinishManager finishManager = sender as FinishManager;
         PlaySound(finishSound, finishManager.transform.position);

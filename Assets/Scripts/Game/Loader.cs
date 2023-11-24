@@ -26,10 +26,20 @@ public static class Loader
     public static void LoadNetwork(Scene targetScene)
     {
         NetworkManager.Singleton.SceneManager.LoadScene(targetScene.ToString(), LoadSceneMode.Single);
+        switch (targetScene)
+        {
+            case Scene.Tutorial:
+                AmbientManager.Instance.PlayWindAmbient();
+                break;
+            default:
+                AmbientManager.Instance.StopAmbient();
+                break;
+        }
     }
 
     public static void LoaderCallback()
     {
         SceneManager.LoadScene(targetScene.ToString());
+        AmbientManager.Instance.StopAmbient();
     }
 }

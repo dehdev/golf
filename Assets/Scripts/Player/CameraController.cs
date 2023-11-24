@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
         virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.m_Lens.OrthographicSize = maxZoom;
         targetZoom = maxZoom;
-        GameInput.Instance.OnStartedRotatingCamera += Instance_OnRotatingCamera;
+        //GameInput.Instance.OnStartedRotatingCamera += Instance_OnRotatingCamera;
     }
 
     private void Instance_OnRotatingCamera(object sender, EventArgs e)

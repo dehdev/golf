@@ -14,9 +14,13 @@ public class MaineMenuOptionsUI : MonoBehaviour
     [SerializeField] private Button soundEffectsVolumeMinus;
     [SerializeField] private Button musicVolumePlus;
     [SerializeField] private Button musicVolumeMinus;
+    [SerializeField] private Button ambientVolumePlus;
+    [SerializeField] private Button ambientVolumeMinus;
 
     [SerializeField] private TextMeshProUGUI soundEffectsVolumeText;
     [SerializeField] private TextMeshProUGUI musicVolumeText;
+    [SerializeField] private TextMeshProUGUI ambientVolumeText;
+
 
     private void Awake()
     {
@@ -41,6 +45,16 @@ public class MaineMenuOptionsUI : MonoBehaviour
             MusicManager.Instance.IncreaseVolume();
             UpdateVisual();
         });
+        ambientVolumeMinus.onClick.AddListener(() =>
+        {
+            AmbientManager.Instance.DecreaseVolume();
+            UpdateVisual();
+        });
+        ambientVolumePlus.onClick.AddListener(() =>
+        {
+            AmbientManager.Instance.IncreaseVolume();
+            UpdateVisual();
+        });
         backButton.onClick.AddListener(() =>
         {
             MainMenuUI.Instance.Show();
@@ -56,8 +70,9 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
     private void UpdateVisual()
     {
-        soundEffectsVolumeText.text = "Sound Effects: " + Mathf.Round(SoundManager.Instance.GetVolume() * 10f);
-        musicVolumeText.text = "Music: " + Mathf.Round(MusicManager.Instance.GetVolume() * 10f);
+        soundEffectsVolumeText.text = "SOUND EFFECTS: " + Mathf.Round(SoundManager.Instance.GetVolume() * 10f);
+        musicVolumeText.text = "MUSIC: " + Mathf.Round(MusicManager.Instance.GetVolume() * 10f);
+        ambientVolumeText.text = "AMBIENT: " + Mathf.Round(AmbientManager.Instance.GetVolume() * 10f);
     }
 
     private void Hide()

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class MusicManager : MonoBehaviour
+public class AmbientManager : MonoBehaviour
 {
-    private const string PLAYER_PREFS_MUSIC_VOLUME = "MusicVolume";
+    private const string PLAYER_PREFS_AMBIENT_VOLUME = "AmbientVolume";
 
-    public static MusicManager Instance { get; private set; }
+    public static AmbientManager Instance { get; private set; }
 
     private float volume = .1f;
+
     private AudioSource audioSource;
 
     private void Awake()
@@ -22,7 +23,7 @@ public class MusicManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            volume = PlayerPrefs.GetFloat(PLAYER_PREFS_MUSIC_VOLUME, .1f);
+            volume = PlayerPrefs.GetFloat(PLAYER_PREFS_AMBIENT_VOLUME, .1f);
         }
         audioSource = GetComponent<AudioSource>();
         audioSource.volume = volume;
@@ -35,7 +36,7 @@ public class MusicManager : MonoBehaviour
             volume += 0.1f;
         }
         audioSource.volume = volume;
-        PlayerPrefs.SetFloat(PLAYER_PREFS_MUSIC_VOLUME, volume);
+        PlayerPrefs.SetFloat(PLAYER_PREFS_AMBIENT_VOLUME, volume);
         PlayerPrefs.Save();
     }
 
@@ -46,7 +47,7 @@ public class MusicManager : MonoBehaviour
             volume -= 0.1f;
         }
         audioSource.volume = volume;
-        PlayerPrefs.SetFloat(PLAYER_PREFS_MUSIC_VOLUME, volume);
+        PlayerPrefs.SetFloat(PLAYER_PREFS_AMBIENT_VOLUME, volume);
         PlayerPrefs.Save();
     }
 

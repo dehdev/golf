@@ -13,9 +13,16 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-
-        volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
+        }
     }
 
     void Start()
@@ -71,7 +78,7 @@ public class SoundManager : MonoBehaviour
 
     public void DecreaseVolume()
     {
-        if (volume >= 0.1f)
+        if (volume >= 0.01f)
         {
             volume -= 0.1f;
         }
@@ -82,5 +89,12 @@ public class SoundManager : MonoBehaviour
     public float GetVolume()
     {
         return volume;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerController.OnIdleEvent -= PlayerController_OnIdleEvent;
+        PlayerController.OnBallHit -= PlayerController_OnBallHit;
+        PlayerController.OnCollisionHit -= PlayerController_OnCollisionHit;
     }
 }

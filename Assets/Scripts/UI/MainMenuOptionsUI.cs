@@ -9,6 +9,12 @@ public class MaineMenuOptionsUI : MonoBehaviour
 {
     public static MaineMenuOptionsUI Instance { get; private set; }
 
+    private const string PLAYER_PREFS_RESOLUTION = "GameResolution";
+    private const string PLAYER_PREFS_VIDEO_QUALITY = "GameQuality";
+    private const string PLAYER_PREFS_VSYNC = "GameVsync";
+    private const string PLAYER_PREFS_FULLSCREEN = "GameFullscreen";
+
+
     [SerializeField] private Button backButton;
     [SerializeField] private Button soundEffectsVolumePlus;
     [SerializeField] private Button soundEffectsVolumeMinus;
@@ -21,6 +27,65 @@ public class MaineMenuOptionsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI musicVolumeText;
     [SerializeField] private TextMeshProUGUI ambientVolumeText;
 
+    [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] private TMP_Dropdown qualityDropdown;
+    [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Toggle vsyncToggle;
+
+    private Resolution[] resolutions;
+    private List<Resolution> filteredResolutions;
+    private int currentResolutionIndex = 0;
+
+    public void SetQualityLevelDropdown(int index)
+    {
+        QualitySettings.SetQualityLevel(index, false);
+        PlayerPrefs.SetInt(PLAYER_PREFS_VIDEO_QUALITY, index);
+        PlayerPrefs.Save();
+    }
+
+    public void SetResolutionDropdown(int index)
+    {
+        Debug.Log("SetResolutionDropdown: " + index);
+        Resolution resolution = filteredResolutions[index];
+        Screen.SetResolution(resolution.width, resolution.height, GetFullScreenMode());
+        PlayerPrefs.SetInt(PLAYER_PREFS_RESOLUTION, index);
+        PlayerPrefs.Save();
+    }
+
+    public void FullscreenToggle(bool isFullscreen)
+    {
+        if (isFullscreen)
+        {
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+            PlayerPrefs.SetInt(PLAYER_PREFS_FULLSCREEN, 1);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            PlayerPrefs.SetInt(PLAYER_PREFS_FULLSCREEN, 0);
+            PlayerPrefs.Save();
+        }
+    }
+
+    private FullScreenMode GetFullScreenMode()
+    {
+        if (PlayerPrefs.GetInt(PLAYER_PREFS_FULLSCREEN, 1) == 1)
+        {
+            return FullScreenMode.ExclusiveFullScreen;
+        }
+        else
+        {
+            return FullScreenMode.Windowed;
+        }
+    }
+
+    public void VsyncToggle(bool isVsync)
+    {
+        QualitySettings.vSyncCount = isVsync ? 1 : 0;
+        PlayerPrefs.SetInt(PLAYER_PREFS_VSYNC, isVsync ? 1 : 0);
+        PlayerPrefs.Save();
+    }
 
     private void Awake()
     {
@@ -62,8 +127,57 @@ public class MaineMenuOptionsUI : MonoBehaviour
         });
     }
 
+    private void InitializeVideoSettings()
+    {
+        if (PlayerPrefs.GetInt(PLAYER_PREFS_FULLSCREEN, 1) == 1)
+        {
+            fullscreenToggle.isOn = true;
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        }
+        else
+        {
+            fullscreenToggle.isOn = false;
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+        }
+        if (PlayerPrefs.GetInt(PLAYER_PREFS_VSYNC, 1) == 1)
+        {
+            vsyncToggle.isOn = true;
+            QualitySettings.vSyncCount = 1;
+        }
+        else
+        {
+            vsyncToggle.isOn = false;
+            QualitySettings.vSyncCount = 0;
+        }
+
+        resolutions = Screen.resolutions;
+        filteredResolutions = new List<Resolution>();
+
+        for (int i = 0; i < resolutions.Length; i++)
+        {
+            filteredResolutions.Add(resolutions[i]);
+        }
+
+        List<string> resolutionOptions = new List<string>();
+        for (int i = 0; i < filteredResolutions.Count; i++)
+        {
+            string resolutionOption = filteredResolutions[i].width + " x " + filteredResolutions[i].height + " " + filteredResolutions[i].refreshRateRatio + " Hz";
+            resolutionOptions.Add(resolutionOption);
+            if (filteredResolutions[i].width == Screen.currentResolution.width && filteredResolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionIndex = i;
+            }
+        }
+
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resolutionOptions);
+        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+    }
+
     private void Start()
     {
+        InitializeVideoSettings();
         UpdateVisual();
         Hide();
     }

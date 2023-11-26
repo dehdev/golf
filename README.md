@@ -3,8 +3,6 @@
 ui pentru putere lovire <br>
 modificat cum abordez spawnpointurile<br>
 adaugat selectie nivel<br>
-cancel shoot si pe alt buton de ex space<br>
-rotating camera holding mouse3 or using Q and E<br>
 <br>
 coliziuni intre mingi cu movement???<br>
 obstacole<br>

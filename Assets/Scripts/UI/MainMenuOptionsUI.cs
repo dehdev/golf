@@ -43,11 +43,12 @@ public class MaineMenuOptionsUI : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public void SetResolutionDropdown(int index)
+    public void ApplyResolution(int index)
     {
         Debug.Log("SetResolutionDropdown: " + index);
         Resolution resolution = filteredResolutions[index];
-        Screen.SetResolution(resolution.width, resolution.height, GetFullScreenMode());
+        RefreshRate cRefreshRate = resolution.refreshRateRatio;
+        Screen.SetResolution(resolution.width, resolution.height, GetFullScreenMode(), cRefreshRate);
         PlayerPrefs.SetInt(PLAYER_PREFS_RESOLUTION, index);
         PlayerPrefs.Save();
     }
@@ -129,6 +130,7 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
     private void InitializeVideoSettings()
     {
+        Application.targetFrameRate = 200;
         if (PlayerPrefs.GetInt(PLAYER_PREFS_FULLSCREEN, 1) == 1)
         {
             fullscreenToggle.isOn = true;
@@ -158,12 +160,12 @@ public class MaineMenuOptionsUI : MonoBehaviour
             filteredResolutions.Add(resolutions[i]);
         }
 
-        List<string> resolutionOptions = new List<string>();
+        List<string> resolutionOptions = new();
         for (int i = 0; i < filteredResolutions.Count; i++)
         {
-            string resolutionOption = filteredResolutions[i].width + " x " + filteredResolutions[i].height + " " + filteredResolutions[i].refreshRateRatio + " Hz";
+            string resolutionOption = filteredResolutions[i].width + " x " + filteredResolutions[i].height;
             resolutionOptions.Add(resolutionOption);
-            if (filteredResolutions[i].width == Screen.currentResolution.width && filteredResolutions[i].height == Screen.currentResolution.height)
+            if (filteredResolutions[i].width == Screen.width && filteredResolutions[i].height == Screen.height)
             {
                 currentResolutionIndex = i;
             }
@@ -172,6 +174,8 @@ public class MaineMenuOptionsUI : MonoBehaviour
         resolutionDropdown.ClearOptions();
         resolutionDropdown.AddOptions(resolutionOptions);
         resolutionDropdown.value = currentResolutionIndex;
+        Debug.Log("InitializeVideoSettings: " + currentResolutionIndex);
+        Debug.Log("InitializeVideoSettings: " + filteredResolutions[currentResolutionIndex]);
         resolutionDropdown.RefreshShownValue();
     }
 

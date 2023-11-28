@@ -78,17 +78,6 @@
                 },
                 {
                     "name": "",
-                    "id": "0a830149-afb9-4c28-92dd-d74e3169ec8f",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CancelShoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "2ef177d5-e9ea-40bf-b80d-b2aa64df0ba6",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",

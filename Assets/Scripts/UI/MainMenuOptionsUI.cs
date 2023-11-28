@@ -47,7 +47,7 @@ public class MaineMenuOptionsUI : MonoBehaviour
     {
         Debug.Log("SetResolutionDropdown: " + index);
         Resolution resolution = filteredResolutions[index];
-        RefreshRate cRefreshRate = resolution.refreshRateRatio;
+        RefreshRate cRefreshRate = Screen.currentResolution.refreshRateRatio;
         Screen.SetResolution(resolution.width, resolution.height, GetFullScreenMode(), cRefreshRate);
         PlayerPrefs.SetInt(PLAYER_PREFS_RESOLUTION, index);
         PlayerPrefs.Save();
@@ -83,8 +83,16 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
     public void VsyncToggle(bool isVsync)
     {
-        QualitySettings.vSyncCount = isVsync ? 1 : 0;
-        PlayerPrefs.SetInt(PLAYER_PREFS_VSYNC, isVsync ? 1 : 0);
+        if (isVsync)
+        {
+            QualitySettings.vSyncCount = 1;
+            PlayerPrefs.SetInt(PLAYER_PREFS_VSYNC, 1);
+        }
+        else
+        {
+            QualitySettings.vSyncCount = 0;
+            PlayerPrefs.SetInt(PLAYER_PREFS_VSYNC, 0);
+        }
         PlayerPrefs.Save();
     }
 
@@ -130,7 +138,6 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
     private void InitializeVideoSettings()
     {
-        Application.targetFrameRate = 200;
         if (PlayerPrefs.GetInt(PLAYER_PREFS_FULLSCREEN, 1) == 1)
         {
             fullscreenToggle.isOn = true;
@@ -174,8 +181,6 @@ public class MaineMenuOptionsUI : MonoBehaviour
         resolutionDropdown.ClearOptions();
         resolutionDropdown.AddOptions(resolutionOptions);
         resolutionDropdown.value = currentResolutionIndex;
-        Debug.Log("InitializeVideoSettings: " + currentResolutionIndex);
-        Debug.Log("InitializeVideoSettings: " + filteredResolutions[currentResolutionIndex]);
         resolutionDropdown.RefreshShownValue();
     }
 

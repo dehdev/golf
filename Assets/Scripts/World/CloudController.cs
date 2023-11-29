@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CloudController : MonoBehaviour
 {
-    public float moveDistance = 10f;
-    public float moveDuration = 5f;
+    [SerializeField] private float moveDistance = 10f;
+    [SerializeField] private float moveDuration = 5f;
 
     private Tween cloudTween;
 

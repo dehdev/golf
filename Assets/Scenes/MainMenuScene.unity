@@ -599,9 +599,9 @@ MonoBehaviour:
     m_Options:
     - m_Text: High
       m_Image: {fileID: 0}
-    - m_Text: Low
-      m_Image: {fileID: 0}
     - m_Text: Medium
+      m_Image: {fileID: 0}
+    - m_Text: Low
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3002,7 +3002,6 @@ GameObject:
   - component: {fileID: 832146379}
   - component: {fileID: 832146381}
   - component: {fileID: 832146380}
-  - component: {fileID: 832146382}
   m_Layer: 5
   m_Name: Arrow
   m_TagString: Untagged
@@ -3067,21 +3066,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832146378}
   m_CullTransparentMesh: 1
---- !u!114 &832146382
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 832146378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 1, y: -1}
-  m_UseGraphicAlpha: 1
 --- !u!1 &899668093
 GameObject:
   m_ObjectHideFlags: 0
@@ -4910,7 +4894,6 @@ GameObject:
   - component: {fileID: 1193246533}
   - component: {fileID: 1193246535}
   - component: {fileID: 1193246534}
-  - component: {fileID: 1193246536}
   m_Layer: 5
   m_Name: Arrow
   m_TagString: Untagged
@@ -4975,21 +4958,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193246532}
   m_CullTransparentMesh: 1
---- !u!114 &1193246536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1193246532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 1, y: -1}
-  m_UseGraphicAlpha: 1
 --- !u!1 &1195047238
 GameObject:
   m_ObjectHideFlags: 0
@@ -5410,8 +5378,8 @@ Cloth:
   m_UseTethers: 1
   m_UseGravity: 1
   m_Damping: 0
-  m_ExternalAcceleration: {x: -10, y: 0, z: 0}
-  m_RandomAcceleration: {x: 0, y: 0, z: -5}
+  m_ExternalAcceleration: {x: -8, y: 0, z: 0}
+  m_RandomAcceleration: {x: 0, y: 0, z: -8}
   m_WorldVelocityScale: 0.5
   m_WorldAccelerationScale: 1
   m_Friction: 0.5
@@ -7180,6 +7148,10 @@ MonoBehaviour:
   qualityDropdown: {fileID: 284372188}
   fullscreenToggle: {fileID: 324943902}
   vsyncToggle: {fileID: 1208456246}
+  qualityLevels:
+  - {fileID: 11400000, guid: c54061a89afabdc4b9700492cb521a98, type: 2}
+  - {fileID: 11400000, guid: 559f8523a2db2724cacd4751167918ae, type: 2}
+  - {fileID: 11400000, guid: bd0088f77492f9b4986ab34cc81fc837, type: 2}
 --- !u!1 &1583218850
 GameObject:
   m_ObjectHideFlags: 0

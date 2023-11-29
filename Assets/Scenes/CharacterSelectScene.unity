@@ -226,8 +226,8 @@ Cloth:
   m_UseTethers: 1
   m_UseGravity: 1
   m_Damping: 0
-  m_ExternalAcceleration: {x: -10, y: 0, z: 0}
-  m_RandomAcceleration: {x: 0, y: 0, z: -5}
+  m_ExternalAcceleration: {x: -8, y: 0, z: 0}
+  m_RandomAcceleration: {x: 0, y: 0, z: -8}
   m_WorldVelocityScale: 0.5
   m_WorldAccelerationScale: 1
   m_Friction: 0.5

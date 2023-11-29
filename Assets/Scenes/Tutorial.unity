@@ -12060,13 +12060,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7568234400217759371}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000003774895, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.1179214, y: 3.1004949, z: 0}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: -1.12, y: 3.1004949, z: -0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 543450651782548187}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!1 &7748569495661447954
 GameObject:
   m_ObjectHideFlags: 0
@@ -12184,8 +12184,8 @@ Cloth:
   m_UseTethers: 1
   m_UseGravity: 1
   m_Damping: 0
-  m_ExternalAcceleration: {x: 0, y: 0, z: 10}
-  m_RandomAcceleration: {x: 0, y: 0, z: -20}
+  m_ExternalAcceleration: {x: 0, y: 0, z: -8}
+  m_RandomAcceleration: {x: 0, y: 0, z: -8}
   m_WorldVelocityScale: 0.5
   m_WorldAccelerationScale: 1
   m_Friction: 0.5

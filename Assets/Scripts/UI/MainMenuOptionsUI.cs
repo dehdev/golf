@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class MaineMenuOptionsUI : MonoBehaviour
@@ -31,6 +32,7 @@ public class MaineMenuOptionsUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Toggle vsyncToggle;
+    [SerializeField] private RenderPipelineAsset[] qualityLevels;
 
     private Resolution[] resolutions;
     private List<Resolution> filteredResolutions;
@@ -39,6 +41,7 @@ public class MaineMenuOptionsUI : MonoBehaviour
     public void SetQualityLevelDropdown(int index)
     {
         QualitySettings.SetQualityLevel(index, false);
+        QualitySettings.renderPipeline = qualityLevels[index];
         PlayerPrefs.SetInt(PLAYER_PREFS_VIDEO_QUALITY, index);
         PlayerPrefs.Save();
     }
@@ -182,6 +185,8 @@ public class MaineMenuOptionsUI : MonoBehaviour
         resolutionDropdown.AddOptions(resolutionOptions);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+
+        qualityDropdown.value = QualitySettings.GetQualityLevel();
     }
 
     private void Start()

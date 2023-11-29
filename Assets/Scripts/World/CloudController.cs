@@ -18,7 +18,6 @@ public class CloudController : MonoBehaviour
     void MoveCloud()
     {
         cloudTween = transform.DOMoveZ(transform.position.z - moveDistance, moveDuration)
-            .SetLoops(-1, LoopType.Restart)
             .SetEase(Ease.Linear);
     }
 

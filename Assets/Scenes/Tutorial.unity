@@ -11938,7 +11938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b3b6b7470dcb3469406acffa02b892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raiseHeight: 3
+  raiseHeight: 2
   raiseFlagCollider: {fileID: 1301643485}
   lowerFlagCollider: {fileID: 1830275202}
   flagPole: {fileID: 9152704229279622474}

@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class SoundManager : MonoBehaviour
 {
     private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
     public static SoundManager Instance { get; private set; }
 
-    [SerializeField] private AudioClip idleSound, ballHit, collisionSound, countdownSound, finishSound;
+    [SerializeField] private AudioClip idleSound, ballHit, collisionSound, countdownSound, finishSound, offMapSound;
     private float volume = 1f;
 
     private void Awake()
@@ -30,6 +31,13 @@ public class SoundManager : MonoBehaviour
         PlayerController.OnIdleEvent += PlayerController_OnIdleEvent;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
         PlayerController.OnCollisionHit += PlayerController_OnCollisionHit;
+        PlayerController.OnPlayerResetPosition += PlayerController_OnPlayerOffMap;
+    }
+
+    private void PlayerController_OnPlayerOffMap(object sender, EventArgs e)
+    {
+        PlayerController playerController = sender as PlayerController;
+        PlaySound(offMapSound, playerController.transform.position);
     }
 
     public void PlayFinishedSound(object sender, EventArgs e)
@@ -53,12 +61,13 @@ public class SoundManager : MonoBehaviour
     private void PlayerController_OnIdleEvent(object sender, EventArgs e)
     {
         PlayerController playerController = sender as PlayerController;
-        PlaySound(idleSound, playerController.transform.position);
+        PlaySound(idleSound, playerController.transform.position, 0.2f);
     }
 
     private void PlaySound(AudioClip audioClip, Vector3 position, float volumeMultiplier = 1f)
     {
-        AudioSource.PlayClipAtPoint(audioClip, position, volumeMultiplier * volume);
+        //AudioSource.PlayClipAtPoint(audioClip, position, volumeMultiplier * volume);
+        PlayClipAt(audioClip, position, volumeMultiplier * volume);
     }
 
     public void PlayCountdownSound()
@@ -91,10 +100,23 @@ public class SoundManager : MonoBehaviour
         return volume;
     }
 
+    public static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float volume)
+    {
+        GameObject tempGO = new GameObject("TempAudio"); // create the temp object
+        tempGO.transform.position = pos; // set its position
+        AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
+        aSource.clip = clip; // define the clip
+        aSource.volume = volume;
+        aSource.Play(); // start the sound
+        Destroy(tempGO, clip.length); // destroy object after clip duration
+        return aSource; // return the AudioSource reference
+    }
+
     private void OnDestroy()
     {
         PlayerController.OnIdleEvent -= PlayerController_OnIdleEvent;
         PlayerController.OnBallHit -= PlayerController_OnBallHit;
         PlayerController.OnCollisionHit -= PlayerController_OnCollisionHit;
+        PlayerController.OnPlayerResetPosition -= PlayerController_OnPlayerOffMap;
     }
 }

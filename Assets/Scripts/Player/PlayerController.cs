@@ -22,6 +22,8 @@ public class PlayerController : NetworkBehaviour
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
+    public static event EventHandler<float> OnShootingStartEvent;
+    public static event EventHandler OnPlayerResetPosition;
 
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopDuration = 5;
@@ -107,6 +109,7 @@ public class PlayerController : NetworkBehaviour
         StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPos));
         InstantStop();
         CancelShoot();
+        OnPlayerResetPosition?.Invoke(this, EventArgs.Empty);
     }
 
     public void CancelShoot()
@@ -234,8 +237,10 @@ public class PlayerController : NetworkBehaviour
         }
         float clampedVolume = Mathf.Clamp(rb.velocity.magnitude / 10 * 0.2f, 0.1f, 1);
         OnCollisionHit?.Invoke(this, clampedVolume);
-        if (collision.gameObject.CompareTag("Terrain"))
+        if (collision.gameObject.CompareTag("Terrain") && GolfGameManager.Instance.IsGamePlaying())
         {
+            Debug.Log("Player off map");
+            OnPlayerResetPosition?.Invoke(this, EventArgs.Empty);
             transform.position = lastPos;
             InstantStop();
         }
@@ -268,6 +273,7 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
+        lineRenderer.enabled = true;
         DrawLine(worldPoint.Value);
         if (readyToShoot)
         {
@@ -294,13 +300,12 @@ public class PlayerController : NetworkBehaviour
 
         Vector3 direction = (horizontalWorldPoint - transform.position).normalized;
 
-        float strength = Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
+        float strength = GetClampedStrength(worldPoint);
 
         rb.AddForce(shotMultiplier * strength * -direction);
         isIdle = false;
 
         Debug.Log("Force: " + (shotMultiplier * strength * -direction).magnitude);
-
     }
 
     private void DrawLine(Vector3 worldPoint)
@@ -326,11 +331,18 @@ public class PlayerController : NetworkBehaviour
 
         lineRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
 
-        lineRenderer.enabled = true;
-
         float arrowAngle = Mathf.Atan2(clampedDirection.x, clampedDirection.z) * Mathf.Rad2Deg;
         Quaternion arrowRotation = Quaternion.Euler(0f, arrowAngle, 0f);
         arrow.transform.rotation = arrowRotation;
+
+        float distanceRatio = Vector3.Distance(transform.position, clampedWorldPoint) / MaxDragDistance;
+        OnShootingStartEvent?.Invoke(this, distanceRatio);
+    }
+
+    private float GetClampedStrength(Vector3 worldPoint)
+    {
+        Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
+        return Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
     }
 
     private void LerpStop()

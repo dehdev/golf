@@ -4395,11 +4395,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aa629a072fb5bf41a4db908f95752c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  idleSound: {fileID: 8300000, guid: e5b391814f2d40c4aa66369a0d562499, type: 3}
+  idleSound: {fileID: 8300000, guid: 454c2bb4fcc97014fb075075cebe5b39, type: 3}
   ballHit: {fileID: 8300000, guid: fcd8143003e925a4c910dd1fa8ada0a7, type: 3}
   collisionSound: {fileID: 8300000, guid: 53fd4a73972581a4ca3b9b60a7fa9c26, type: 3}
   countdownSound: {fileID: 8300000, guid: b90d8099bdbf09a40ab1163556d5b5f4, type: 3}
   finishSound: {fileID: 8300000, guid: 44691251b8410654090604539b1af100, type: 3}
+  offMapSound: {fileID: 8300000, guid: 6e37943f9fefb8145bb547ffe77ec32e, type: 3}
 --- !u!4 &1108234867
 Transform:
   m_ObjectHideFlags: 0

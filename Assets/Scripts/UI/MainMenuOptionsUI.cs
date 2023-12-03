@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -48,7 +49,6 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
     public void ApplyResolution(int index)
     {
-        Debug.Log("SetResolutionDropdown: " + index);
         Resolution resolution = filteredResolutions[index];
         RefreshRate cRefreshRate = Screen.currentResolution.refreshRateRatio;
         Screen.SetResolution(resolution.width, resolution.height, GetFullScreenMode(), cRefreshRate);
@@ -164,11 +164,20 @@ public class MaineMenuOptionsUI : MonoBehaviour
 
         resolutions = Screen.resolutions;
         filteredResolutions = new List<Resolution>();
+        double targetRefreshRateRatio = Screen.currentResolution.refreshRateRatio.value;
 
         for (int i = 0; i < resolutions.Length; i++)
         {
-            filteredResolutions.Add(resolutions[i]);
+            double currentRefreshRateRatio = resolutions[i].refreshRateRatio.value;
+
+            // Check if the absolute difference is less than or equal to 1
+            if (Mathf.Abs((float)currentRefreshRateRatio - (float)targetRefreshRateRatio) <= 1f)
+            {
+                filteredResolutions.Add(resolutions[i]);
+            }
         }
+
+        filteredResolutions = filteredResolutions.Distinct().ToList();
 
         List<string> resolutionOptions = new();
         for (int i = 0; i < filteredResolutions.Count; i++)

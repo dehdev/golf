@@ -1,12 +1,10 @@
 # TO DO
 
-ui pentru putere lovire <br>
 modificat cum abordez spawnpointurile<br>
 adaugat selectie nivel<br>
 <br>
 coliziuni intre mingi cu movement???<br>
 obstacole<br>
-setari calitate video + rezolutii<br>
 # POLISH
 
 particule lovit minge<br>
@@ -15,5 +13,3 @@ camera pan in direction of shooting<br>
 copaci, iarba, constructii pe langa, etc<br>
 
 # BUGS
-
-sunetele se aud ciudat uneori din cauza vitezei (schimba doppler effect pe audio listener)<br>

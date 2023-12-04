@@ -8,7 +8,6 @@ obstacole<br>
 # POLISH
 
 particule lovit minge<br>
-particule de vant<br>
 camera pan in direction of shooting<br>
 copaci, iarba, constructii pe langa, etc<br>
 

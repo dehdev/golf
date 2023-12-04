@@ -46,4 +46,10 @@ public class FlagController : MonoBehaviour
         flag.DOMoveY(initialFlagPosition.y, 1f).SetEase(Ease.OutQuad);
         flagPole.DOMoveY(initialFlagPolePosition.y, 1f).SetEase(Ease.OutQuad);
     }
+
+    private void OnDestroy()
+    {
+        DOTween.Kill(flag);  // Stop tween for the flag
+        DOTween.Kill(flagPole);  // Stop tween for the flag pole
+    }
 }

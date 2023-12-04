@@ -1,11 +1,11 @@
 using Cinemachine;
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
-    private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float maxZoom = 15f;
     [SerializeField] private float minZoom = 10f;
     [SerializeField] private float zoomSpeed = 0.7f; // Adjust this to control zoom speed.
@@ -14,13 +14,52 @@ public class CameraController : MonoBehaviour
     private float targetZoom;
     private float currentZoomVelocity;
 
+    private CinemachineVirtualCamera playerVirtualCamera;
+    private CinemachineVirtualCamera finishedVirtualCamera;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-        virtualCamera.m_Lens.OrthographicSize = maxZoom;
-        targetZoom = maxZoom;
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+        FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         //GameInput.Instance.OnStartedRotatingCamera += Instance_OnRotatingCamera;
+        if (IsOwner)
+        {
+            finishedVirtualCamera = GameObject.FindGameObjectWithTag("FinishedCamera")?.GetComponent<CinemachineVirtualCamera>();
+            playerVirtualCamera = GameObject.FindGameObjectWithTag("PlayerCamera")?.GetComponent<CinemachineVirtualCamera>();
+            playerVirtualCamera.Follow = transform;
+            playerVirtualCamera.m_Lens.OrthographicSize = maxZoom;
+            targetZoom = maxZoom;
+        }
+    }
+
+    private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
+    {
+        if (IsOwner)
+        {
+            SwitchCameraPriority();
+        }
+    }
+
+    private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (IsOwner && GolfGameManager.Instance.IsGameOver())
+        {
+            SwitchCameraPriority();
+        }
+    }
+
+    private void SwitchCameraPriority()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        if (playerVirtualCamera.Priority == 1)
+        {
+            playerVirtualCamera.Priority = 0;
+            finishedVirtualCamera.Priority = 1;
+        }
     }
 
     private void Instance_OnRotatingCamera(object sender, EventArgs e)
@@ -28,18 +67,18 @@ public class CameraController : MonoBehaviour
         Vector2 inputVector = (Vector2)sender;
 
         // Modify the localEulerAngles based on the inputVector
-        Vector3 currentEulerAngles = virtualCamera.transform.localEulerAngles;
+        Vector3 currentEulerAngles = playerVirtualCamera.transform.localEulerAngles;
 
         currentEulerAngles.y += inputVector.x; // Conver mouse x axis to camera y axis
 
         // Assign the modified angles back to the transform
-        virtualCamera.transform.localEulerAngles = currentEulerAngles;
+        playerVirtualCamera.transform.localEulerAngles = currentEulerAngles;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.IsLocalPlayerFinished())
+        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.IsLocalPlayerFinished() || !IsOwner)
         {
             return;
         }
@@ -50,6 +89,6 @@ public class CameraController : MonoBehaviour
         targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
 
         // Smoothly adjust the camera's orthographic size
-        virtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(virtualCamera.m_Lens.OrthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
+        playerVirtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(playerVirtualCamera.m_Lens.OrthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
     }
 }

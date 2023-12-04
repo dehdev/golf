@@ -10,18 +10,18 @@ public class CloudController : MonoBehaviour
 
     private Tween cloudTween;
 
-    void Start()
+    private void Start()
     {
         MoveCloud();
     }
 
-    void MoveCloud()
+    private void MoveCloud()
     {
         cloudTween = transform.DOMoveZ(transform.position.z - moveDistance, moveDuration)
             .SetEase(Ease.Linear);
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         // Stop the tween when the object is destroyed
         if (cloudTween != null && cloudTween.IsActive())

@@ -47,6 +47,8 @@ public class PlayerController : NetworkBehaviour
     private Vector3 lastPos;
     private Vector3 spawnPos;
 
+    private CinemachineVirtualCamera playerVirtualCamera;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -89,8 +91,6 @@ public class PlayerController : NetworkBehaviour
         {
             sphereCollider.enabled = true;
             areaOfEffect.SetActive(true);
-            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-            virtualCamera.Follow = transform;
         }
         InitializePlayerObjects();
     }
@@ -239,7 +239,6 @@ public class PlayerController : NetworkBehaviour
         OnCollisionHit?.Invoke(this, clampedVolume);
         if (collision.gameObject.CompareTag("Terrain") && GolfGameManager.Instance.IsGamePlaying())
         {
-            Debug.Log("Player off map");
             OnPlayerResetPosition?.Invoke(this, EventArgs.Empty);
             transform.position = lastPos;
             InstantStop();

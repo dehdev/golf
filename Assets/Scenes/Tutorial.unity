@@ -5344,8 +5344,10 @@ MonoBehaviour:
 
     [MOUSE2] to abort shoot
 
-    [R]
-    to respawn
+    [SCROLLWHEEL]
+    to zoom
+
+    [R] to respawn
 
     [ESC] to pause'
   m_isRightToLeft: 0

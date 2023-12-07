@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class RotatingObstacle : MonoBehaviour
 {
-    [SerializeField] private float rotationSpeed = 0.1f;
+    [SerializeField] private float rotationSpeed = 3f;
 
     private Tween rotateTween;
 
@@ -21,5 +21,10 @@ public class RotatingObstacle : MonoBehaviour
         .SetLoops(-1, LoopType.Restart)
         .SetRelative()
         .SetEase(Ease.Linear);
+    }
+
+    private void OnDestroy()
+    {
+        rotateTween.Kill();
     }
 }

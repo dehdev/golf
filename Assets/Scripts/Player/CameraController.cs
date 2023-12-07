@@ -16,6 +16,7 @@ public class CameraController : NetworkBehaviour
 
     private CinemachineVirtualCamera playerVirtualCamera;
     private CinemachineVirtualCamera finishedVirtualCamera;
+    private CinemachineVirtualCamera hoveringVirtualCamera;
 
     // Start is called before the first frame update
     private void Start()
@@ -27,9 +28,13 @@ public class CameraController : NetworkBehaviour
         {
             finishedVirtualCamera = GameObject.FindGameObjectWithTag("FinishedCamera")?.GetComponent<CinemachineVirtualCamera>();
             playerVirtualCamera = GameObject.FindGameObjectWithTag("PlayerCamera")?.GetComponent<CinemachineVirtualCamera>();
+            hoveringVirtualCamera = GameObject.FindGameObjectWithTag("HoveringCamera")?.GetComponent<CinemachineVirtualCamera>();
             playerVirtualCamera.Follow = transform;
             playerVirtualCamera.m_Lens.OrthographicSize = maxZoom;
             targetZoom = maxZoom;
+
+            finishedVirtualCamera.enabled = false;
+            playerVirtualCamera.enabled = false;
         }
     }
 
@@ -37,29 +42,72 @@ public class CameraController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            SwitchCameraPriority();
+            finishedVirtualCamera.enabled = true;
+            SwitchToFinishedCamera();
+            playerVirtualCamera.enabled = false;
         }
     }
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
     {
-        if (IsOwner && GolfGameManager.Instance.IsGameOver())
+        if (IsOwner)
         {
-            SwitchCameraPriority();
+            GolfGameManager gameManager = GolfGameManager.Instance;
+            if (gameManager.IsGameOver())
+            {
+                finishedVirtualCamera.enabled = true;
+                SwitchToFinishedCamera();
+                playerVirtualCamera.enabled = false;
+            }
+            else if (gameManager.IsCountdownToStartActive())
+            {
+                playerVirtualCamera.enabled = true;
+                SwitchToPlayerCamera();
+                hoveringVirtualCamera.GetComponentInParent<CameraRotator>().StopRotating();
+                hoveringVirtualCamera.enabled = false;
+            }
+            else if (gameManager.IsWaitingToStart())
+            {
+                playerVirtualCamera.enabled = false;
+                finishedVirtualCamera.enabled = false;
+                hoveringVirtualCamera.enabled = true;
+                SwitchToHoveringCamera();
+            }
         }
     }
 
-    private void SwitchCameraPriority()
+
+    private void SwitchToPlayerCamera()
     {
         if (!IsOwner)
         {
             return;
         }
-        if (playerVirtualCamera.Priority == 1)
+        playerVirtualCamera.Priority = 1;
+        hoveringVirtualCamera.Priority = 0;
+        finishedVirtualCamera.Priority = 0;
+    }
+
+    private void SwitchToHoveringCamera()
+    {
+        if (!IsOwner)
         {
-            playerVirtualCamera.Priority = 0;
-            finishedVirtualCamera.Priority = 1;
+            return;
         }
+        playerVirtualCamera.Priority = 0;
+        hoveringVirtualCamera.Priority = 1;
+        finishedVirtualCamera.Priority = 0;
+    }
+
+    private void SwitchToFinishedCamera()
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        playerVirtualCamera.Priority = 0;
+        hoveringVirtualCamera.Priority = 0;
+        finishedVirtualCamera.Priority = 1;
     }
 
     private void Instance_OnRotatingCamera(object sender, EventArgs e)

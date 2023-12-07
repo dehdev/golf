@@ -369,6 +369,11 @@ public class PlayerController : NetworkBehaviour
         return null;
     }
 
+    public void PlayerHitObstacle(Vector3 hitVelocity)
+    {
+        rb.velocity = hitVelocity;
+    }
+
     public int GetLocalPlayerShots()
     {
         return localPlayerShots;

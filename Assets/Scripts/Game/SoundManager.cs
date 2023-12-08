@@ -102,7 +102,7 @@ public class SoundManager : MonoBehaviour
 
     public static AudioSource PlayClipAt(AudioClip clip, Vector3 pos, float volume)
     {
-        GameObject tempGO = new GameObject("TempAudio"); // create the temp object
+        GameObject tempGO = new("TempAudio"); // create the temp object
         tempGO.transform.position = pos; // set its position
         AudioSource aSource = tempGO.AddComponent<AudioSource>(); // add an audio source
         aSource.clip = clip; // define the clip

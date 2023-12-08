@@ -659,7 +659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba57216d32c6b3b4798a4b083367a30e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 30
+  force: 50
 --- !u!1 &6024605320330502538
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,7 +760,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8857966102348538309
 Transform:
@@ -5897,7 +5897,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba57216d32c6b3b4798a4b083367a30e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 30
+  force: 50
 --- !u!1001 &480671210879789371
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5969,6 +5969,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 46f4d1aa8ec66714a9cbfee77d82a5b8, type: 3}
       propertyPath: m_Layer
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 46f4d1aa8ec66714a9cbfee77d82a5b8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

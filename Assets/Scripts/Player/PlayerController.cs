@@ -26,7 +26,6 @@ public class PlayerController : NetworkBehaviour
     public static event EventHandler OnPlayerResetPosition;
 
     [SerializeField] private float shotMultiplier;
-    [SerializeField] private float stopDuration = 5;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
 
@@ -40,14 +39,11 @@ public class PlayerController : NetworkBehaviour
     private bool isAiming;
     private bool readyToShoot;
     private bool hasChangedToIdle;
-    private bool isFirstSpawn = true;
 
     private int localPlayerShots = 0;
 
     private Vector3 lastPos;
     private Vector3 spawnPos;
-
-    private CinemachineVirtualCamera playerVirtualCamera;
 
     private void Awake()
     {
@@ -56,11 +52,11 @@ public class PlayerController : NetworkBehaviour
 
         readyToShoot = false;
         isAiming = false;
-        lineRenderer.enabled = false;
         hasChangedToIdle = false;
+
         idleParticles.SetActive(false);
         arrow.SetActive(false);
-
+        lineRenderer.enabled = false;
         trailRenderer.enabled = false;
         meshRenderer.enabled = false;
         sphereCollider.enabled = false;
@@ -72,8 +68,23 @@ public class PlayerController : NetworkBehaviour
         if (IsOwner)
         {
             LocalInstance = this;
+            spawnPos = SpawnPointManager.Instance.GetSpawnPointsList()[(int)OwnerClientId].transform.position;
+            SetPlayerPosition(spawnPos);
         }
         base.OnNetworkSpawn();
+    }
+
+    public void SetPlayerPosition(Vector3 pos)
+    {
+        CancelShoot();
+        StartCoroutine(SetPlayerPositionCoroutine(pos));
+    }
+
+    IEnumerator SetPlayerPositionCoroutine(Vector3 pos)
+    {
+        yield return new WaitForFixedUpdate();
+        transform.position = pos;
+        Debug.Log("Player pos set to: " + transform.position);
     }
 
     private void Start()
@@ -82,17 +93,13 @@ public class PlayerController : NetworkBehaviour
         GameInput.Instance.OnCancelShoot += GameInput_OnCancelShoot;
         PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
         playerVisual.SetPlayerColor(GolfGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
-        if (!IsOwner)
-        {
-            sphereCollider.enabled = false;
-            areaOfEffect.SetActive(false);
-        }
+
+        InitializePlayerObjectsForAll();
+
         if (IsOwner)
         {
-            sphereCollider.enabled = true;
-            areaOfEffect.SetActive(true);
+            InitializePlayerObjectsForOwner();
         }
-        InitializePlayerObjects();
     }
 
     private void GameInput_OnCancelShoot(object sender, EventArgs e)
@@ -106,8 +113,8 @@ public class PlayerController : NetworkBehaviour
         {
             return;
         }
-        StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPos));
-        InstantStop();
+        SetPlayerPosition(spawnPos);
+        StartCoroutine(PlayerInstantStopCoroutine());
         CancelShoot();
         OnPlayerResetPosition?.Invoke(this, EventArgs.Empty);
     }
@@ -123,46 +130,18 @@ public class PlayerController : NetworkBehaviour
             idleParticles.SetActive(true);
         }
     }
-
-    [ClientRpc]
-    public void SetPlayerPositionClientRpc(Vector3 spawnPoint, ulong clientId)
-    {
-        if (clientId == OwnerClientId)
-        {
-            StartCoroutine(SetPlayerSpawnPositionCoroutine(spawnPoint));
-            spawnPos = spawnPoint;
-        }
-    }
-
-    IEnumerator SetPlayerSpawnPositionCoroutine(Vector3 spawnPoint)
-    {
-        if (IsOwner)
-        {
-            lastPos = spawnPoint;
-            yield return new WaitForFixedUpdate();
-            transform.position = spawnPoint;
-            Debug.Log("Player pos set to: " + spawnPoint);
-            if (isFirstSpawn)
-            {
-                sphereCollider.enabled = true;
-                areaOfEffect.SetActive(true);
-                var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-                virtualCamera.Follow = transform;
-            }
-        }
-
-        if (isFirstSpawn)
-        {
-            InitializePlayerObjects();
-        }
-
-    }
-
-    private void InitializePlayerObjects()
+    private void InitializePlayerObjectsForAll()
     {
         trailRenderer.enabled = true;
         meshRenderer.enabled = true;
-        isFirstSpawn = false;
+        sphereCollider.enabled = true;
+    }
+
+    private void InitializePlayerObjectsForOwner()
+    {
+        areaOfEffect.SetActive(true);
+        var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera.Follow = transform;
     }
 
     private void Update()
@@ -178,19 +157,22 @@ public class PlayerController : NetworkBehaviour
                 if (!hasChangedToIdle)
                 {
                     hasChangedToIdle = true;
-                    idleParticles.SetActive(true);
                     if (!GolfGameManager.Instance.IsLocalPlayerFinished())
                     {
+                        idleParticles.SetActive(true);
                         OnIdleEvent?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
             isIdle = true;
-            LerpStop();
+            //StartCoroutine(PlayerLerpStopCoroutine());
         }
         else
         {
+            hasChangedToIdle = false;
             isIdle = false;
+            idleParticles.SetActive(false);
+            CancelShoot();
         }
 
         trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
@@ -203,12 +185,6 @@ public class PlayerController : NetworkBehaviour
             return;
         }
         ProcessAim();
-    }
-
-    public void StopRbRotation()
-    {
-        rb.angularVelocity = Vector3.zero;
-        rb.velocity = Vector3.zero;
     }
 
     private void OnMouseUp()
@@ -240,8 +216,8 @@ public class PlayerController : NetworkBehaviour
         if (collision.gameObject.CompareTag("Terrain") && GolfGameManager.Instance.IsGamePlaying())
         {
             OnPlayerResetPosition?.Invoke(this, EventArgs.Empty);
-            transform.position = lastPos;
-            InstantStop();
+            SetPlayerPosition(lastPos);
+            StartCoroutine(PlayerInstantStopCoroutine());
         }
     }
 
@@ -280,12 +256,12 @@ public class PlayerController : NetworkBehaviour
             readyToShoot = false;
             hasChangedToIdle = false;
             Cursor.visible = true;
-            Shoot(worldPoint.Value);
+            HandleShoot(worldPoint.Value);
             isAiming = false;
         }
     }
 
-    private void Shoot(Vector3 worldPoint)
+    private void HandleShoot(Vector3 worldPoint)
     {
         GolfGameManager.Instance.SetPlayerBallHitServerRpc();
         localPlayerShots++;
@@ -302,9 +278,9 @@ public class PlayerController : NetworkBehaviour
         float strength = GetClampedStrength(worldPoint);
 
         rb.AddForce(shotMultiplier * strength * -direction);
+
         isIdle = false;
 
-        Debug.Log("Force: " + (shotMultiplier * strength * -direction).magnitude);
     }
 
     private void DrawLine(Vector3 worldPoint)
@@ -344,14 +320,16 @@ public class PlayerController : NetworkBehaviour
         return Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
     }
 
-    private void LerpStop()
+    /*private IEnumerator PlayerLerpStopCoroutine()
     {
+        yield return new WaitForFixedUpdate();
         rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime / stopDuration);
         rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime / stopDuration);
-    }
+    }*/
 
-    private void InstantStop()
+    private IEnumerator PlayerInstantStopCoroutine()
     {
+        yield return new WaitForFixedUpdate();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }

@@ -9,22 +9,26 @@ public class PistonObstacle : MonoBehaviour
 
     private Tween pistonTween;
 
+    private ObstacleBouncePlayer obstacleBouncePlayer;
+
     private void Start()
     {
+        obstacleBouncePlayer = GetComponentInChildren<ObstacleBouncePlayer>();
         MovePiston();
     }
 
     private void MovePiston()
     {
         Vector3 initialPosition = transform.localPosition;
-
+        obstacleBouncePlayer.Disable();
         pistonTween = transform.DOLocalMoveY(initialPosition.y - moveDistance, pullBackDuration)
             .SetEase(Ease.InOutQuad)
             .SetDelay(0.3f)
             .OnComplete(() =>
             {
+                obstacleBouncePlayer.Enable();
                 pistonTween = transform.DOLocalMoveY(initialPosition.y, pushDuration)
-                    .SetEase(Ease.OutBounce)
+                    .SetEase(Ease.OutCubic)
                     .SetDelay(1f)
                     .OnComplete(() =>
                     {
@@ -35,9 +39,6 @@ public class PistonObstacle : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (pistonTween != null)
-        {
-            pistonTween.Kill();
-        }
+        pistonTween.Kill();
     }
 }

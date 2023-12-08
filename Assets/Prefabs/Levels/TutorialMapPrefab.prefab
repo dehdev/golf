@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4368959635907205690}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: TutorialMapPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4368959635907205690
 Transform:
@@ -47,12 +47,12 @@ GameObject:
   - component: {fileID: 1500435627851420189}
   - component: {fileID: 2736631583252050310}
   - component: {fileID: 375970838562822867}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6213338721487743107
 Transform:
@@ -2965,12 +2965,12 @@ GameObject:
   - component: {fileID: 4424450324178688789}
   - component: {fileID: 6920784279658207649}
   - component: {fileID: 5483332062112285406}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8032271646604334938
 Transform:

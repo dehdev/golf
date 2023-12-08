@@ -22,7 +22,6 @@ public class GolfGameManager : NetworkBehaviour
     public event EventHandler OnLocalPlayerReadyChanged;
     public event EventHandler OnMultiplayerGamePaused;
     public event EventHandler OnMultiplayerGameUnPaused;
-    public event EventHandler OnLocalPlayerSpawned;
 
     private enum State
     {
@@ -92,18 +91,7 @@ public class GolfGameManager : NetworkBehaviour
         {
             GameObject newPlayer = Instantiate(playerPrefab);
             newPlayer.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            StartCoroutine(WaitForSpawnPointManager(clientId));
         }
-    }
-
-    IEnumerator WaitForSpawnPointManager(ulong clientId)
-    {
-        while (!SpawnPointManager.Instance.IsInitialized)
-        {
-            yield return null;
-        }
-        OnLocalPlayerSpawned?.Invoke(clientId, EventArgs.Empty);
-        playerShotsDictionary.Add(clientId, 0);
     }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)
@@ -165,15 +153,11 @@ public class GolfGameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void SetPlayerBallHitServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        if (!IsClient)
+        if (!playerShotsDictionary.ContainsKey(serverRpcParams.Receive.SenderClientId))
         {
-            return;
+            playerShotsDictionary.Add(serverRpcParams.Receive.SenderClientId, 0);
         }
-        ulong clientId = serverRpcParams.Receive.SenderClientId;
-        if (NetworkManager.ConnectedClients.ContainsKey(clientId))
-        {
-            playerShotsDictionary[serverRpcParams.Receive.SenderClientId]++;
-        }
+        playerShotsDictionary[serverRpcParams.Receive.SenderClientId]++;
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)

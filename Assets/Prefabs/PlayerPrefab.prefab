@@ -5425,7 +5425,6 @@ GameObject:
   - component: {fileID: 353335351230481258}
   - component: {fileID: 6289793550299701831}
   - component: {fileID: 3005368436813429830}
-  - component: {fileID: 2881149157484114736}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -5519,6 +5518,7 @@ MonoBehaviour:
   shotMultiplier: 400
   stopVelocity: 0.05
   MaxDragDistance: 15
+  playerContactForce: 20
   lineRenderer: {fileID: 61233483730055631}
   trailRenderer: {fileID: 2009906578361943323}
   idleParticles: {fileID: 3035676753139126120}
@@ -5607,17 +5607,5 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 0
+  Interpolate: 1
   SlerpPosition: 0
---- !u!114 &2881149157484114736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8189122645325627270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FinishManager : NetworkBehaviour
@@ -20,30 +21,46 @@ public class FinishManager : NetworkBehaviour
 
     private void Start()
     {
-        if (!IsServer)
+        if (IsServer)
         {
-            return;
+            playerFinishedDictionary.Add(NetworkManager.Singleton.LocalClientId, false);
         }
-        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        else
         {
-            playerFinishedDictionary.Add(clientId, false);
+            SetPlayerInFinishDictionaryServerRpc();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerInFinishDictionaryServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        playerFinishedDictionary.Add(serverRpcParams.Receive.SenderClientId, false);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            ulong clientId = other.gameObject.GetComponent<PlayerController>().OwnerClientId;
+            SetLocalPlayerFinishedClientRpc(clientId);
+            SetPlayerFinishServerRpc(clientId);
+        }
+    }
+
+    [ClientRpc]
+    private void SetLocalPlayerFinishedClientRpc(ulong clientId)
+    {
+        if (clientId == NetworkManager.Singleton.LocalClientId)
+        {
             OnLocalPlayerFinished?.Invoke(this, EventArgs.Empty);
-            SetPlayerFinishServerRpc();
             SoundManager.Instance.PlayFinishedSound(this, EventArgs.Empty);
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerFinishServerRpc(ServerRpcParams serverRpcParams = default)
+    public void SetPlayerFinishServerRpc(ulong clientId, ServerRpcParams serverRpcParams = default)
     {
-        playerFinishedDictionary[serverRpcParams.Receive.SenderClientId] = true;
+        playerFinishedDictionary[clientId] = true;
         CheckAllPlayers();
     }
 
@@ -56,7 +73,7 @@ public class FinishManager : NetworkBehaviour
             {
                 allPlayersFinished = false;
             }
-           }
+        }
         if (allPlayersFinished)
         {
             OnMultiplayerGameFinished?.Invoke(this, EventArgs.Empty);

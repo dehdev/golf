@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class RotatingObstacle : MonoBehaviour
+public class RotatingObstacle : NetworkBehaviour
 {
     [SerializeField] private float rotationSpeed = 3f;
 
@@ -12,7 +12,10 @@ public class RotatingObstacle : MonoBehaviour
 
     private void Start()
     {
-        RotateTween();
+        if (IsServer)
+        {
+            RotateTween();
+        }
     }
 
     private void RotateTween()
@@ -20,10 +23,11 @@ public class RotatingObstacle : MonoBehaviour
         rotateTween = transform.DORotate(new Vector3(0f, 360f, 0f), rotationSpeed, RotateMode.FastBeyond360)
         .SetLoops(-1, LoopType.Restart)
         .SetRelative()
+        .SetUpdate(UpdateType.Fixed)
         .SetEase(Ease.Linear);
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
         rotateTween.Kill();
     }

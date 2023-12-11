@@ -1,9 +1,10 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class MovingObstacle : MonoBehaviour
+public class MovingObstacle : NetworkBehaviour
 {
     [SerializeField] private Vector3 moveDistance = new Vector3(0f, 0f, 0f);
     [SerializeField] private float moveDuration = 2f;
@@ -12,7 +13,10 @@ public class MovingObstacle : MonoBehaviour
 
     private void Start()
     {
-        MovePlatform();
+        if (IsServer)
+        {
+            MovePlatform();
+        }
     }
 
     private void MovePlatform()
@@ -21,10 +25,12 @@ public class MovingObstacle : MonoBehaviour
 
         platformMoveTween = transform.DOMove(initialPosition + moveDistance, moveDuration)
             .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
             .OnComplete(() =>
             {
                 platformMoveTween = transform.DOMove(initialPosition, moveDuration)
                     .SetEase(Ease.InOutQuad)
+                    .SetUpdate(UpdateType.Fixed)
                     .OnComplete(() =>
                     {
                         MovePlatform();
@@ -32,7 +38,7 @@ public class MovingObstacle : MonoBehaviour
             });
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
         platformMoveTween.Kill();
     }

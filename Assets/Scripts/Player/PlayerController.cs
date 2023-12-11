@@ -1,11 +1,7 @@
 using Cinemachine;
 using System;
 using System.Collections;
-using System.Linq;
-using TMPro;
 using Unity.Netcode;
-using Unity.Services.Lobbies.Models;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -28,6 +24,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float shotMultiplier;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
+    [SerializeField] private float playerContactForce = 20f;
 
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private TrailRenderer trailRenderer;
@@ -144,6 +141,14 @@ public class PlayerController : NetworkBehaviour
         virtualCamera.Follow = transform;
     }
 
+    public void SetVisbility(bool isVisible)
+    {
+        meshRenderer.enabled = isVisible;
+        trailRenderer.enabled = isVisible;
+        areaOfEffect.SetActive(isVisible);
+        sphereCollider.enabled = isVisible;
+    }
+
     private void Update()
     {
         if (!IsOwner)
@@ -207,6 +212,10 @@ public class PlayerController : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Finish"))
+        {
+            SetPlayerVisibilityServerRpc(false);
+        }
         if (!IsOwner)
         {
             return;
@@ -219,6 +228,34 @@ public class PlayerController : NetworkBehaviour
             SetPlayerPosition(lastPos);
             StartCoroutine(PlayerInstantStopCoroutine());
         }
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                Vector3 hitDirection;
+                hitDirection = contact.normal;
+                Vector3 appliedForce = -hitDirection * playerContactForce;
+                appliedForce.y = Mathf.Max(0, appliedForce.y);
+                collision.gameObject.GetComponent<PlayerController>().PlayerHitObstacle(appliedForce);
+                return;
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerVisibilityServerRpc(bool visibility, ServerRpcParams serverRpcParams = default)
+    {
+        SetPlayerVisibilityClientRpc(visibility, serverRpcParams.Receive.SenderClientId);
+    }
+
+    [ClientRpc]
+    private void SetPlayerVisibilityClientRpc(bool visibility, ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId == clientId)
+        {
+            return;
+        }
+        SetVisbility(visibility);
     }
 
     private void PreProcessAim()
@@ -349,7 +386,7 @@ public class PlayerController : NetworkBehaviour
 
     public void PlayerHitObstacle(Vector3 hitVelocity)
     {
-        rb.velocity = hitVelocity;
+        rb.AddForce(hitVelocity, ForceMode.Impulse);
     }
 
     public int GetLocalPlayerShots()

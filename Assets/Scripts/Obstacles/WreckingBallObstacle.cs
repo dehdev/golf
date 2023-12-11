@@ -2,9 +2,10 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class WreckingBallObstacle : MonoBehaviour
+public class WreckingBallObstacle : NetworkBehaviour
 {
     [SerializeField] private float rotationDuration = 2f;
     [SerializeField] private float rotationAngle = 45f;
@@ -16,7 +17,10 @@ public class WreckingBallObstacle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        MoveWreckingBalls();
+        if (IsServer)
+        {
+            MoveWreckingBalls();
+        }
     }
 
     private void MoveWreckingBalls()
@@ -29,6 +33,7 @@ public class WreckingBallObstacle : MonoBehaviour
     {
         wreckingBall.DORotate(new Vector3(targetRotation, 0, 0), rotationDuration)
             .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
             .OnComplete(() => MoveWreckingBallOnX(wreckingBall, -targetRotation));
     }
 
@@ -36,10 +41,11 @@ public class WreckingBallObstacle : MonoBehaviour
     {
         wreckingBall.DORotate(new Vector3(0, 90, targetRotation), rotationDuration)
             .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
             .OnComplete(() => MoveWreckingBallOnY(wreckingBall, -targetRotation));
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
         // Kill any ongoing tweens associated with this GameObject
         DOTween.Kill(wreckingBall1);

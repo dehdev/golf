@@ -1,7 +1,8 @@
 using DG.Tweening;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PistonObstacle : MonoBehaviour
+public class PistonObstacle : NetworkBehaviour
 {
     [SerializeField] private float moveDistance = 4f;
     [SerializeField] private float pullBackDuration = 2f;
@@ -14,7 +15,10 @@ public class PistonObstacle : MonoBehaviour
     private void Start()
     {
         obstacleBouncePlayer = GetComponentInChildren<ObstacleBouncePlayer>();
-        MovePiston();
+        if (IsServer)
+        {
+            MovePiston();
+        }
     }
 
     private void MovePiston()
@@ -37,7 +41,7 @@ public class PistonObstacle : MonoBehaviour
             });
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
         pistonTween.Kill();
     }

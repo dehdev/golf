@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class WreckingBallObstacle : NetworkBehaviour
+public class WreckingBallObstacle : MonoBehaviour
 {
     [SerializeField] private float rotationDuration = 2f;
     [SerializeField] private float rotationAngle = 45f;
@@ -15,9 +15,14 @@ public class WreckingBallObstacle : NetworkBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        if (IsServer)
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+    }
+
+    private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MoveWreckingBalls();
         }
@@ -45,10 +50,11 @@ public class WreckingBallObstacle : NetworkBehaviour
             .OnComplete(() => MoveWreckingBallOnY(wreckingBall, -targetRotation));
     }
 
-    public override void OnDestroy()
+    private void OnDestroy()
     {
         // Kill any ongoing tweens associated with this GameObject
         DOTween.Kill(wreckingBall1);
         DOTween.Kill(wreckingBall2);
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

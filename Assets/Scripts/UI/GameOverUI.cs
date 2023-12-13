@@ -15,8 +15,8 @@ public class GameOverUI : MonoBehaviour
 
     private void Start()
     {
-        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         FinishManager.Instance.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         mainMenuButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.Shutdown();

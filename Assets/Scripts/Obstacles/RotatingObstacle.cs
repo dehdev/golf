@@ -1,10 +1,11 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class RotatingObstacle : NetworkBehaviour
+public class RotatingObstacle : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed = 3f;
 
@@ -12,7 +13,12 @@ public class RotatingObstacle : NetworkBehaviour
 
     private void Start()
     {
-        if (IsServer)
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+    }
+
+    private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             RotateTween();
         }
@@ -27,8 +33,9 @@ public class RotatingObstacle : NetworkBehaviour
         .SetEase(Ease.Linear);
     }
 
-    public override void OnDestroy()
+    private void OnDestroy()
     {
         rotateTween.Kill();
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

@@ -21,10 +21,12 @@ public class PlayerController : NetworkBehaviour
     public static event EventHandler<float> OnShootingStartEvent;
     public static event EventHandler OnPlayerResetPosition;
 
-    [SerializeField] private float shotMultiplier;
+    [SerializeField] private float shootForce;
+    private float shootClampedStrength;
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
-    [SerializeField] private float playerContactForce = 20f;
+
+    private const float PLAYER_MAX_SPEED = 100f;
 
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private TrailRenderer trailRenderer;
@@ -131,22 +133,20 @@ public class PlayerController : NetworkBehaviour
     {
         trailRenderer.enabled = true;
         meshRenderer.enabled = true;
-        sphereCollider.enabled = true;
     }
 
     private void InitializePlayerObjectsForOwner()
     {
         areaOfEffect.SetActive(true);
+        sphereCollider.enabled = true;
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.Follow = transform;
     }
 
-    public void SetVisbility(bool isVisible)
+    private void SetVisbility(bool isVisible)
     {
         meshRenderer.enabled = isVisible;
         trailRenderer.enabled = isVisible;
-        areaOfEffect.SetActive(isVisible);
-        sphereCollider.enabled = isVisible;
     }
 
     private void Update()
@@ -185,6 +185,8 @@ public class PlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        rb.velocity = Vector3.ClampMagnitude(rb.velocity, PLAYER_MAX_SPEED);
+
         if (!IsOwner)
         {
             return;
@@ -212,10 +214,6 @@ public class PlayerController : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Finish"))
-        {
-            SetPlayerVisibilityServerRpc(false);
-        }
         if (!IsOwner)
         {
             return;
@@ -228,33 +226,18 @@ public class PlayerController : NetworkBehaviour
             SetPlayerPosition(lastPos);
             StartCoroutine(PlayerInstantStopCoroutine());
         }
-        foreach (ContactPoint contact in collision.contacts)
-        {
-            if (collision.gameObject.CompareTag("Player"))
-            {
-                Vector3 hitDirection;
-                hitDirection = contact.normal;
-                Vector3 appliedForce = -hitDirection * playerContactForce;
-                appliedForce.y = Mathf.Max(0, appliedForce.y);
-                collision.gameObject.GetComponent<PlayerController>().PlayerHitObstacle(appliedForce);
-                return;
-            }
-        }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerVisibilityServerRpc(bool visibility, ServerRpcParams serverRpcParams = default)
+    public void SetPlayerVisibilityServerRpc(bool visibility)
     {
-        SetPlayerVisibilityClientRpc(visibility, serverRpcParams.Receive.SenderClientId);
+        SetVisbility(visibility);
+        SetPlayerVisibilityClientRpc(visibility);
     }
 
     [ClientRpc]
-    private void SetPlayerVisibilityClientRpc(bool visibility, ulong clientId)
+    private void SetPlayerVisibilityClientRpc(bool visibility)
     {
-        if (NetworkManager.Singleton.LocalClientId == clientId)
-        {
-            return;
-        }
         SetVisbility(visibility);
     }
 
@@ -287,6 +270,8 @@ public class PlayerController : NetworkBehaviour
 
         lineRenderer.enabled = true;
         DrawLine(worldPoint.Value);
+        SetClampedStrengthOnWorldPoint(worldPoint.Value);
+
         if (readyToShoot)
         {
             arrow.SetActive(false);
@@ -312,9 +297,8 @@ public class PlayerController : NetworkBehaviour
 
         Vector3 direction = (horizontalWorldPoint - transform.position).normalized;
 
-        float strength = GetClampedStrength(worldPoint);
-
-        rb.AddForce(shotMultiplier * strength * -direction);
+        rb.AddForce(shootForce * shootClampedStrength * -direction);
+        Debug.Log("Player shot with strength: " + shootForce * shootClampedStrength);
 
         isIdle = false;
 
@@ -351,10 +335,18 @@ public class PlayerController : NetworkBehaviour
         OnShootingStartEvent?.Invoke(this, distanceRatio);
     }
 
-    private float GetClampedStrength(Vector3 worldPoint)
+    private void SetClampedStrengthOnWorldPoint(Vector3 worldPoint)
     {
         Vector3 horizontalWorldPoint = new(worldPoint.x, transform.position.y, worldPoint.z);
-        return Mathf.Clamp(Vector3.Distance(transform.position, horizontalWorldPoint), 0, MaxDragDistance);
+        float distance = Vector3.Distance(transform.position, horizontalWorldPoint);
+
+        // Use Mathf.InverseLerp to map the distance to a value between 0 and 1
+        shootClampedStrength = Mathf.InverseLerp(0, MaxDragDistance, distance);
+    }
+
+    public float GetStrength()
+    {
+        return shootClampedStrength;
     }
 
     /*private IEnumerator PlayerLerpStopCoroutine()
@@ -386,11 +378,16 @@ public class PlayerController : NetworkBehaviour
 
     public void PlayerHitObstacle(Vector3 hitVelocity)
     {
-        rb.AddForce(hitVelocity, ForceMode.Impulse);
+        rb.velocity = hitVelocity;
     }
 
     public int GetLocalPlayerShots()
     {
         return localPlayerShots;
+    }
+
+    public float GetMaxDragDistance()
+    {
+        return MaxDragDistance;
     }
 }

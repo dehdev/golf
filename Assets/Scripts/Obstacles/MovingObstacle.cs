@@ -1,10 +1,11 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class MovingObstacle : NetworkBehaviour
+public class MovingObstacle : MonoBehaviour
 {
     [SerializeField] private Vector3 moveDistance = new Vector3(0f, 0f, 0f);
     [SerializeField] private float moveDuration = 2f;
@@ -13,7 +14,12 @@ public class MovingObstacle : NetworkBehaviour
 
     private void Start()
     {
-        if (IsServer)
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+    }
+
+    private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MovePlatform();
         }
@@ -38,8 +44,9 @@ public class MovingObstacle : NetworkBehaviour
             });
     }
 
-    public override void OnDestroy()
+    private void OnDestroy()
     {
         platformMoveTween.Kill();
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

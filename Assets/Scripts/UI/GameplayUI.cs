@@ -14,6 +14,12 @@ public class GameplayUI : MonoBehaviour
     {
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         PlayerController.OnBallHit += PlayerController_OnBallHit;
+        FinishManager.Instance.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
+        Hide();
+    }
+
+    private void Instance_OnLocalPlayerFinished(object sender, EventArgs e)
+    {
         Hide();
     }
 
@@ -42,5 +48,12 @@ public class GameplayUI : MonoBehaviour
     private void Show()
     {
         gameObject.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
+        PlayerController.OnBallHit -= PlayerController_OnBallHit;
+        FinishManager.Instance.OnLocalPlayerFinished -= Instance_OnLocalPlayerFinished;
     }
 }

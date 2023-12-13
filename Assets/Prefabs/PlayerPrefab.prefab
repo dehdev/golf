@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7450357247330497321}
   - component: {fileID: 61233483730055631}
+  - component: {fileID: 200775278907918862}
   m_Layer: 2
   m_Name: Shoot Line
   m_TagString: Untagged
@@ -97,7 +98,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0}
+      key0: {r: 1, g: 1, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -128,7 +129,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 1
     alignment: 1
-    textureMode: 4
+    textureMode: 1
     textureScale: {x: 0.4, y: 0.4}
     shadowBias: 0.5
     generateLightingData: 0
@@ -136,6 +137,18 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &200775278907918862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93660391883645189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf8092241032ab0429b903cca6f47043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1301113984517165659
 GameObject:
   m_ObjectHideFlags: 0
@@ -5515,10 +5528,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshRenderer: {fileID: 345984074427196350}
   areaOfEffect: {fileID: 7254183502711414349}
-  shotMultiplier: 400
+  shootForce: 6000
   stopVelocity: 0.05
-  MaxDragDistance: 15
-  playerContactForce: 20
+  MaxDragDistance: 12
   lineRenderer: {fileID: 61233483730055631}
   trailRenderer: {fileID: 2009906578361943323}
   idleParticles: {fileID: 3035676753139126120}
@@ -5537,7 +5549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 4
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineColor: {r: 0.9254902, g: 0.9411765, b: 0.94509804, a: 1}
   outlineWidth: 0.5
   precomputeOutline: 0
   bakeKeys: []
@@ -5601,7 +5613,7 @@ MonoBehaviour:
   SyncScaleY: 0
   SyncScaleZ: 0
   PositionThreshold: 0.001
-  RotAngleThreshold: 1
+  RotAngleThreshold: 5
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0

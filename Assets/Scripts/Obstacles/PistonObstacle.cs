@@ -1,8 +1,9 @@
 using DG.Tweening;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PistonObstacle : NetworkBehaviour
+public class PistonObstacle : MonoBehaviour
 {
     [SerializeField] private float moveDistance = 4f;
     [SerializeField] private float pullBackDuration = 2f;
@@ -14,8 +15,13 @@ public class PistonObstacle : NetworkBehaviour
 
     private void Start()
     {
+        GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         obstacleBouncePlayer = GetComponentInChildren<ObstacleBouncePlayer>();
-        if (IsServer)
+    }
+
+    private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MovePiston();
         }
@@ -27,12 +33,14 @@ public class PistonObstacle : NetworkBehaviour
         obstacleBouncePlayer.Disable();
         pistonTween = transform.DOLocalMoveY(initialPosition.y - moveDistance, pullBackDuration)
             .SetEase(Ease.InOutQuad)
+            .SetUpdate(UpdateType.Fixed)
             .SetDelay(0.3f)
             .OnComplete(() =>
             {
                 obstacleBouncePlayer.Enable();
                 pistonTween = transform.DOLocalMoveY(initialPosition.y, pushDuration)
                     .SetEase(Ease.OutCubic)
+                    .SetUpdate(UpdateType.Fixed)
                     .SetDelay(1f)
                     .OnComplete(() =>
                     {
@@ -41,8 +49,9 @@ public class PistonObstacle : NetworkBehaviour
             });
     }
 
-    public override void OnDestroy()
+    private void OnDestroy()
     {
         pistonTween.Kill();
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

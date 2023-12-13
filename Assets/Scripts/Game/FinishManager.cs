@@ -43,7 +43,6 @@ public class FinishManager : NetworkBehaviour
         {
             ulong clientId = other.gameObject.GetComponent<PlayerController>().OwnerClientId;
             SetLocalPlayerFinishedClientRpc(clientId);
-            SetPlayerFinishServerRpc(clientId);
         }
     }
 
@@ -53,12 +52,14 @@ public class FinishManager : NetworkBehaviour
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             OnLocalPlayerFinished?.Invoke(this, EventArgs.Empty);
+            PlayerController.LocalInstance.SetPlayerVisibilityServerRpc(false);
             SoundManager.Instance.PlayFinishedSound(this, EventArgs.Empty);
+            SetPlayerFinishServerRpc(clientId);
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerFinishServerRpc(ulong clientId, ServerRpcParams serverRpcParams = default)
+    public void SetPlayerFinishServerRpc(ulong clientId)
     {
         playerFinishedDictionary[clientId] = true;
         CheckAllPlayers();

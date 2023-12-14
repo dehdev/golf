@@ -14,11 +14,27 @@ public class CharacterSelectReady : NetworkBehaviour
 
     public event EventHandler OnReadyStatusChanged;
 
+    public NetworkVariable<Loader.GameScene> selectedGameScene;
 
     private void Awake()
     {
         Instance = this;
         playerReadyDictionary = new Dictionary<ulong, bool>();
+    }
+
+    private void Start()
+    {
+        selectedGameScene.OnValueChanged += SelectedGameScene_OnValueChanged;
+    }
+
+    private void SelectedGameScene_OnValueChanged(Loader.GameScene previousValue, Loader.GameScene newValue)
+    {
+        selectedGameScene.Value = newValue;
+    }
+
+    public Loader.GameScene GetSelectedGameScene()
+    {
+        return selectedGameScene.Value;
     }
 
     public void SetPlayerReady()
@@ -44,7 +60,7 @@ public class CharacterSelectReady : NetworkBehaviour
         if (allClientsReady)
         {
             GolfGameLobby.Instance.DeleteLobby();
-            Loader.LoadNetwork(Loader.Scene.Tutorial);
+            Loader.LoadNetwork(selectedGameScene.Value);
         }
     }
 
@@ -55,7 +71,7 @@ public class CharacterSelectReady : NetworkBehaviour
         OnReadyStatusChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public bool isPlayerReady(ulong clientId)
+    public bool IsPlayerReady(ulong clientId)
     {
         return playerReadyDictionary.ContainsKey(clientId) && playerReadyDictionary[clientId];
     }

@@ -11,7 +11,8 @@ public class PlayerController : NetworkBehaviour
     public static PlayerController LocalInstance { get; private set; }
 
     private Rigidbody rb;
-    private SphereCollider sphereCollider;
+    [SerializeField] private SphereCollider playerCollider;
+    [SerializeField] private SphereCollider finishCollider;
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject areaOfEffect;
 
@@ -47,7 +48,6 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        sphereCollider = GetComponent<SphereCollider>();
 
         readyToShoot = false;
         isAiming = false;
@@ -58,7 +58,8 @@ public class PlayerController : NetworkBehaviour
         lineRenderer.enabled = false;
         trailRenderer.enabled = false;
         meshRenderer.enabled = false;
-        sphereCollider.enabled = false;
+        playerCollider.enabled = false;
+        finishCollider.enabled = false;
         areaOfEffect.SetActive(false);
     }
 
@@ -99,6 +100,10 @@ public class PlayerController : NetworkBehaviour
         {
             InitializePlayerObjectsForOwner();
         }
+        if (IsServer)
+        {
+            TogglePlayerFinishCollider(true);
+        }
     }
 
     private void GameInput_OnCancelShoot(object sender, EventArgs e)
@@ -138,15 +143,14 @@ public class PlayerController : NetworkBehaviour
     private void InitializePlayerObjectsForOwner()
     {
         areaOfEffect.SetActive(true);
-        sphereCollider.enabled = true;
+        playerCollider.enabled = true;
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.Follow = transform;
     }
 
-    private void SetVisbility(bool isVisible)
+    private void TogglePlayerFinishCollider(bool isVisible)
     {
-        meshRenderer.enabled = isVisible;
-        trailRenderer.enabled = isVisible;
+        finishCollider.enabled = isVisible;
     }
 
     private void Update()
@@ -185,13 +189,12 @@ public class PlayerController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = Vector3.ClampMagnitude(rb.velocity, PLAYER_MAX_SPEED);
-
         if (!IsOwner)
         {
             return;
         }
         ProcessAim();
+        rb.velocity = Vector3.ClampMagnitude(rb.velocity, PLAYER_MAX_SPEED);
     }
 
     private void OnMouseUp()
@@ -229,16 +232,19 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerVisibilityServerRpc(bool visibility)
+    public void TogglePlayerFinishColliderServerRpc(bool visibility, ServerRpcParams serverRpcParams = default)
     {
-        SetVisbility(visibility);
-        SetPlayerVisibilityClientRpc(visibility);
+        if(serverRpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
+        {
+            TogglePlayerFinishCollider(visibility);
+        }
+        TogglePlayerFinishColliderClientRpc(visibility);
     }
 
     [ClientRpc]
-    private void SetPlayerVisibilityClientRpc(bool visibility)
+    private void TogglePlayerFinishColliderClientRpc(bool visibility)
     {
-        SetVisbility(visibility);
+        TogglePlayerFinishCollider(visibility);
     }
 
     private void PreProcessAim()

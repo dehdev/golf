@@ -27,7 +27,7 @@ public class GolfGameLobby : MonoBehaviour
 
     public class OnLobbyListChangedEventArgs : EventArgs
     {
-        public List<Lobby> lobbyList { get; set; }
+        public List<Lobby> LobbyList { get; set; }
     }
 
     private Lobby joinedLobby;
@@ -63,7 +63,7 @@ public class GolfGameLobby : MonoBehaviour
 
     private void HandleHeartBeat()
     {
-        if (isLobbyHost())
+        if (IsLobbyHost())
         {
             heartBeatTimer -= Time.deltaTime;
             if (heartBeatTimer <= 0)
@@ -111,7 +111,7 @@ public class GolfGameLobby : MonoBehaviour
 
     public async void KickPlayer(string playerId)
     {
-        if (isLobbyHost())
+        if (IsLobbyHost())
         {
             try
             {
@@ -124,7 +124,7 @@ public class GolfGameLobby : MonoBehaviour
         }
     }
 
-    private bool isLobbyHost()
+    private bool IsLobbyHost()
     {
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
@@ -225,7 +225,7 @@ public class GolfGameLobby : MonoBehaviour
             QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
             OnLobbyListChanged?.Invoke(this, new OnLobbyListChangedEventArgs
             {
-                lobbyList = queryResponse.Results
+                LobbyList = queryResponse.Results
             });
         }
         catch (LobbyServiceException e)

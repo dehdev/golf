@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using Unity.Netcode;
 
 public class FlagController : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class FlagController : MonoBehaviour
     private Vector3 initialFlagPosition;
     private Vector3 initialFlagPolePosition;
 
+    private int playersInsideTrigger = 0;
+    private bool isRaised = false;
+
     private void Start()
     {
         initialFlagPosition = flag.transform.position;
@@ -23,7 +27,11 @@ public class FlagController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            RaiseFlag();
+            playersInsideTrigger++;
+            if (!isRaised)
+            {
+                RaiseFlag();
+            }
         }
     }
 
@@ -31,18 +39,24 @@ public class FlagController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            LowerFlag();
+            playersInsideTrigger--;
+            if (isRaised && playersInsideTrigger == 0)
+            {
+                LowerFlag();
+            }
         }
     }
 
     private void RaiseFlag()
     {
+        isRaised = true;
         flag.DOMoveY(flag.transform.position.y + raiseHeight, 1f).SetEase(Ease.OutQuad);
         flagPole.DOMoveY(flagPole.transform.position.y + raiseHeight, 1f).SetEase(Ease.OutQuad);
     }
 
     private void LowerFlag()
     {
+        isRaised = false;
         flag.DOMoveY(initialFlagPosition.y, 1f).SetEase(Ease.OutQuad);
         flagPole.DOMoveY(initialFlagPolePosition.y, 1f).SetEase(Ease.OutQuad);
     }

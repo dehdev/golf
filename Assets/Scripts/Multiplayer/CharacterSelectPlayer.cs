@@ -48,7 +48,7 @@ public class CharacterSelectPlayer : MonoBehaviour
         {
             Show();
             PlayerData playerData = GolfGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
-            readyText.SetActive(CharacterSelectReady.Instance.isPlayerReady(playerData.clientId));
+            readyText.SetActive(CharacterSelectReady.Instance.IsPlayerReady(playerData.clientId));
             playerVisual.SetPlayerColor(GolfGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
             playerNameText.text = playerData.playerName.ToString();
         }

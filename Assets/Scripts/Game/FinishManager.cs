@@ -52,7 +52,7 @@ public class FinishManager : NetworkBehaviour
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             OnLocalPlayerFinished?.Invoke(this, EventArgs.Empty);
-            PlayerController.LocalInstance.SetPlayerVisibilityServerRpc(false);
+            PlayerController.LocalInstance.TogglePlayerFinishColliderServerRpc(false);
             SoundManager.Instance.PlayFinishedSound(this, EventArgs.Empty);
             SetPlayerFinishServerRpc(clientId);
         }

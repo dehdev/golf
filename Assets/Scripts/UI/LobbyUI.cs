@@ -54,7 +54,7 @@ public class LobbyUI : MonoBehaviour
 
     private void GolfGameLobby_OnLobbyListChanged(object sender, GolfGameLobby.OnLobbyListChangedEventArgs e)
     {
-        UpdateLobbyList(e.lobbyList);
+        UpdateLobbyList(e.LobbyList);
     }
 
     private void OnDestroy()

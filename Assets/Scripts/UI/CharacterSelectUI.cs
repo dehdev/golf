@@ -29,8 +29,11 @@ public class CharacterSelectUI : MonoBehaviour
 
     private void Start()
     {
-        Lobby lobby = GolfGameLobby.Instance.GetLobby();
-        lobbyNameText.text = "Lobby name: " + lobby.Name;
-        lobbyCodeText.text = "Lobby code: " + lobby.LobbyCode;
+        if (GolfGameMultiplayer.playMultiplayer)
+        {
+            Lobby lobby = GolfGameLobby.Instance.GetLobby();
+            lobbyNameText.text = "Lobby name: " + lobby.Name;
+            lobbyCodeText.text = "Lobby code: " + lobby.LobbyCode;
+        }
     }
 }

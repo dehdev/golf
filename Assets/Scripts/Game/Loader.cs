@@ -9,10 +9,17 @@ public static class Loader
     public enum Scene
     {
         MainMenuScene,
-        Tutorial,
         LoadingScene,
         LobbyScene,
         CharacterSelectScene
+    }
+
+    public enum GameScene
+    {
+        TUTORIAL,
+        SKY,
+        FOREST,
+        CAVE
     }
 
     public static Scene targetScene;
@@ -28,7 +35,18 @@ public static class Loader
         NetworkManager.Singleton.SceneManager.LoadScene(targetScene.ToString(), LoadSceneMode.Single);
         switch (targetScene)
         {
-            case Scene.Tutorial:
+            default:
+                AmbientManager.Instance.StopAmbient();
+                break;
+        }
+    }
+
+    public static void LoadNetwork(GameScene targetScene)
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene(targetScene.ToString(), LoadSceneMode.Single);
+        switch (targetScene)
+        {
+            case GameScene.TUTORIAL:
                 AmbientManager.Instance.PlayWindAmbient();
                 break;
             default:

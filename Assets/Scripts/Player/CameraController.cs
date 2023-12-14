@@ -26,9 +26,9 @@ public class CameraController : NetworkBehaviour
         //GameInput.Instance.OnStartedRotatingCamera += Instance_OnRotatingCamera;
         if (IsOwner)
         {
-            finishedVirtualCamera = GameObject.FindGameObjectWithTag("FinishedCamera")?.GetComponent<CinemachineVirtualCamera>();
-            playerVirtualCamera = GameObject.FindGameObjectWithTag("PlayerCamera")?.GetComponent<CinemachineVirtualCamera>();
-            hoveringVirtualCamera = GameObject.FindGameObjectWithTag("HoveringCamera")?.GetComponent<CinemachineVirtualCamera>();
+            finishedVirtualCamera = GameObject.FindGameObjectWithTag("FinishedCamera").GetComponent<CinemachineVirtualCamera>();
+            playerVirtualCamera = GameObject.FindGameObjectWithTag("PlayerCamera").GetComponent<CinemachineVirtualCamera>();
+            hoveringVirtualCamera = GameObject.FindGameObjectWithTag("HoveringCamera").GetComponent<CinemachineVirtualCamera>();
             playerVirtualCamera.Follow = transform;
             playerVirtualCamera.m_Lens.OrthographicSize = maxZoom;
             targetZoom = maxZoom;

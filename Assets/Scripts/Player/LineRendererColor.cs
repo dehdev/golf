@@ -24,5 +24,6 @@ public class LineRendererColor : MonoBehaviour
         lineColor = Color.Lerp(lineColor, redColor, clampedStrength);
 
         lineRenderer.material.color = lineColor;
+        lineRenderer.material.SetColor("_EmissionColor", lineColor);
     }
 }

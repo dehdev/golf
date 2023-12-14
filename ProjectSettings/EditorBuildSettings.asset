@@ -18,6 +18,15 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadingScene.unity
     guid: b7c68eb1a33f05748941faccc9bc2b39
   - enabled: 1
-    path: Assets/Scenes/Tutorial.unity
+    path: Assets/Scenes/Level Scenes/TUTORIAL.unity
     guid: 0341e96822694084b9e5ed50074abc68
+  - enabled: 1
+    path: Assets/Scenes/Level Scenes/CAVE.unity
+    guid: bb1bcb1f3e9deb64d838162f988c42bb
+  - enabled: 1
+    path: Assets/Scenes/Level Scenes/FOREST.unity
+    guid: bd36f2d6438858e4e85e9a42dcb63d07
+  - enabled: 1
+    path: Assets/Scenes/Level Scenes/SKY.unity
+    guid: fa4cfdd565b8f264bb05695412e2bda0
   m_configObjects: {}

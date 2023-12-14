@@ -39,7 +39,7 @@ public class GolfGameMultiplayer : NetworkBehaviour
         if (!playMultiplayer)
         {
             StartHost();
-            Loader.LoadNetwork(Loader.Scene.Tutorial);
+            Loader.LoadNetwork(Loader.Scene.CharacterSelectScene);
         }
     }
 

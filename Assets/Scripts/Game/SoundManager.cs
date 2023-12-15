@@ -9,7 +9,16 @@ public class SoundManager : MonoBehaviour
     private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
     public static SoundManager Instance { get; private set; }
 
-    [SerializeField] private AudioClip idleSound, ballHit, collisionSound, countdownSound, finishSound, offMapSound;
+    [Header("Player Sounds")]
+    [SerializeField] private AudioClip idleSound;
+    [SerializeField] private AudioClip ballHit;
+    [SerializeField] private AudioClip collisionSound;
+    [SerializeField] private AudioClip countdownSound;
+    [SerializeField] private AudioClip finishSound;
+    [SerializeField] private AudioClip offMapSound;
+
+    public EventHandler OnSoundEffectsVolumeChanged;
+
     private float volume = 1f;
 
     private void Awake()
@@ -64,15 +73,16 @@ public class SoundManager : MonoBehaviour
         PlaySound(idleSound, playerController.transform.position, 0.2f);
     }
 
+    public void PlayCountdownSound()
+    {
+        PlaySound(countdownSound, Vector3.zero, volume);
+    }
+
+
     private void PlaySound(AudioClip audioClip, Vector3 position, float volumeMultiplier = 1f)
     {
         //AudioSource.PlayClipAtPoint(audioClip, position, volumeMultiplier * volume);
         PlayClipAt(audioClip, position, volumeMultiplier * volume);
-    }
-
-    public void PlayCountdownSound()
-    {
-        PlaySound(countdownSound, Vector3.zero, volume);
     }
 
     public void IncreaseVolume()
@@ -83,6 +93,7 @@ public class SoundManager : MonoBehaviour
         }
         PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, volume);
         PlayerPrefs.Save();
+        OnSoundEffectsVolumeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void DecreaseVolume()
@@ -93,6 +104,7 @@ public class SoundManager : MonoBehaviour
         }
         PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, volume);
         PlayerPrefs.Save();
+        OnSoundEffectsVolumeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetVolume()

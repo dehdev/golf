@@ -33,12 +33,7 @@ public static class Loader
     public static void LoadNetwork(Scene targetScene)
     {
         NetworkManager.Singleton.SceneManager.LoadScene(targetScene.ToString(), LoadSceneMode.Single);
-        switch (targetScene)
-        {
-            default:
-                AmbientManager.Instance.StopAmbient();
-                break;
-        }
+        AmbientManager.Instance.StopAmbient();
     }
 
     public static void LoadNetwork(GameScene targetScene)
@@ -48,6 +43,12 @@ public static class Loader
         {
             case GameScene.TUTORIAL:
                 AmbientManager.Instance.PlayWindAmbient();
+                break;
+            case GameScene.SKY:
+                break;
+            case GameScene.FOREST:
+                break;
+            case GameScene.CAVE:
                 break;
             default:
                 AmbientManager.Instance.StopAmbient();

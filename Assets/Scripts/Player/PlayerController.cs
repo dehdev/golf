@@ -84,7 +84,6 @@ public class PlayerController : NetworkBehaviour
     {
         yield return new WaitForFixedUpdate();
         transform.position = pos;
-        Debug.Log("Player pos set to: " + transform.position);
     }
 
     private void Start()
@@ -304,7 +303,6 @@ public class PlayerController : NetworkBehaviour
         Vector3 direction = (horizontalWorldPoint - transform.position).normalized;
 
         rb.AddForce(shootForce * shootClampedStrength * -direction);
-        Debug.Log("Player shot with strength: " + shootForce * shootClampedStrength);
 
         isIdle = false;
 

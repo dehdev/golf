@@ -688,7 +688,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 80a7ac05b1bc4f24d93852e720509f39, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b40144bb3c639954d99c426a88bf7fd6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2600,8 +2600,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -493.41998, y: -180}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchoredPosition: {x: -531.52203, y: -180}
+  m_SizeDelta: {x: 380, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &853026713
 MonoBehaviour:
@@ -4067,8 +4067,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -493.41998, y: 60}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchoredPosition: {x: -533.51, y: 60}
+  m_SizeDelta: {x: 380, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1367712810
 MonoBehaviour:
@@ -4359,7 +4359,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Enter your name:'
+  m_text: 'Nickname:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: edeee9548779fe5468ef4dff5466e46a, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: edeee9548779fe5468ef4dff5466e46a, type: 2}
@@ -6084,8 +6084,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -493.41998, y: -95}
-  m_SizeDelta: {x: 300, y: 50}
+  m_AnchoredPosition: {x: -531.47906, y: -95}
+  m_SizeDelta: {x: 380, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1877317124
 MonoBehaviour:
@@ -6711,8 +6711,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -493.41998, y: 180}
-  m_SizeDelta: {x: 300, y: 100}
+  m_AnchoredPosition: {x: -533.4412, y: 180}
+  m_SizeDelta: {x: 380, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2061334696
 MonoBehaviour:

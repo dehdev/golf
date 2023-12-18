@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "Hold(duration=0.2)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Scoreboard",
+                    "type": "Button",
+                    "id": "a6ae6d23-230a-47b5-9f84-51035d235793",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -84,6 +93,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ActivateCameraRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "704e9310-1129-4b7a-8596-cf79664e7dc8",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Scoreboard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

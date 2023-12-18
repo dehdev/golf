@@ -62,6 +62,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Hold(duration=0.2)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Toggle Scoreboard"",
+                    ""type"": ""Button"",
+                    ""id"": ""a6ae6d23-230a-47b5-9f84-51035d235793"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -106,6 +115,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ActivateCameraRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""704e9310-1129-4b7a-8596-cf79664e7dc8"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Toggle Scoreboard"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -209,6 +229,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_CancelShoot = m_Player.FindAction("CancelShoot", throwIfNotFound: true);
         m_Player_ActivateCameraRotate = m_Player.FindAction("ActivateCameraRotate", throwIfNotFound: true);
+        m_Player_ToggleScoreboard = m_Player.FindAction("Toggle Scoreboard", throwIfNotFound: true);
         // RotateCamera
         m_RotateCamera = asset.FindActionMap("RotateCamera", throwIfNotFound: true);
         m_RotateCamera_RotatingCamera = m_RotateCamera.FindAction("RotatingCamera", throwIfNotFound: true);
@@ -280,6 +301,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_CancelShoot;
     private readonly InputAction m_Player_ActivateCameraRotate;
+    private readonly InputAction m_Player_ToggleScoreboard;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -288,6 +310,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @CancelShoot => m_Wrapper.m_Player_CancelShoot;
         public InputAction @ActivateCameraRotate => m_Wrapper.m_Player_ActivateCameraRotate;
+        public InputAction @ToggleScoreboard => m_Wrapper.m_Player_ToggleScoreboard;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -309,6 +332,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ActivateCameraRotate.started += instance.OnActivateCameraRotate;
             @ActivateCameraRotate.performed += instance.OnActivateCameraRotate;
             @ActivateCameraRotate.canceled += instance.OnActivateCameraRotate;
+            @ToggleScoreboard.started += instance.OnToggleScoreboard;
+            @ToggleScoreboard.performed += instance.OnToggleScoreboard;
+            @ToggleScoreboard.canceled += instance.OnToggleScoreboard;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -325,6 +351,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ActivateCameraRotate.started -= instance.OnActivateCameraRotate;
             @ActivateCameraRotate.performed -= instance.OnActivateCameraRotate;
             @ActivateCameraRotate.canceled -= instance.OnActivateCameraRotate;
+            @ToggleScoreboard.started -= instance.OnToggleScoreboard;
+            @ToggleScoreboard.performed -= instance.OnToggleScoreboard;
+            @ToggleScoreboard.canceled -= instance.OnToggleScoreboard;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -440,6 +469,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnCancelShoot(InputAction.CallbackContext context);
         void OnActivateCameraRotate(InputAction.CallbackContext context);
+        void OnToggleScoreboard(InputAction.CallbackContext context);
     }
     public interface IRotateCameraActions
     {

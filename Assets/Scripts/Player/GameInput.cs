@@ -16,6 +16,7 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnAnyKeyPressed;
     public event EventHandler OnCancelShoot;
     public event EventHandler OnStartedRotatingCamera;
+    public event EventHandler OnToggleScoreboard;
 
     private void Awake()
     {
@@ -31,10 +32,22 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.CancelShoot.performed += CancelShoot_performed;
         playerInputActions.Player.ActivateCameraRotate.performed += ActivateCameraRotate_performed;
         playerInputActions.Player.ActivateCameraRotate.canceled += ActivateCameraRotate_canceled;
-        
+
+
+        playerInputActions.Player.ToggleScoreboard.performed += ToggleScoreboard_performed;
+
         playerInputActions.RotateCamera.RotatingCamera.performed += RotatingCamera_performed;
 
         playerInputActions.WaitingForInput.Anykeypressed.performed += Anykeypressed_performed;
+    }
+
+    private void ToggleScoreboard_performed(InputAction.CallbackContext context)
+    {
+        if (GolfGameManager.Instance.IsLocalPlayerPaused() || !GolfGameManager.Instance.IsGamePlaying() || GolfGameManager.Instance.IsLocalPlayerFinished())
+        {
+            return;
+        }
+        OnToggleScoreboard?.Invoke(this, EventArgs.Empty);
     }
 
     private void RotatingCamera_performed(InputAction.CallbackContext context)

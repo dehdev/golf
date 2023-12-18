@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,7 +16,7 @@ public class GolfGameManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, bool> playerPausedDictionary;
-    private Dictionary<ulong, int> playerShotsDictionary;
+    public Dictionary<ulong, int> playerShotsDictionary;
 
     public event EventHandler OnStateChanged;
     public event EventHandler OnLocalGamePaused;
@@ -22,6 +24,9 @@ public class GolfGameManager : NetworkBehaviour
     public event EventHandler OnLocalPlayerReadyChanged;
     public event EventHandler OnMultiplayerGamePaused;
     public event EventHandler OnMultiplayerGameUnPaused;
+
+    public event EventHandler OnConnectedClientsIdsReceived;
+    public event EventHandler OnPlayerShotDictionaryChanged;
 
     private enum State
     {
@@ -40,6 +45,8 @@ public class GolfGameManager : NetworkBehaviour
     private bool autoTestGamePausedState = false;
     private NetworkVariable<bool> isGamePaused = new(false);
 
+    private List<ulong> connectedClientsIds;
+
     private bool didLocalPlayerFinish = false;
 
     private void Awake()
@@ -56,6 +63,24 @@ public class GolfGameManager : NetworkBehaviour
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void GetConnectedClientsIdsServerRpc()
+    {
+        GetConnectedClientsIdsClientRpc(NetworkManager.Singleton.ConnectedClientsIds.ToArray());
+    }
+
+    [ClientRpc]
+    private void GetConnectedClientsIdsClientRpc(ulong[] list)
+    {
+        connectedClientsIds = new List<ulong>(list);
+        OnConnectedClientsIdsReceived?.Invoke(this, EventArgs.Empty);
+    }
+
+    public List<ulong> GetConnectedClientsIds()
+    {
+        return connectedClientsIds;
     }
 
     private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
@@ -153,11 +178,29 @@ public class GolfGameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void SetPlayerBallHitServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        if (!playerShotsDictionary.ContainsKey(serverRpcParams.Receive.SenderClientId))
+        ulong clientId = serverRpcParams.Receive.SenderClientId;
+        if (!playerShotsDictionary.ContainsKey(clientId))
         {
-            playerShotsDictionary.Add(serverRpcParams.Receive.SenderClientId, 0);
+            playerShotsDictionary.Add(clientId, 0);
         }
-        playerShotsDictionary[serverRpcParams.Receive.SenderClientId]++;
+        playerShotsDictionary[clientId]++;
+        OnPlayerShotDictionaryChanged?.Invoke(this, EventArgs.Empty);
+        SetPlayerBallHitClientRpc(clientId);
+    }
+
+    [ClientRpc]
+    private void SetPlayerBallHitClientRpc(ulong clientId)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        if (!playerShotsDictionary.ContainsKey(clientId))
+        {
+            playerShotsDictionary.Add(clientId, 0);
+        }
+        playerShotsDictionary[clientId]++;
+        OnPlayerShotDictionaryChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
@@ -203,6 +246,15 @@ public class GolfGameManager : NetworkBehaviour
             autoTestGamePausedState = false;
             TestGamePausedState();
         }
+    }
+
+    public int GetPlayerShots(ulong clientId)
+    {
+        if (playerShotsDictionary.ContainsKey(clientId))
+        {
+            return playerShotsDictionary[clientId];
+        }
+        return 0;
     }
 
     public bool IsGamePlaying()

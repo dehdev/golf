@@ -45,10 +45,13 @@ public static class Loader
                 AmbientManager.Instance.PlayWindAmbient();
                 break;
             case GameScene.SKY:
+                AmbientManager.Instance.PlayWindAmbient();
                 break;
             case GameScene.FOREST:
+                AmbientManager.Instance.PlayForestAmbient();
                 break;
             case GameScene.CAVE:
+                AmbientManager.Instance.PlayCaveAmbient();
                 break;
             default:
                 AmbientManager.Instance.StopAmbient();

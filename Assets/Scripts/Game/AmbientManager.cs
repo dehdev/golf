@@ -8,6 +8,8 @@ public class AmbientManager : MonoBehaviour
     private const string PLAYER_PREFS_AMBIENT_VOLUME = "AmbientVolume";
 
     [SerializeField] private AudioClip windAmbient;
+    [SerializeField] private AudioClip forestAmbient;
+    [SerializeField] private AudioClip caveAmbient;
 
     public static AmbientManager Instance { get; private set; }
 
@@ -62,7 +64,18 @@ public class AmbientManager : MonoBehaviour
     {
         audioSource.clip = windAmbient;
         audioSource.Play();
-        Debug.Log("Playing wind ambient");
+    }
+
+    public void PlayForestAmbient()
+    {
+        audioSource.clip = forestAmbient;
+        audioSource.Play();
+    }
+
+    public void PlayCaveAmbient()
+    {
+        audioSource.clip = caveAmbient;
+        audioSource.Play();
     }
 
     public void StopAmbient()

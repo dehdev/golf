@@ -1379,6 +1379,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   windAmbient: {fileID: 8300000, guid: d2f2e4b2e3667524ba8c3d814a3cb04b, type: 3}
+  forestAmbient: {fileID: 8300000, guid: 3326272d5e7da7347b437c04ed7c9bb0, type: 3}
+  caveAmbient: {fileID: 0}
 --- !u!4 &459436228
 Transform:
   m_ObjectHideFlags: 0

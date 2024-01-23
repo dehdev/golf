@@ -44,6 +44,32 @@ public class MovingObstacle : MonoBehaviour
             });
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Transform playerTransform = other.GetComponent<Transform>();
+            if (playerTransform != null)
+            {
+                playerTransform.SetParent(transform);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Transform playerTransform = other.GetComponent<Transform>();
+            if (playerTransform != null && playerTransform.parent == transform)
+            {
+                playerTransform.SetParent(null);
+            }
+
+        }
+    }
+
+
     private void OnDestroy()
     {
         platformMoveTween.Kill();

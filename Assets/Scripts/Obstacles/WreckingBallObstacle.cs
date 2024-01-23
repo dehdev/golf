@@ -36,7 +36,7 @@ public class WreckingBallObstacle : MonoBehaviour
 
     private void MoveWreckingBallOnX(Transform wreckingBall, float targetRotation)
     {
-        wreckingBall.DORotate(new Vector3(targetRotation, 0, 0), rotationDuration)
+        wreckingBall.DOLocalRotate(new Vector3(targetRotation, 0, 0), rotationDuration)
             .SetEase(Ease.InOutQuad)
             .SetUpdate(UpdateType.Fixed)
             .OnComplete(() => MoveWreckingBallOnX(wreckingBall, -targetRotation));
@@ -44,7 +44,7 @@ public class WreckingBallObstacle : MonoBehaviour
 
     private void MoveWreckingBallOnY(Transform wreckingBall, float targetRotation)
     {
-        wreckingBall.DORotate(new Vector3(0, 90, targetRotation), rotationDuration)
+        wreckingBall.DOLocalRotate(new Vector3(0, 90, targetRotation), rotationDuration)
             .SetEase(Ease.InOutQuad)
             .SetUpdate(UpdateType.Fixed)
             .OnComplete(() => MoveWreckingBallOnY(wreckingBall, -targetRotation));

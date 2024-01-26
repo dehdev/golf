@@ -3,7 +3,6 @@
 modificat cum abordez spawnpointurile<br>
 
 <br>
-coliziuni intre mingi cu movement???<br>
 obstacole<br>
 # POLISH
 

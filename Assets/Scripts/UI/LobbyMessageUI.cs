@@ -35,26 +35,31 @@ public class LobbyMessageUI : MonoBehaviour
     private void GolfGameLobby_OnQuickJoinFailed(object sender, EventArgs e)
     {
         ShowMessage("NO LOBBIES AVAILABLE!");
+        closeButton.gameObject.SetActive(true);
     }
 
     private void GolfGameLobby_OnJoinFailed(object sender, EventArgs e)
     {
         ShowMessage("FAILED TO JOIN LOBBY!");
+        closeButton.gameObject.SetActive(true);
     }
 
     private void GolfGameLobby_OnJoinStarted(object sender, EventArgs e)
     {
         ShowMessage("JOINING LOBBY...");
+        closeButton.gameObject.SetActive(false);
     }
 
     private void GolfGameLobby_OnCreateLobbyStarted(object sender, EventArgs e)
     {
         ShowMessage("CREATING LOBBY...");
+        closeButton.gameObject.SetActive(false);
     }
 
     private void GolfGameLobby_OnCreateLobbyFailed(object sender, EventArgs e)
     {
         ShowMessage("FAILED TO CREATE LOBBY!");
+        closeButton.gameObject.SetActive(true);
     }
 
     private void OnDestroy()

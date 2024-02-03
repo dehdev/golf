@@ -13,6 +13,7 @@ public class HostDisconnectedUI : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
+            GolfGameLobby.Instance.LeaveLobby();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
     }

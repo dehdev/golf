@@ -134,9 +134,12 @@ public class GolfGameLobby : MonoBehaviour
         if (UnityServices.State != ServicesInitializationState.Initialized)
         {
             InitializationOptions initializationOptions = new InitializationOptions();
-            initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+            //initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
             await UnityServices.InitializeAsync();
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
         }
     }
 
@@ -172,7 +175,7 @@ public class GolfGameLobby : MonoBehaviour
     {
         try
         {
-            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode: joinCode);
             return joinAllocation;
         }
         catch (RelayServiceException e)
@@ -222,7 +225,7 @@ public class GolfGameLobby : MonoBehaviour
                 new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
             }
             };
-            QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
+            QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync(queryLobbiesOptions);
             OnLobbyListChanged?.Invoke(this, new OnLobbyListChangedEventArgs
             {
                 LobbyList = queryResponse.Results

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2440637243491190711}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Island2
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 1343626635519782445}
   - component: {fileID: 1343626635521168211}
   - component: {fileID: 1343626635516598395}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Convex (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 1856895647955185580}
   - component: {fileID: 1856895647953755436}
   - component: {fileID: 1856895647949942356}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Straight 2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 3050890562834870335}
   - component: {fileID: 3050890562833730881}
   - component: {fileID: 3050890562829649513}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Convex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 3763197864596049719}
   - component: {fileID: 3763197864597484105}
   - component: {fileID: 3763197864592882017}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Convex (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ GameObject:
   - component: {fileID: 5791126343577327606}
   - component: {fileID: 5791126343576167798}
   - component: {fileID: 5791126343572084238}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Straight 2 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -579,7 +579,7 @@ GameObject:
   - component: {fileID: 8070926142208049304}
   - component: {fileID: 8070926142207393254}
   - component: {fileID: 8070926142211176142}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocktile Convex (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

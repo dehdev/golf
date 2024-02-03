@@ -30,12 +30,12 @@ public class MovingObstacle : MonoBehaviour
         Vector3 initialPosition = transform.position;
 
         platformMoveTween = transform.DOMove(initialPosition + moveDistance, moveDuration)
-            .SetEase(Ease.InOutQuad)
+            .SetEase(Ease.Linear)
             .SetUpdate(UpdateType.Fixed)
             .OnComplete(() =>
             {
                 platformMoveTween = transform.DOMove(initialPosition, moveDuration)
-                    .SetEase(Ease.InOutQuad)
+                    .SetEase(Ease.Linear)
                     .SetUpdate(UpdateType.Fixed)
                     .OnComplete(() =>
                     {

@@ -29,7 +29,6 @@ public class CameraController : NetworkBehaviour
             finishedVirtualCamera = GameObject.FindGameObjectWithTag("FinishedCamera").GetComponent<CinemachineVirtualCamera>();
             playerVirtualCamera = GameObject.FindGameObjectWithTag("PlayerCamera").GetComponent<CinemachineVirtualCamera>();
             hoveringVirtualCamera = GameObject.FindGameObjectWithTag("HoveringCamera").GetComponent<CinemachineVirtualCamera>();
-            playerVirtualCamera.Follow = transform;
             playerVirtualCamera.m_Lens.OrthographicSize = maxZoom;
             targetZoom = maxZoom;
 
@@ -83,6 +82,7 @@ public class CameraController : NetworkBehaviour
         {
             return;
         }
+        playerVirtualCamera.Follow = transform;
         playerVirtualCamera.Priority = 1;
         hoveringVirtualCamera.Priority = 0;
         finishedVirtualCamera.Priority = 0;

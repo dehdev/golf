@@ -26,7 +26,7 @@ public class RotatingObstacle : MonoBehaviour
 
     private void RotateTween()
     {
-        rotateTween = transform.DORotate(new Vector3(0f, 360f, 0f), rotationSpeed, RotateMode.FastBeyond360)
+        rotateTween = transform.DOLocalRotate(new Vector3(0f, 360f, 0f), rotationSpeed, RotateMode.FastBeyond360)
         .SetLoops(-1, LoopType.Restart)
         .SetRelative()
         .SetUpdate(UpdateType.Fixed)

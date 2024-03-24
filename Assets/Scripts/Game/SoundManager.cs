@@ -70,7 +70,12 @@ public class SoundManager : MonoBehaviour
     private void PlayerController_OnIdleEvent(object sender, EventArgs e)
     {
         PlayerController playerController = sender as PlayerController;
-        PlaySound(idleSound, playerController.transform.position, 0.2f);
+        float isSilent = 1;
+        if (!GolfGameManager.Instance.IsGamePlaying())
+        {
+            isSilent = 0;
+        }
+        PlaySound(idleSound, playerController.transform.position, 0.2f * isSilent);
     }
 
     public void PlayCountdownSound()

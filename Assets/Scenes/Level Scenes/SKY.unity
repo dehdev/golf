@@ -13173,7 +13173,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1332431543}
   - component: {fileID: 1332431539}
-  - component: {fileID: 1332431542}
   - component: {fileID: 1332431541}
   - component: {fileID: 1332431540}
   m_Layer: 0
@@ -13312,14 +13311,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!81 &1332431542
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1332431538}
-  m_Enabled: 1
 --- !u!4 &1332431543
 Transform:
   m_ObjectHideFlags: 0

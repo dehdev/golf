@@ -13,6 +13,9 @@ public class PistonObstacle : MonoBehaviour
 
     private ObstacleBouncePlayer obstacleBouncePlayer;
 
+    public static EventHandler OnPistonObstacleStartMovingForward;
+    public static EventHandler OnPistonObstacleStartMovingReverse;
+
     private void Start()
     {
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
@@ -35,6 +38,7 @@ public class PistonObstacle : MonoBehaviour
             .SetEase(Ease.InOutQuad)
             .SetUpdate(UpdateType.Fixed)
             .SetDelay(0.3f)
+            .OnStart(() => OnPistonObstacleStartMovingReverse?.Invoke(this, EventArgs.Empty))
             .OnComplete(() =>
             {
                 obstacleBouncePlayer.Enable();
@@ -42,6 +46,7 @@ public class PistonObstacle : MonoBehaviour
                     .SetEase(Ease.OutCubic)
                     .SetUpdate(UpdateType.Fixed)
                     .SetDelay(1f)
+                    .OnStart(() => OnPistonObstacleStartMovingForward?.Invoke(this, EventArgs.Empty))
                     .OnComplete(() =>
                     {
                         MovePiston();

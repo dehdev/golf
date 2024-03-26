@@ -13,6 +13,8 @@ public class WreckingBallObstacle : MonoBehaviour
     [SerializeField] private Transform wreckingBall1;
     [SerializeField] private Transform wreckingBall2;
 
+    public static EventHandler OnWreckingBallStartMoving;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -38,6 +40,7 @@ public class WreckingBallObstacle : MonoBehaviour
         wreckingBall.DOLocalRotate(new Vector3(targetRotation, 0, 0), rotationDuration)
             .SetEase(Ease.InOutQuad)
             .SetUpdate(UpdateType.Fixed)
+            .OnStart(() => OnWreckingBallStartMoving?.Invoke(this, EventArgs.Empty))
             .OnComplete(() => MoveWreckingBallOnX(wreckingBall, -targetRotation));
     }
 

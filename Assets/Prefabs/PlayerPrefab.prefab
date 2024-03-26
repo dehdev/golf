@@ -5466,6 +5466,7 @@ Transform:
   - {fileID: 4136883838350314242}
   - {fileID: 7450357247330497321}
   - {fileID: 330036398941576833}
+  - {fileID: 1816885625905725597}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &8570951859048488444
@@ -5540,6 +5541,7 @@ MonoBehaviour:
   idleParticles: {fileID: 3035676753139126120}
   arrow: {fileID: 3111674827145115671}
   playerVisual: {fileID: 22245383034317482}
+  AudioListenerHolder: {fileID: 9117744028315597530}
 --- !u!114 &3720556429358799956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5658,3 +5660,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &9117744028315597530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1816885625905725597}
+  - component: {fileID: 6114199335656237692}
+  m_Layer: 0
+  m_Name: AudioListenerHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1816885625905725597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9117744028315597530}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6575350131983111067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &6114199335656237692
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9117744028315597530}
+  m_Enabled: 1

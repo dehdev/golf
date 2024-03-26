@@ -11,6 +11,8 @@ public class RotatingObstacle : MonoBehaviour
 
     private Tween rotateTween;
 
+    public static EventHandler OnRotatingObstacleStartRotating;
+
     private void Start()
     {
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
@@ -21,6 +23,7 @@ public class RotatingObstacle : MonoBehaviour
         if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             RotateTween();
+            OnRotatingObstacleStartRotating?.Invoke(this, EventArgs.Empty);
         }
     }
 

@@ -35,6 +35,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private GameObject arrow;
     [SerializeField] private PlayerVisual playerVisual;
 
+    [SerializeField] private GameObject AudioListenerHolder;
+
     private bool isIdle;
     private bool isAiming;
     private bool readyToShoot;
@@ -184,6 +186,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         trailRenderer.transform.rotation = Quaternion.Euler(90, 0, 0);
+        AudioListenerHolder.transform.rotation = Quaternion.Euler(30, 45, 0);
     }
 
     private void FixedUpdate()

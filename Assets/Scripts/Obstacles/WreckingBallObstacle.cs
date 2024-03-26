@@ -13,7 +13,6 @@ public class WreckingBallObstacle : MonoBehaviour
     [SerializeField] private Transform wreckingBall1;
     [SerializeField] private Transform wreckingBall2;
 
-
     // Start is called before the first frame update
     private void Start()
     {

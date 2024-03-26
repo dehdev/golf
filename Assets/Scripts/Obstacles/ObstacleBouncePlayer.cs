@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class ObstacleBouncePlayer : MonoBehaviour
     private Vector3 hitDirection;
 
     private bool isEnabled;
+    public event EventHandler OnTargetHit;
 
     private void Awake()
     {
@@ -38,6 +40,7 @@ public class ObstacleBouncePlayer : MonoBehaviour
                 Vector3 appliedForce = -hitDirection * force;
                 appliedForce.y = Mathf.Max(0, appliedForce.y);
                 collision.gameObject.GetComponent<PlayerController>().PlayerHitObstacle(appliedForce);
+                OnTargetHit?.Invoke(this, EventArgs.Empty);
                 return;
             }
         }

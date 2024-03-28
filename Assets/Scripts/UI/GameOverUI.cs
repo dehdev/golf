@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
@@ -11,7 +12,14 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI shotsText;
     [SerializeField] private TextMeshProUGUI finishLabel;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button backToLobbiesButton;
+    [SerializeField] private Button restartButton;
     [SerializeField] private Image finishLabelImage;
+
+    private void Awake()
+    {
+        backToLobbiesButton.gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -22,6 +30,27 @@ public class GameOverUI : MonoBehaviour
             NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
+        restartButton.onClick.AddListener(() =>
+        {
+            // Check if the local player is valid
+            if (PlayerController.LocalInstance)
+            {
+               
+                
+            }
+
+            // Restart the game
+            Loader.LoadNetwork(Loader.GameScene.TUTORIAL);
+        });
+
+        if (GolfGameMultiplayer.playMultiplayer)
+        {
+            backToLobbiesButton.gameObject.SetActive(true);
+            backToLobbiesButton.onClick.AddListener(() =>
+            {
+                Loader.Load(Loader.Scene.LobbyScene);
+            });
+        }
         Hide();
     }
 

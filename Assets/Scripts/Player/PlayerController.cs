@@ -16,6 +16,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private GameObject areaOfEffect;
 
+    private AudioListener audioListener;
+
     public static event EventHandler OnBallHit;
     public static event EventHandler<float> OnCollisionHit;
     public static event EventHandler OnIdleEvent;
@@ -27,7 +29,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float stopVelocity = .05f; //The velocity below which the rigidbody will be considered as stopped
     [SerializeField] private float MaxDragDistance = 30f;
 
-    private const float PLAYER_MAX_SPEED = 100f;
+    private const float PLAYER_MAX_SPEED = 150f;
 
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private TrailRenderer trailRenderer;
@@ -50,6 +52,7 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        audioListener = AudioListenerHolder.GetComponent<AudioListener>();
 
         readyToShoot = false;
         isAiming = false;
@@ -63,6 +66,7 @@ public class PlayerController : NetworkBehaviour
         playerCollider.enabled = false;
         finishCollider.enabled = false;
         areaOfEffect.SetActive(false);
+        audioListener.enabled = false;
     }
 
     public override void OnNetworkSpawn()
@@ -144,6 +148,7 @@ public class PlayerController : NetworkBehaviour
     private void InitializePlayerObjectsForOwner()
     {
         areaOfEffect.SetActive(true);
+        audioListener.enabled = true;
         playerCollider.enabled = true;
         var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         virtualCamera.Follow = transform;

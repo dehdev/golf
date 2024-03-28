@@ -73,13 +73,13 @@ public class ObstacleSoundManager : MonoBehaviour
     private void RotatingObstacle_OnRotatingObstacleStartRotating(object sender, EventArgs e)
     {
         RotatingObstacle rotatingObstacle = sender as RotatingObstacle;
-        PlaySound(rotatingObstacleSound, rotatingObstacle.transform.position, false);
+        PlaySound(rotatingObstacleSound, rotatingObstacle.transform.position, true);
     }
 
     private void WreckingBall_OnWreckingBallStartMoving(object sender, EventArgs e)
     {
         WreckingBallObstacle wreckingBallObstacle = sender as WreckingBallObstacle;
-        PlaySound(wreckingBallSound, wreckingBallObstacle.transform.position, true);
+        PlaySound(wreckingBallSound, wreckingBallObstacle.transform.position, false);
     }
 
     private void SoundManager_OnSoundEffectsVolumeChanged(object sender, EventArgs e)

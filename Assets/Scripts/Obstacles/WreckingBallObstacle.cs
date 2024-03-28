@@ -26,6 +26,7 @@ public class WreckingBallObstacle : MonoBehaviour
         if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MoveWreckingBalls();
+            OnWreckingBallStartMoving?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -40,8 +41,11 @@ public class WreckingBallObstacle : MonoBehaviour
         wreckingBall.DOLocalRotate(new Vector3(targetRotation, 0, 0), rotationDuration)
             .SetEase(Ease.InOutQuad)
             .SetUpdate(UpdateType.Fixed)
-            .OnStart(() => OnWreckingBallStartMoving?.Invoke(this, EventArgs.Empty))
-            .OnComplete(() => MoveWreckingBallOnX(wreckingBall, -targetRotation));
+            .OnComplete(() =>
+            {
+                MoveWreckingBallOnX(wreckingBall, -targetRotation);
+                OnWreckingBallStartMoving?.Invoke(this, EventArgs.Empty);
+            });
     }
 
     private void MoveWreckingBallOnY(Transform wreckingBall, float targetRotation)

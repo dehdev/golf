@@ -270,6 +270,7 @@ public class GolfGameLobby : MonoBehaviour
         {
             Debug.LogError(e);
             OnJoinFailed?.Invoke(this, EventArgs.Empty);
+            LeaveLobby();
         }
     }
 
@@ -278,11 +279,30 @@ public class GolfGameLobby : MonoBehaviour
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try
         {
+            await Task.Delay(200);
+            // Join the lobby by ID
             joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
-            string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
-            JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
-            GolfGameMultiplayer.Instance.StartClient();
+
+            // Check if the lobby was successfully joined
+            if (joinedLobby != null)
+            {
+                // Get the relay join code from the lobby data
+                string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
+
+                // Join the relay using the join code
+                JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
+
+                // Set the relay server data for the network transport
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+
+                // Start the multiplayer client
+                GolfGameMultiplayer.Instance.StartClient();
+            }
+            else
+            {
+                Debug.LogError("Failed to join lobby: Lobby is null");
+                OnJoinFailed?.Invoke(this, EventArgs.Empty);
+            }
         }
         catch (LobbyServiceException e)
         {
@@ -290,6 +310,7 @@ public class GolfGameLobby : MonoBehaviour
             OnJoinFailed?.Invoke(this, EventArgs.Empty);
         }
     }
+
 
     public Lobby GetLobby()
     {

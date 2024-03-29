@@ -77,10 +77,12 @@ public class LobbyMessageUI : MonoBehaviour
         if (NetworkManager.Singleton.DisconnectReason == "")
         {
             ShowMessage("FAILED TO CONNECT!");
+            closeButton.gameObject.SetActive(true);
         }
         else
         {
             ShowMessage(NetworkManager.Singleton.DisconnectReason);
+            closeButton.gameObject.SetActive(true);
         }
     }
 

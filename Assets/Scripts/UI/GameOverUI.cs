@@ -35,7 +35,6 @@ public class GameOverUI : MonoBehaviour
             restartButton.gameObject.SetActive(true);
             restartButton.onClick.AddListener(() =>
             {
-                GolfGameManager.Instance.DespawnAllNetworkedObjects();
                 Loader.LoadNetwork(Loader.GameScene.TUTORIAL);
             });
         }

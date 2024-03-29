@@ -43,6 +43,7 @@ public class GolfGameManager : NetworkBehaviour
     [SerializeField] private float gameplayingTimerMax = 120f;
     private bool isLocalGamePaused = false;
     private bool autoTestGamePausedState = false;
+    private bool autoTestGameReadyState = false;
     private NetworkVariable<bool> isGamePaused = new(false);
 
     private List<ulong> connectedClientsIds;
@@ -112,6 +113,7 @@ public class GolfGameManager : NetworkBehaviour
         {
             return;
         }
+        CleanScene();
         foreach (ulong clientId in clientsCompleted)
         {
             GameObject newPlayer = Instantiate(playerPrefab);
@@ -119,24 +121,33 @@ public class GolfGameManager : NetworkBehaviour
         }
     }
 
-    public void DespawnAllNetworkedObjects()
+    public void CleanScene()
     {
-        // Find all networked objects in the scene
-        NetworkObject[] networkObjects = FindObjectsOfType<NetworkObject>();
+        // Create a list to store objects to despawn and destroy
+        List<NetworkObject> objectsToCleanUp = new List<NetworkObject>();
 
-        // Despawn each networked object
-        foreach (NetworkObject networkObject in networkObjects)
+        // Iterate over the spawned objects list and add objects to the cleanup list
+        foreach (NetworkObject networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
-            if (networkObject.CompareTag("Player"))
+            if (networkObject.IsPlayerObject)
             {
-                networkObject.Despawn(true);
+                objectsToCleanUp.Add(networkObject);
             }
         }
+
+        // Iterate over the cleanup list and despawn and destroy each object
+        foreach (NetworkObject networkObject in objectsToCleanUp)
+        {
+            // Despawn the network object, which will handle cleanup across the network
+            networkObject.Despawn(true);
+        }
     }
+
 
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)
     {
         autoTestGamePausedState = true;
+        autoTestGameReadyState = true;
     }
 
     private void IsGamePaused_OnValueChanged(bool previousValue, bool newValue)
@@ -174,6 +185,24 @@ public class GolfGameManager : NetworkBehaviour
     private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
     {
         playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
+        bool allClientsReady = true;
+        foreach (ulong clientdId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (!playerReadyDictionary.ContainsKey(clientdId) || !playerReadyDictionary[clientdId])
+            {
+                allClientsReady = false;
+                break;
+            }
+        }
+
+        if (allClientsReady)
+        {
+            state.Value = State.CountdownToStart;
+        }
+    }
+
+    private void CheckPlayersReady()
+    {
         bool allClientsReady = true;
         foreach (ulong clientdId in NetworkManager.Singleton.ConnectedClientsIds)
         {
@@ -260,6 +289,11 @@ public class GolfGameManager : NetworkBehaviour
         {
             autoTestGamePausedState = false;
             TestGamePausedState();
+        }
+        if (autoTestGameReadyState)
+        {
+            autoTestGameReadyState = false;
+            CheckPlayersReady();
         }
     }
 

@@ -30,24 +30,26 @@ public class GameOverUI : MonoBehaviour
             NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
-        restartButton.onClick.AddListener(() =>
+        if (GolfGameMultiplayer.Instance.IsServer)
         {
-            // Check if the local player is valid
-            if (PlayerController.LocalInstance)
+            restartButton.gameObject.SetActive(true);
+            restartButton.onClick.AddListener(() =>
             {
-               
-                
-            }
-
-            // Restart the game
-            Loader.LoadNetwork(Loader.GameScene.TUTORIAL);
-        });
+                GolfGameManager.Instance.DespawnAllNetworkedObjects();
+                Loader.LoadNetwork(Loader.GameScene.TUTORIAL);
+            });
+        }
+        else
+        {
+            restartButton.gameObject.SetActive(false);
+        }
 
         if (GolfGameMultiplayer.playMultiplayer)
         {
             backToLobbiesButton.gameObject.SetActive(true);
             backToLobbiesButton.onClick.AddListener(() =>
             {
+                GolfGameMultiplayer.Instance.ShutDownNetwork();
                 Loader.Load(Loader.Scene.LobbyScene);
             });
         }

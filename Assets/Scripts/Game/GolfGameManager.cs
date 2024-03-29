@@ -119,6 +119,21 @@ public class GolfGameManager : NetworkBehaviour
         }
     }
 
+    public void DespawnAllNetworkedObjects()
+    {
+        // Find all networked objects in the scene
+        NetworkObject[] networkObjects = FindObjectsOfType<NetworkObject>();
+
+        // Despawn each networked object
+        foreach (NetworkObject networkObject in networkObjects)
+        {
+            if (networkObject.CompareTag("Player"))
+            {
+                networkObject.Despawn(true);
+            }
+        }
+    }
+
     private void NetworkManager_OnClientDisconnectCallback(ulong obj)
     {
         autoTestGamePausedState = true;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,18 @@ public class LobbyUI : MonoBehaviour
 
     private void Awake()
     {
+        if (NetworkManager.Singleton != null)
+        {
+            Destroy(NetworkManager.Singleton.gameObject);
+        }
+        if (GolfGameMultiplayer.Instance != null)
+        {
+            Destroy(GolfGameMultiplayer.Instance.gameObject);
+        }
+        if (GolfGameLobby.Instance != null)
+        {
+            Destroy(GolfGameLobby.Instance.gameObject);
+        }
         mainMenuButton.onClick.AddListener(() =>
         {
             GolfGameLobby.Instance.LeaveLobby();

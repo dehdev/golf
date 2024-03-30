@@ -27,6 +27,7 @@ public class WreckingBallObstacle : MonoBehaviour
         {
             MoveWreckingBalls();
             OnWreckingBallStartMoving?.Invoke(this, EventArgs.Empty);
+            GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
         }
     }
 

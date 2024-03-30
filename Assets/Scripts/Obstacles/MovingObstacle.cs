@@ -22,6 +22,7 @@ public class MovingObstacle : MonoBehaviour
         if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MovePlatform();
+            GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
         }
     }
 

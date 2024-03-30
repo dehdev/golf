@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,6 +15,7 @@ public class GolfGameManager : NetworkBehaviour
     private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, bool> playerPausedDictionary;
     public Dictionary<ulong, int> playerShotsDictionary;
+    public Dictionary<ulong, int> playerRestartingDictionary;
 
     public event EventHandler OnStateChanged;
     public event EventHandler OnLocalGamePaused;
@@ -27,6 +26,7 @@ public class GolfGameManager : NetworkBehaviour
 
     public event EventHandler OnConnectedClientsIdsReceived;
     public event EventHandler OnPlayerShotDictionaryChanged;
+    public event EventHandler onPlayerRestartingDictionaryChanged;
 
     private enum State
     {
@@ -56,6 +56,7 @@ public class GolfGameManager : NetworkBehaviour
         playerReadyDictionary = new Dictionary<ulong, bool>();
         playerPausedDictionary = new Dictionary<ulong, bool>();
         playerShotsDictionary = new Dictionary<ulong, int>();
+        playerRestartingDictionary = new Dictionary<ulong, int>();
     }
 
     private void Start()
@@ -96,7 +97,7 @@ public class GolfGameManager : NetworkBehaviour
 
         if (IsServer)
         {
-            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+            NetworkManager.Singleton.OnClientDisconnectCallback += (ulong clientId) => NetworkManager_OnClientDisconnectCallback(clientId);
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
         }
         base.OnNetworkSpawn();
@@ -104,6 +105,10 @@ public class GolfGameManager : NetworkBehaviour
 
     private void FinishManager_OnMultiplayerGameFinished(object sender, EventArgs e)
     {
+        if(!IsServer)
+        {
+            return;
+        }
         state.Value = State.GameOver;
     }
 
@@ -144,10 +149,14 @@ public class GolfGameManager : NetworkBehaviour
     }
 
 
-    private void NetworkManager_OnClientDisconnectCallback(ulong obj)
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
     {
         autoTestGamePausedState = true;
         autoTestGameReadyState = true;
+        playerReadyDictionary.Remove(clientId);
+        playerPausedDictionary.Remove(clientId);
+        playerShotsDictionary.Remove(clientId);
+        playerRestartingDictionary.Remove(clientId);
     }
 
     private void IsGamePaused_OnValueChanged(bool previousValue, bool newValue)
@@ -195,7 +204,7 @@ public class GolfGameManager : NetworkBehaviour
             }
         }
 
-        if (allClientsReady)
+        if (allClientsReady && state.Value == State.WaitingToStart)
         {
             state.Value = State.CountdownToStart;
         }
@@ -213,9 +222,30 @@ public class GolfGameManager : NetworkBehaviour
             }
         }
 
-        if (allClientsReady)
+        if (allClientsReady && state.Value == State.WaitingToStart)
         {
             state.Value = State.CountdownToStart;
+        }
+    }
+
+    private void CheckPlayersRestarting()
+    {
+        if(!IsServer)
+        {
+            return;
+        }
+        bool allPlayersRestarting = true;
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (!playerRestartingDictionary.ContainsKey(clientId) || playerRestartingDictionary[clientId] == 0)
+            {
+                allPlayersRestarting = false;
+                break;
+            }
+        } 
+        if (allPlayersRestarting)
+        {
+            Loader.LoadNetwork(Loader.GetCurrentSceneEnum(SceneManager.GetActiveScene().name));
         }
     }
 
@@ -245,6 +275,35 @@ public class GolfGameManager : NetworkBehaviour
         }
         playerShotsDictionary[clientId]++;
         OnPlayerShotDictionaryChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetPlayerRestartingServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        ulong clientId = serverRpcParams.Receive.SenderClientId;
+        if (!playerRestartingDictionary.ContainsKey(clientId))
+        {
+            playerRestartingDictionary.Add(clientId, 0);
+        }
+        playerRestartingDictionary[clientId]++;
+        onPlayerRestartingDictionaryChanged?.Invoke(this, EventArgs.Empty);
+        SetPlayerRestartingClientRpc(clientId);
+        CheckPlayersRestarting();
+    }
+
+    [ClientRpc]
+    private void SetPlayerRestartingClientRpc(ulong clientId)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        if (!playerRestartingDictionary.ContainsKey(clientId))
+        {
+            playerRestartingDictionary.Add(clientId, 0);
+        }
+        playerRestartingDictionary[clientId]++;
+        onPlayerRestartingDictionaryChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)

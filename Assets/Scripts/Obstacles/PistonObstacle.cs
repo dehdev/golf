@@ -27,6 +27,7 @@ public class PistonObstacle : MonoBehaviour
         if (GolfGameManager.Instance.IsCountdownToStartActive())
         {
             MovePiston();
+            GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
         }
     }
 

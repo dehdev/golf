@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -11,6 +9,7 @@ public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI shotsText;
     [SerializeField] private TextMeshProUGUI finishLabel;
+    [SerializeField] private TextMeshProUGUI playersRestartCountLabel;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button backToLobbiesButton;
     [SerializeField] private Button restartButton;
@@ -19,29 +18,25 @@ public class GameOverUI : MonoBehaviour
     private void Awake()
     {
         backToLobbiesButton.gameObject.SetActive(false);
+        restartButton.interactable = false;
     }
 
     private void Start()
     {
-        FinishManager.Instance.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
+        FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
+        FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
+        GolfGameManager.Instance.onPlayerRestartingDictionaryChanged += GolfGameManager_onPlayerRestartingDictionaryChanged;
         mainMenuButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.Shutdown();
             Loader.Load(Loader.Scene.MainMenuScene);
         });
-        if (GolfGameMultiplayer.Instance.IsServer)
+        restartButton.onClick.AddListener(() =>
         {
-            restartButton.gameObject.SetActive(true);
-            restartButton.onClick.AddListener(() =>
-            {
-                Loader.LoadNetwork(Loader.GameScene.TUTORIAL);
-            });
-        }
-        else
-        {
-            restartButton.gameObject.SetActive(false);
-        }
+            GolfGameManager.Instance.SetPlayerRestartingServerRpc();
+            restartButton.interactable = false;
+        });
 
         if (GolfGameMultiplayer.playMultiplayer)
         {
@@ -55,7 +50,23 @@ public class GameOverUI : MonoBehaviour
         Hide();
     }
 
-    private void Instance_OnLocalPlayerFinished(object sender, EventArgs e)
+    private void GolfGameManager_onPlayerRestartingDictionaryChanged(object sender, EventArgs e)
+    {
+        UpdatePlayersRestartingLabel();
+    }
+
+    private void FinishManager_OnMultiplayerGameFinished(object sender, EventArgs e)
+    {
+        restartButton.interactable = true;
+        UpdatePlayersRestartingLabel();
+    }
+
+    private void UpdatePlayersRestartingLabel()
+    {
+        playersRestartCountLabel.text = GolfGameManager.Instance.playerRestartingDictionary.Count.ToString() + "/" + FinishManager.Instance.playerFinishedDictionary.Count;
+    }
+
+    private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
     {
         GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
         shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
@@ -70,7 +81,7 @@ public class GameOverUI : MonoBehaviour
         {
             shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
             finishLabel.text = "DIDN'T FINISH IN";
-            FinishManager.Instance.OnLocalPlayerFinished -= Instance_OnLocalPlayerFinished;
+            FinishManager.Instance.OnLocalPlayerFinished -= FinishManager_OnLocalPlayerFinished;
             Show();
         }
         else
@@ -87,5 +98,12 @@ public class GameOverUI : MonoBehaviour
     private void Show()
     {
         gameObject.SetActive(true);
+    }
+
+    private void OnDestroy()
+    {
+        FinishManager.Instance.OnLocalPlayerFinished -= FinishManager_OnLocalPlayerFinished;
+        FinishManager.Instance.OnMultiplayerGameFinished -= FinishManager_OnMultiplayerGameFinished;
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

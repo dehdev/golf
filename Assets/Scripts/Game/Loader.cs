@@ -36,6 +36,24 @@ public static class Loader
         AmbientManager.Instance.StopAmbient();
     }
 
+    // Helper method to get the enum value of the current scene
+    public static GameScene GetCurrentSceneEnum(string currentSceneName)
+    {
+        switch (currentSceneName)
+        {
+            case "TUTORIAL":
+                return GameScene.TUTORIAL;
+            case "SKY":
+                return GameScene.SKY;
+            case "FOREST":
+                return GameScene.FOREST;
+            case "CAVE":
+                return GameScene.CAVE;
+            default:
+                return GameScene.TUTORIAL;
+        }
+    }
+
     public static void LoadNetwork(GameScene targetScene)
     {
         NetworkManager.Singleton.SceneManager.LoadScene(targetScene.ToString(), LoadSceneMode.Single);

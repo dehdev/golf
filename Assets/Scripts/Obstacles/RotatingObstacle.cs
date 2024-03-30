@@ -24,6 +24,7 @@ public class RotatingObstacle : MonoBehaviour
         {
             RotateTween();
             OnRotatingObstacleStartRotating?.Invoke(this, EventArgs.Empty);
+            GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
         }
     }
 

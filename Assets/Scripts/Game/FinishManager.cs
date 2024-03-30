@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class FinishManager : NetworkBehaviour
 {
     public static FinishManager Instance { get; private set; }
 
-    private Dictionary<ulong, bool> playerFinishedDictionary;
+    public Dictionary<ulong, bool> playerFinishedDictionary;
 
     public event EventHandler OnLocalPlayerFinished;
     public event EventHandler OnMultiplayerGameFinished;
@@ -19,11 +18,24 @@ public class FinishManager : NetworkBehaviour
         playerFinishedDictionary = new Dictionary<ulong, bool>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += (ulong clientId) =>
+            {
+                playerFinishedDictionary.Remove(clientId);
+                CheckAllPlayers();
+            };
+        }
+        base.OnNetworkSpawn();
+    }
     private void Start()
     {
         if (IsServer)
         {
             playerFinishedDictionary.Add(NetworkManager.Singleton.LocalClientId, false);
+            SetPlayerInFinishDictionaryClientRpc(NetworkManager.Singleton.LocalClientId);
         }
         else
         {
@@ -35,31 +47,47 @@ public class FinishManager : NetworkBehaviour
     private void SetPlayerInFinishDictionaryServerRpc(ServerRpcParams serverRpcParams = default)
     {
         playerFinishedDictionary.Add(serverRpcParams.Receive.SenderClientId, false);
+        SetPlayerInFinishDictionaryClientRpc(serverRpcParams.Receive.SenderClientId);
+    }
+
+    [ClientRpc]
+    private void SetPlayerInFinishDictionaryClientRpc(ulong clientId)
+    {
+        if (IsServer)
+        {
+            return;
+        }
+        if (!playerFinishedDictionary.ContainsKey(clientId))
+        {
+            playerFinishedDictionary.Add(clientId, false);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            ulong clientId = other.gameObject.GetComponent<PlayerController>().OwnerClientId;
-            SetLocalPlayerFinishedClientRpc(clientId);
-        }
-    }
-
-    [ClientRpc]
-    private void SetLocalPlayerFinishedClientRpc(ulong clientId)
-    {
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
             OnLocalPlayerFinished?.Invoke(this, EventArgs.Empty);
             PlayerController.LocalInstance.TogglePlayerFinishColliderServerRpc(false);
             SoundManager.Instance.PlayFinishedSound(this, EventArgs.Empty);
-            SetPlayerFinishServerRpc(clientId);
+            SetPlayerFinishedServerRpc();
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetPlayerFinishServerRpc(ulong clientId)
+    private void SetPlayerFinishedServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        ulong clientId = serverRpcParams.Receive.SenderClientId;
+        playerFinishedDictionary[clientId] = true;
+        SetPlayerFinishedClientRpc(clientId);
+        if (IsServer)
+        {
+            CheckAllPlayers();
+        }
+    }
+
+    [ClientRpc]
+    private void SetPlayerFinishedClientRpc(ulong clientId)
     {
         playerFinishedDictionary[clientId] = true;
         CheckAllPlayers();
@@ -68,7 +96,7 @@ public class FinishManager : NetworkBehaviour
     private void CheckAllPlayers()
     {
         bool allPlayersFinished = true;
-        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        foreach (ulong clientId in playerFinishedDictionary.Keys)
         {
             if (playerFinishedDictionary[clientId] == false)
             {

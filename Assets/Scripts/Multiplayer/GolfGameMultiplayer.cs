@@ -67,14 +67,6 @@ public class GolfGameMultiplayer : NetworkBehaviour
         NetworkManager.Singleton.StartHost();
     }
 
-    public void ShutDownNetwork()
-    {
-        NetworkManager.Singleton.ConnectionApprovalCallback -= NetworkManager_ConnectionApprovalCallback;
-        NetworkManager.Singleton.OnClientConnectedCallback -= NetworkManager_OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Server_OnClientDisconnectCallback;
-        NetworkManager.Singleton.Shutdown();
-    }
-
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId)
     {
         for (int i = 0; i < playerDataNetworkList.Count; i++)

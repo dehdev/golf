@@ -47,7 +47,7 @@ public class MovingObstacle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (NetworkManager.Singleton.IsServer && other.CompareTag("Player"))
         {
             Transform playerTransform = other.GetComponent<Transform>();
             if (playerTransform != null)
@@ -59,7 +59,7 @@ public class MovingObstacle : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (NetworkManager.Singleton.IsServer && other.CompareTag("Player"))
         {
             Transform playerTransform = other.GetComponent<Transform>();
             if (playerTransform != null && playerTransform.parent == transform)

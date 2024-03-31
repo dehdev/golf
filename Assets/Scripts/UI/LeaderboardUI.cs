@@ -84,5 +84,8 @@ public class LeaderboardUI : MonoBehaviour
     private void OnDestroy()
     {
         GameInput.Instance.OnToggleScoreboard -= Instance_OnToggleScoreboard;
+        GolfGameManager.Instance.OnConnectedClientsIdsReceived -= GolfGameManager_OnConnectedClientsIdsReceived;
+        GolfGameManager.Instance.OnPlayerShotDictionaryChanged -= GolfGameManager_OnPlayerShotDictionaryChanged;
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
     }
 }

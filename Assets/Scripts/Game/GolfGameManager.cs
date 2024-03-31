@@ -105,7 +105,7 @@ public class GolfGameManager : NetworkBehaviour
 
     private void FinishManager_OnMultiplayerGameFinished(object sender, EventArgs e)
     {
-        if(!IsServer)
+        if (!IsServer)
         {
             return;
         }
@@ -230,7 +230,7 @@ public class GolfGameManager : NetworkBehaviour
 
     private void CheckPlayersRestarting()
     {
-        if(!IsServer)
+        if (!IsServer)
         {
             return;
         }
@@ -242,7 +242,7 @@ public class GolfGameManager : NetworkBehaviour
                 allPlayersRestarting = false;
                 break;
             }
-        } 
+        }
         if (allPlayersRestarting)
         {
             Loader.LoadNetwork(Loader.GetCurrentSceneEnum(SceneManager.GetActiveScene().name));

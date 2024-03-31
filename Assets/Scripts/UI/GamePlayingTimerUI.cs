@@ -76,4 +76,9 @@ public class GamePlayingTimerUI : MonoBehaviour
 
         isFlashing = false;
     }
+
+    private void OnDestroy()
+    {
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
+    }
 }

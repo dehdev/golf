@@ -11,13 +11,11 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finishLabel;
     [SerializeField] private TextMeshProUGUI playersRestartCountLabel;
     [SerializeField] private Button mainMenuButton;
-    [SerializeField] private Button backToLobbiesButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Image finishLabelImage;
 
     private void Awake()
     {
-        backToLobbiesButton.gameObject.SetActive(false);
         restartButton.interactable = false;
     }
 
@@ -37,16 +35,6 @@ public class GameOverUI : MonoBehaviour
             GolfGameManager.Instance.SetPlayerRestartingServerRpc();
             restartButton.interactable = false;
         });
-
-        if (GolfGameMultiplayer.playMultiplayer)
-        {
-            backToLobbiesButton.gameObject.SetActive(true);
-            backToLobbiesButton.onClick.AddListener(() =>
-            {
-                GolfGameMultiplayer.Instance.ShutDownNetwork();
-                Loader.Load(Loader.Scene.LobbyScene);
-            });
-        }
         Hide();
     }
 

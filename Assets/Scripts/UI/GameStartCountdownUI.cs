@@ -58,4 +58,8 @@ public class GameStartCountdownUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    private void OnDestroy()
+    {
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
+    }
 }

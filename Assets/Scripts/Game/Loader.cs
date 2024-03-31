@@ -39,7 +39,7 @@ public static class Loader
     // Helper method to get the enum value of the current scene
     public static GameScene GetCurrentSceneEnum(string currentSceneName)
     {
-        switch (currentSceneName)
+        switch (currentSceneName.ToUpper())
         {
             case "TUTORIAL":
                 return GameScene.TUTORIAL;

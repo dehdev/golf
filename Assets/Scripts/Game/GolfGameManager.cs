@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -118,7 +119,6 @@ public class GolfGameManager : NetworkBehaviour
         {
             return;
         }
-        CleanScene();
         foreach (ulong clientId in clientsCompleted)
         {
             GameObject newPlayer = Instantiate(playerPrefab);
@@ -128,35 +128,43 @@ public class GolfGameManager : NetworkBehaviour
 
     public void CleanScene()
     {
-        // Create a list to store objects to despawn and destroy
         List<NetworkObject> objectsToCleanUp = new List<NetworkObject>();
 
-        // Iterate over the spawned objects list and add objects to the cleanup list
         foreach (NetworkObject networkObject in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
-            if (networkObject.IsPlayerObject)
+            if (networkObject.IsPlayerObject && networkObject.gameObject.CompareTag("Player"))
             {
                 objectsToCleanUp.Add(networkObject);
             }
         }
 
-        // Iterate over the cleanup list and despawn and destroy each object
         foreach (NetworkObject networkObject in objectsToCleanUp)
         {
-            // Despawn the network object, which will handle cleanup across the network
             networkObject.Despawn(true);
+            Destroy(networkObject.gameObject);
         }
+        NetworkManager.Singleton.OnClientDisconnectCallback -= (ulong clientId) => NetworkManager_OnClientDisconnectCallback(clientId);
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= SceneManager_OnLoadEventCompleted;
     }
-
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
     {
+        // Null check before removing items from dictionaries
+        if (playerReadyDictionary != null)
+            playerReadyDictionary.Remove(clientId);
+
+        if (playerPausedDictionary != null)
+            playerPausedDictionary.Remove(clientId);
+
+        if (playerShotsDictionary != null)
+            playerShotsDictionary.Remove(clientId);
+
+        if (playerRestartingDictionary != null)
+            playerRestartingDictionary.Remove(clientId);
+
+        // Update other states or variables as needed
         autoTestGamePausedState = true;
         autoTestGameReadyState = true;
-        playerReadyDictionary.Remove(clientId);
-        playerPausedDictionary.Remove(clientId);
-        playerShotsDictionary.Remove(clientId);
-        playerRestartingDictionary.Remove(clientId);
     }
 
     private void IsGamePaused_OnValueChanged(bool previousValue, bool newValue)
@@ -245,6 +253,7 @@ public class GolfGameManager : NetworkBehaviour
         }
         if (allPlayersRestarting)
         {
+            CleanScene();
             Loader.LoadNetwork(Loader.GetCurrentSceneEnum(SceneManager.GetActiveScene().name));
         }
     }

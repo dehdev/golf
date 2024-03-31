@@ -10,6 +10,7 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -134,7 +135,7 @@ public class GolfGameLobby : MonoBehaviour
         if (UnityServices.State != ServicesInitializationState.Initialized)
         {
             InitializationOptions initializationOptions = new InitializationOptions();
-            //initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+            initializationOptions.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());/////////////////////////////////////////////////////////
             await UnityServices.InitializeAsync();
             if (!AuthenticationService.Instance.IsSignedIn)
             {
@@ -211,6 +212,7 @@ public class GolfGameLobby : MonoBehaviour
         {
             Debug.LogError(e);
             OnCreateLobbyFailed?.Invoke(this, EventArgs.Empty);
+            GolfGameMultiplayer.Instance.StopHost();
         }
     }
 
@@ -252,6 +254,7 @@ public class GolfGameLobby : MonoBehaviour
         {
             Debug.LogError(e);
             OnQuickJoinFailed?.Invoke(this, EventArgs.Empty);
+            LeaveLobby();
         }
     }
 
@@ -302,12 +305,14 @@ public class GolfGameLobby : MonoBehaviour
             {
                 Debug.LogError("Failed to join lobby: Lobby is null");
                 OnJoinFailed?.Invoke(this, EventArgs.Empty);
+                LeaveLobby();
             }
         }
         catch (LobbyServiceException e)
         {
             Debug.LogError(e);
             OnJoinFailed?.Invoke(this, EventArgs.Empty);
+            LeaveLobby();
         }
     }
 

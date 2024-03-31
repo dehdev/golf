@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -67,6 +68,14 @@ public class GolfGameMultiplayer : NetworkBehaviour
         NetworkManager.Singleton.StartHost();
     }
 
+    public void StopHost()
+    {
+        NetworkManager.Singleton.ConnectionApprovalCallback -= NetworkManager_ConnectionApprovalCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback -= NetworkManager_OnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_Server_OnClientDisconnectCallback;
+        NetworkManager.Singleton.Shutdown();
+    }
+
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId)
     {
         for (int i = 0; i < playerDataNetworkList.Count; i++)
@@ -80,6 +89,8 @@ public class GolfGameMultiplayer : NetworkBehaviour
             {
                 // Disconnected!
                 playerDataNetworkList.RemoveAt(i);
+                LobbyService.Instance.RemovePlayerAsync(NetworkManager.Singleton.name, clientId.ToString());
+                NetworkManager.Singleton.DisconnectClient(clientId);
             }
         }
     }

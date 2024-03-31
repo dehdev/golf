@@ -22,14 +22,17 @@ public class FinishManager : NetworkBehaviour
     {
         if (IsServer)
         {
-            NetworkManager.Singleton.OnClientDisconnectCallback += (ulong clientId) =>
-            {
-                playerFinishedDictionary.Remove(clientId);
-                CheckAllPlayers();
-            };
+            NetworkManager.Singleton.OnClientDisconnectCallback += HandleClientDisconnect;
         }
         base.OnNetworkSpawn();
     }
+
+    private void HandleClientDisconnect(ulong clientId)
+    {
+        playerFinishedDictionary.Remove(clientId);
+        CheckAllPlayers();
+    }
+
     private void Start()
     {
         if (IsServer)
@@ -107,5 +110,15 @@ public class FinishManager : NetworkBehaviour
         {
             OnMultiplayerGameFinished?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    public override void OnDestroy()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+        NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnect;
+        base.OnDestroy();
     }
 }

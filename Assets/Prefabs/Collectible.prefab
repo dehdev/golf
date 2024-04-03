@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 5079271693767120937}
   - component: {fileID: 1407541900545250267}
   - component: {fileID: 7137187482130449519}
+  - component: {fileID: 3180244421121803142}
+  - component: {fileID: 7708250503249907816}
   m_Layer: 0
   m_Name: Collectible
   m_TagString: Collectible
@@ -29,8 +31,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7463751495471738619}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -21.668, y: 7.963, z: 7.012}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 25, y: 25, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -125,8 +127,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.009013519
-  m_Center: {x: 4.656613e-10, y: 0, z: -4.656612e-10}
+  m_Radius: 0.025
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7137187482130449519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,3 +144,45 @@ MonoBehaviour:
   degreesPerSecond: 50
   amplitude: 0.1
   frequency: 0.5
+--- !u!114 &3180244421121803142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7463751495471738619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9e8681c96f6df40a2d1f6c769f3620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7708250503249907816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7463751495471738619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 0
+  SyncPositionY: 1
+  SyncPositionZ: 0
+  SyncRotAngleX: 0
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 1
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0

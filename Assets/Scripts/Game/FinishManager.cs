@@ -111,17 +111,4 @@ public class FinishManager : NetworkBehaviour
             OnMultiplayerGameFinished?.Invoke(this, EventArgs.Empty);
         }
     }
-
-    public override void OnDestroy()
-    {
-        if (!IsServer)
-        {
-            return;
-        }
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.ConnectedClients.Count > 1)
-        {
-            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnect;
-        }
-        base.OnDestroy();
-    }
 }

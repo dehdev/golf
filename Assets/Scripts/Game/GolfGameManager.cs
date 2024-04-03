@@ -66,6 +66,24 @@ public class GolfGameManager : NetworkBehaviour
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
+
+        if (!IsServer)
+        {
+            return;
+        }
+        // Find all instances of Collectible objects in the scene
+        Collectible[] collectibles = FindObjectsOfType<Collectible>();
+
+        // Subscribe to the OnCollectibleCollected event for each Collectible
+        foreach (Collectible collectible in collectibles)
+        {
+            collectible.OnCollectibleCollected += Collectible_OnCollectibleCollected;
+        }
+    }
+
+    private void Collectible_OnCollectibleCollected(object sender, EventArgs e)
+    {
+        
     }
 
     [ServerRpc(RequireOwnership = false)]

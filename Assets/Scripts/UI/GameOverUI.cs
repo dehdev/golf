@@ -70,6 +70,7 @@ public class GameOverUI : MonoBehaviour
             shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
             finishLabel.text = "DIDN'T FINISH IN";
             FinishManager.Instance.OnLocalPlayerFinished -= FinishManager_OnLocalPlayerFinished;
+            FinishManager.Instance.SetPlayerFinishedServerRpc();
             Show();
         }
         else

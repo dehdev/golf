@@ -78,7 +78,7 @@ public class FinishManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerFinishedServerRpc(ServerRpcParams serverRpcParams = default)
+    public void SetPlayerFinishedServerRpc(ServerRpcParams serverRpcParams = default)
     {
         ulong clientId = serverRpcParams.Receive.SenderClientId;
         playerFinishedDictionary[clientId] = true;
@@ -118,7 +118,10 @@ public class FinishManager : NetworkBehaviour
         {
             return;
         }
-        NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnect;
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.ConnectedClients.Count > 1)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= HandleClientDisconnect;
+        }
         base.OnDestroy();
     }
 }

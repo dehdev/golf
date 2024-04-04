@@ -15,9 +15,8 @@ public class Collectible : NetworkBehaviour
             if (!collected && other.CompareTag("Player"))
             {
                 SoundManager.Instance.PlayCoinSound(this);
-                OnCollectibleCollected?.Invoke(this, EventArgs.Empty);
+                GolfGameManager.Instance.PlayerCollectCollectible(OwnerClientId);
                 collected = true; // Mark the collectible as collected to prevent multiple collections
-                Debug.Log("Collectible collected");
                 NetworkObject.Despawn();
             }
         }
@@ -33,9 +32,8 @@ public class Collectible : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void PlayerCollectedCollectibleServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        OnCollectibleCollected?.Invoke(this, EventArgs.Empty);
+        GolfGameManager.Instance.PlayerCollectCollectible(serverRpcParams.Receive.SenderClientId);
         collected = true; // Mark the collectible as collected to prevent multiple collections\
-        Debug.Log("Collectible collected");
         NetworkObject.Despawn();
     }
 }

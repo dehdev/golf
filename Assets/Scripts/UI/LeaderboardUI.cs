@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEditor;
@@ -58,16 +59,34 @@ public class LeaderboardUI : MonoBehaviour
 
     private void UpdatePlayerList()
     {
+        // Create a list to store player IDs and their corresponding shot counts
+        List<KeyValuePair<ulong, int>> playerShotCounts = new List<KeyValuePair<ulong, int>>();
+
+        // Fill the list with player IDs and their shot counts
+        foreach (ulong clientId in GolfGameManager.Instance.GetConnectedClientsIds())
+        {
+            int shotCount = GolfGameManager.Instance.GetPlayerShots(clientId);
+            playerShotCounts.Add(new KeyValuePair<ulong, int>(clientId, shotCount));
+        }
+
+        playerShotCounts.OrderBy(pair => pair.Value);
+
+        // Sort the list based on shot counts (ascending order)
+        playerShotCounts.Sort((a, b) => a.Value.CompareTo(b.Value));
+
+        // Clear the existing player list
         foreach (Transform child in playerListContainer)
         {
             if (child == playerListTemplate) continue;
             Destroy(child.gameObject);
         }
-        foreach (ulong clientId in GolfGameManager.Instance.GetConnectedClientsIds())
+
+        // Instantiate and populate the player list based on the sorted list
+        foreach (var pair in playerShotCounts)
         {
             Transform playerListTransform = Instantiate(playerListTemplate, playerListContainer);
             playerListTransform.gameObject.SetActive(true);
-            playerListTransform.GetComponent<PlayerListSingleUI>().SetPlayerListSingleData(clientId, GolfGameMultiplayer.Instance.GetPlayerDataFromClientId(clientId).playerName.ToString(), GolfGameManager.Instance.GetPlayerShots(clientId));
+            playerListTransform.GetComponent<PlayerListSingleUI>().SetPlayerListSingleData(pair.Key, GolfGameMultiplayer.Instance.GetPlayerDataFromClientId(pair.Key).playerName.ToString(), pair.Value);
         }
     }
 

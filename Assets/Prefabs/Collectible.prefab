@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1407541900545250267}
   - component: {fileID: 7137187482130449519}
   - component: {fileID: 3180244421121803142}
-  - component: {fileID: 7708250503249907816}
+  - component: {fileID: -1899538069245353782}
   m_Layer: 0
   m_Name: Collectible
   m_TagString: Collectible
@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c9e8681c96f6df40a2d1f6c769f3620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7708250503249907816
+--- !u!114 &-1899538069245353782
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7463751495471738619}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: d8d23e4fbc90e5540b67788e2441a220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SyncPositionX: 0
@@ -182,7 +182,7 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 1
+  UseHalfFloatPrecision: 0
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0

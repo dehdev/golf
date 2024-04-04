@@ -67,17 +67,36 @@ public class GolfGameManager : NetworkBehaviour
         GameInput.Instance.OnAnyKeyPressed += GameInput_OnAnyKeyPressed;
         FinishManager.Instance.OnLocalPlayerFinished += FinishManager_OnLocalPlayerFinished;
         FinishManager.Instance.OnMultiplayerGameFinished += FinishManager_OnMultiplayerGameFinished;
+    }
 
-        if (!IsServer)
+    public void PlayerCollectCollectible(ulong clientId)
+    {
+        if (playerShotsDictionary.ContainsKey(clientId))
+        {
+            if (playerShotsDictionary[clientId] > 0)
+            {
+                playerShotsDictionary[clientId]--;
+                OnPlayerShotDictionaryChanged?.Invoke(this, EventArgs.Empty);
+                PlayerCollectCollectibleClientRpc(clientId);
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void PlayerCollectCollectibleClientRpc(ulong clientId)
+    {
+        if (IsServer)
         {
             return;
         }
-        Collectible.OnCollectibleCollected += Collectible_OnCollectibleCollected;
-    }
-
-    private void Collectible_OnCollectibleCollected(object sender, EventArgs e)
-    {
-        Debug.Log("DO SOMETHING");
+        if (playerShotsDictionary.ContainsKey(clientId))
+        {
+            if (playerShotsDictionary[clientId] > 0)
+            {
+                playerShotsDictionary[clientId]--;
+                OnPlayerShotDictionaryChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

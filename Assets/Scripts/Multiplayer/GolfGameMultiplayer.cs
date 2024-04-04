@@ -89,8 +89,6 @@ public class GolfGameMultiplayer : NetworkBehaviour
             {
                 // Disconnected!
                 playerDataNetworkList.RemoveAt(i);
-                LobbyService.Instance.RemovePlayerAsync(NetworkManager.Singleton.name, clientId.ToString());
-                NetworkManager.Singleton.DisconnectClient(clientId);
             }
         }
     }

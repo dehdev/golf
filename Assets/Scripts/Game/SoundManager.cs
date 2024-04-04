@@ -47,7 +47,6 @@ public class SoundManager : MonoBehaviour
     public void PlayCoinSound(object sender)
     {
         PlaySound(coinSound, (sender as Collectible).transform.position);
-        Debug.Log("Coin sound played");
     }
 
     private void PlayerController_OnPlayerOffMap(object sender, EventArgs e)

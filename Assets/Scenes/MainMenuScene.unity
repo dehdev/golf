@@ -4688,6 +4688,7 @@ MonoBehaviour:
   countdownSound: {fileID: 8300000, guid: b90d8099bdbf09a40ab1163556d5b5f4, type: 3}
   finishSound: {fileID: 8300000, guid: 44691251b8410654090604539b1af100, type: 3}
   offMapSound: {fileID: 8300000, guid: 6e37943f9fefb8145bb547ffe77ec32e, type: 3}
+  coinSound: {fileID: 8300000, guid: 2b3bc0888cd652b41ae76a88065cefeb, type: 3}
 --- !u!4 &1108234867
 Transform:
   m_ObjectHideFlags: 0

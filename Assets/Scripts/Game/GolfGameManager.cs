@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -71,19 +72,12 @@ public class GolfGameManager : NetworkBehaviour
         {
             return;
         }
-        // Find all instances of Collectible objects in the scene
-        Collectible[] collectibles = FindObjectsOfType<Collectible>();
-
-        // Subscribe to the OnCollectibleCollected event for each Collectible
-        foreach (Collectible collectible in collectibles)
-        {
-            collectible.OnCollectibleCollected += Collectible_OnCollectibleCollected;
-        }
+        Collectible.OnCollectibleCollected += Collectible_OnCollectibleCollected;
     }
 
     private void Collectible_OnCollectibleCollected(object sender, EventArgs e)
     {
-        
+        Debug.Log("DO SOMETHING");
     }
 
     [ServerRpc(RequireOwnership = false)]

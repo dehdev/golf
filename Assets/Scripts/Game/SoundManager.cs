@@ -16,6 +16,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip countdownSound;
     [SerializeField] private AudioClip finishSound;
     [SerializeField] private AudioClip offMapSound;
+    [SerializeField] private AudioClip coinSound;
 
     public EventHandler OnSoundEffectsVolumeChanged;
 
@@ -41,6 +42,12 @@ public class SoundManager : MonoBehaviour
         PlayerController.OnBallHit += PlayerController_OnBallHit;
         PlayerController.OnCollisionHit += PlayerController_OnCollisionHit;
         PlayerController.OnPlayerResetPosition += PlayerController_OnPlayerOffMap;
+    }
+
+    public void PlayCoinSound(object sender)
+    {
+        PlaySound(coinSound, (sender as Collectible).transform.position);
+        Debug.Log("Coin sound played");
     }
 
     private void PlayerController_OnPlayerOffMap(object sender, EventArgs e)

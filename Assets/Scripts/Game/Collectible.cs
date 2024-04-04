@@ -6,7 +6,7 @@ public class Collectible : NetworkBehaviour
 {
     private bool collected = false; // Flag to track if the collectible has been collected
 
-    public EventHandler OnCollectibleCollected;
+    public static EventHandler OnCollectibleCollected;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,15 +14,17 @@ public class Collectible : NetworkBehaviour
         {
             if (!collected && other.CompareTag("Player"))
             {
+                SoundManager.Instance.PlayCoinSound(this);
                 OnCollectibleCollected?.Invoke(this, EventArgs.Empty);
                 collected = true; // Mark the collectible as collected to prevent multiple collections
-                NetworkObject.Despawn();
                 Debug.Log("Collectible collected");
-                return;
+                NetworkObject.Despawn();
             }
         }
         if (!collected && other.CompareTag("Player"))
         {
+            SoundManager.Instance.PlayCoinSound(this);
+            collected = true;
             PlayerCollectedCollectibleServerRpc();
         }
     }
@@ -32,8 +34,8 @@ public class Collectible : NetworkBehaviour
     private void PlayerCollectedCollectibleServerRpc(ServerRpcParams serverRpcParams = default)
     {
         OnCollectibleCollected?.Invoke(this, EventArgs.Empty);
-        collected = true; // Mark the collectible as collected to prevent multiple collections
-        NetworkObject.Despawn();
+        collected = true; // Mark the collectible as collected to prevent multiple collections\
         Debug.Log("Collectible collected");
+        NetworkObject.Despawn();
     }
 }

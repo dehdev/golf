@@ -139,4 +139,15 @@ public class CameraController : NetworkBehaviour
         // Smoothly adjust the camera's orthographic size
         playerVirtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(playerVirtualCamera.m_Lens.OrthographicSize, targetZoom, ref currentZoomVelocity, zoomSmoothTime);
     }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (!IsServer)
+        {
+            return;
+        }
+        GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
+        FinishManager.Instance.OnLocalPlayerFinished -= FinishManager_OnLocalPlayerFinished;
+    }
 }

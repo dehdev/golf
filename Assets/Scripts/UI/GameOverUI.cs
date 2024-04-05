@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,6 +14,7 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Image finishLabelImage;
+    [SerializeField] private LeaderboardUI leaderboardUI;
 
     private void Awake()
     {

@@ -12,7 +12,7 @@ public class LeaderboardUI : MonoBehaviour
 {
     [SerializeField] private Transform playerListContainer;
     [SerializeField] private Transform playerListTemplate;
-
+    [SerializeField] bool isAlwaysVisible = false;
 
     private void Start()
     {
@@ -22,14 +22,24 @@ public class LeaderboardUI : MonoBehaviour
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
         playerListTemplate.gameObject.SetActive(false);
         GolfGameManager.Instance.GetConnectedClientsIdsServerRpc();
-        Hide();
+        if (isAlwaysVisible)
+        {
+            Show();
+        }
+        else
+        {
+            Hide();
+        }
     }
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
     {
         if (GolfGameManager.Instance.IsGameOver())
         {
-            Hide();
+            if (!isAlwaysVisible)
+            {
+                Hide();
+            }
         }
     }
 
@@ -95,7 +105,7 @@ public class LeaderboardUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Show()
+    public void Show()
     {
         gameObject.SetActive(true);
     }

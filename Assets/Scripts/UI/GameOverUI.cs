@@ -59,7 +59,7 @@ public class GameOverUI : MonoBehaviour
     private void FinishManager_OnLocalPlayerFinished(object sender, EventArgs e)
     {
         GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
-        shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
+        shotsText.text = GolfGameManager.Instance.GetPlayerShots(NetworkManager.Singleton.LocalClientId).ToString();
         finishLabel.text = "FINISHED IN";
         finishLabelImage.color = new Color(0.1529412f, 0.682353f, 0.3764706f, 1f);
         Show();
@@ -69,7 +69,7 @@ public class GameOverUI : MonoBehaviour
     {
         if (GolfGameManager.Instance.IsGameOver())
         {
-            shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
+            shotsText.text = GolfGameManager.Instance.GetPlayerShots(NetworkManager.Singleton.LocalClientId).ToString();
             finishLabel.text = "DIDN'T FINISH IN";
             FinishManager.Instance.OnLocalPlayerFinished -= FinishManager_OnLocalPlayerFinished;
             FinishManager.Instance.SetPlayerFinishedServerRpc();

@@ -83,15 +83,16 @@ public class FinishManager : NetworkBehaviour
         ulong clientId = serverRpcParams.Receive.SenderClientId;
         playerFinishedDictionary[clientId] = true;
         SetPlayerFinishedClientRpc(clientId);
-        if (IsServer)
-        {
-            CheckAllPlayers();
-        }
+        CheckAllPlayers();
     }
 
     [ClientRpc]
     private void SetPlayerFinishedClientRpc(ulong clientId)
     {
+        if (IsServer)
+        {
+            return;
+        }
         playerFinishedDictionary[clientId] = true;
         CheckAllPlayers();
     }

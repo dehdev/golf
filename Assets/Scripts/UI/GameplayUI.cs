@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class GameplayUI : MonoBehaviour
@@ -13,19 +12,19 @@ public class GameplayUI : MonoBehaviour
     private void Start()
     {
         GolfGameManager.Instance.OnStateChanged += GolfGameManager_OnStateChanged;
-        PlayerController.OnBallHit += PlayerController_OnBallHit;
         FinishManager.Instance.OnLocalPlayerFinished += Instance_OnLocalPlayerFinished;
+        GolfGameManager.Instance.OnPlayerShotDictionaryChanged += GolfGameManager_OnPlayerShotDictionaryChanged;
         Hide();
+    }
+
+    private void GolfGameManager_OnPlayerShotDictionaryChanged(object sender, EventArgs e)
+    {
+        shotsText.text = GolfGameManager.Instance.GetPlayerShots(NetworkManager.Singleton.LocalClientId).ToString();
     }
 
     private void Instance_OnLocalPlayerFinished(object sender, EventArgs e)
     {
         Hide();
-    }
-
-    private void PlayerController_OnBallHit(object sender, EventArgs e)
-    {
-        shotsText.text = PlayerController.LocalInstance.GetLocalPlayerShots().ToString();
     }
 
     private void GolfGameManager_OnStateChanged(object sender, EventArgs e)
@@ -53,7 +52,6 @@ public class GameplayUI : MonoBehaviour
     private void OnDestroy()
     {
         GolfGameManager.Instance.OnStateChanged -= GolfGameManager_OnStateChanged;
-        PlayerController.OnBallHit -= PlayerController_OnBallHit;
         FinishManager.Instance.OnLocalPlayerFinished -= Instance_OnLocalPlayerFinished;
     }
 }

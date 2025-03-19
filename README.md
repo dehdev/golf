@@ -1,8 +1,12 @@
+# Description
 Bachelor's project for my final year 2024.
 
 A mini golf game in Unity C# with Netcode for GameObjects for multiplayer feature.
 
+# Video demo
+https://youtu.be/5wErRoAmgqs
 
+# Screenshots:
 ![Screenshot 2024-06-16 195749](https://github.com/user-attachments/assets/d985cf27-f839-49b3-93b1-3f5c43a5ebc1)
 ![Screenshot 2024-06-16 195821](https://github.com/user-attachments/assets/ead2d6e2-403f-4753-a7b2-84fb3c148694)
 ![Screenshot 2024-06-16 195839](https://github.com/user-attachments/assets/4402d859-888a-4772-b861-23d54527979b)
